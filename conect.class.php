@@ -1,8 +1,6 @@
 <?php
 	ini_set('default_charset', 'utf-8');
 
-	$errorLDAP='';
-	$valores = array ('cn','loginshell','sn','mail');
 class phpLDAP{
 	var $errorLDAP;
 	function conecLDAP($lhost,$lport){
@@ -12,9 +10,9 @@ class phpLDAP{
 		return $lcon;
 	}
 	
-	function enlaceLDAP($lcon,$luser,$lpwd){
+	function enlaceLDAP($lcon,$luser,$lpwd,$base){
 		try{	
-			$dn = "uid=".$luser.",ou=people,dc=xibalba,dc=com";
+			$dn = "uid=".$luser.",".$base;
 			if($lenl = ldap_bind($lcon,$dn,$lpwd)){
 				return $lenl;
 			}else{
@@ -52,9 +50,9 @@ class phpLDAP{
 		}	
 	}
 
-	function arrayDatosLDAP($lcontenido){
+	function arrayDatosLDAP($lcontenido,$valores){
 		$objecto = array();
-			foreach ($GLOBALS['valores'] as $j){
+			foreach ($valores as $j){
 				if(array_key_exists($j,$lcontenido[0])){
 					array_push($objecto,$lcontenido[0][$j][0]) ;
 				}else{
@@ -64,12 +62,12 @@ class phpLDAP{
 		return $objecto;
 	}
 	
-	function tabDatosLDAP($lcontenido){
+	function tabDatosLDAP($lcontenido,$valores){
 		$entradas = $lcontenido['count'];
 		$tabla = "";
 		for ( $i = 0; $i < $entradas; $i++ ) {
 			$tabla .= "\n\t<tr>";
-			foreach ($GLOBALS['valores'] as $j){
+			foreach ($valores as $j){
 				$tabla .= "\n\t\t<td>";
 				if(array_key_exists($j,$lcontenido[$i])){
 					$tabla .= $lcontenido[$i][$j][0]."" ;
