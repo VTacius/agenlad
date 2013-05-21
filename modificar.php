@@ -1,5 +1,6 @@
 <?php
 	require_once('conect.class.php');
+	require_once('config.php');	
 	session_start();
 	if (!(isset($_SESSION['luser']) && isset($_SESSION['lpasswd']))){
 		header('Location: index.php');
@@ -10,7 +11,7 @@
 	
 	$modificar = new phpLDAP();
 	
-	$modificar_con = $modificar->conecLDAP("192.168.1.11","389");
+	$modificar_con = $modificar->conecLDAP($host,$port);
 	
 	$modificar_bind = $modificar->enlaceLDAP($modificar_con,$user,$pass) or die ($modificar->errorLDAP );
 		
