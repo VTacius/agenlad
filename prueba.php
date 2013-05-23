@@ -71,40 +71,23 @@
         <div class="span10">
           <div class="brand">
             <h2 class=" small text-center">Directorio del Ministerio de Salud</h2>
-            <form class="form-search">
-                <input type="text" class="input-large search-query" id="appendedDropdownButton">
-                <div class="input-append">
-                    <div class="btn-group">
-                        <button class="btn dropdown-toggle" data-toggle="dropdown">Primera opción
-                        <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li>Primera opción</li>
-                            <li>Segunda opción</li>
-                        </ul>
-                    </div>
-                    
-                </div>
+            
+              <form class="form-search text-center" action="prueba.php" method="GET">
+              <input class="span6" id="filtro" type="text">
+              <select>
+                    <option>Nombre</option>
+                    <option>Correo</option>
+                    <option>Telefono</option>
+                    <option>Departamento</option>
+              </select>
+              <button class="btn btn-medium" type="button">Búsqueda</button>            
             </form>
-            <form class="bs-docs-example">
-            <div class="input-append">
-              <input class="span2" id="appendedDropdownButton" type="text">
-              <div class="btn-group">
-                <button class="btn dropdown-toggle" data-toggle="dropdown">Action <span class="caret"></span></button>
-                <ul class="dropdown-menu">
-                  <li><a href="#">Action</a></li>
-                  <li><a href="#">Another action</a></li>
-                  <li><a href="#">Something else here</a></li>
-                  <li class="divider"></li>
-                  <li><a href="#">Separated link</a></li>
-                </ul>
-              </div><!-- /btn-group -->
-            </div><!-- /input-append -->
-          </form>
+            
+            
           </div>
           <div class="row-fluid">
             <div class="span12">
-              <h2>Heading</h2>
+              <h2>Usuarios</h2>
               <table class="table">
                   <thead>
                       <tr>
