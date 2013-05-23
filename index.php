@@ -1,21 +1,61 @@
-<?php
-	require_once('conect.php');
-	$index_con = conecLDAP("192.168.1.11","389");
-	
-	$index_bind = enlaceLDAP($index_con,"cn=administrator,dc=xibalba,dc=com","pass2025") or die ($GLOBALS['errorLDAP'] );
-	//print_r($index_bind);
-		
-	$index_list = listarLDAP($index_con,"ou=people,dc=xibalba,dc=com","uid=*") or die ($GLOBALS['errorLDAP']);
-	
-	$index_cont = getLDAP($index_con,$index_list) or die ($GLOBALS['errorLDAP']);
-	
-	$index_tabla =	tabDatosLDAP($index_cont);
-	echo "<br>";
-	echo "<table border=1>";
-	echo $index_tabla;
-	echo "</table>";
+<!DOCTYPE html>
+<!-- saved from url=(0055)http://twitter.github.io/bootstrap/examples/signin.html -->
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <title>Entrar</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="Directorio LDAP del Ministerio de Salud">
+        <meta name="author" content="Alexander Ortìz">
+        <link href="css/bootstrap.css" rel="stylesheet">
+        <style type="text/css">
+        body {
+            padding-top: 45px;
+            padding-bottom: 40px;
+            background-color: #f5f5f5;
+        }
+        .form-signin {
+            max-width: 470px;
+            padding: 19px 29px 29px;
+            margin: 0 auto 20px;
+            background-color: #fff;
+            border: 1px solid #e5e5e5;
+            -webkit-border-radius: 5px;
+            -moz-border-radius: 5px;
+                border-radius: 5px;
+            -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+            -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+        }
+        .form-signin .form-signin-heading,
+        .form-signin .checkbox {
+            margin-bottom: 10px;
+        }
+        .form-signin input[type="text"],
+        .form-signin input[type="password"] {
+            font-size: 16px;
+            height: auto;
+            margin-bottom: 15px;
+            padding: 7px 9px;
+        }
+        </style>
+    </head>
+    <body>
+    <div class="container">
+        <form class="form-signin" action="login.php" method="POST" enctype="">
+        <h2 class="form-signin-heading">Directorio Teléfonico MINSAL</h2>
+        <h3 class="form-signin-heading">Entrar</h3>
+        <input type="text" class="input-block-level" placeholder="Email address" name="luser">
+        <input type="password" class="input-block-level" placeholder="Password" name="lpasswd">
+        <!--<label class="checkbox">
+          <input type="checkbox" value="remember-me"> Remember me
+        </label>-->
+        <button class="btn btn-large btn-primary" type="submit">Entrar</button>
+      </form>
 
-	$entry = ldap_first_entry($index_con, $index_list);
-
-	$attrs = ldap_get_attributes($index_con, $entry);
-?>
+    </div> <!-- /container -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.js"></script>
+</body>
+</html>
