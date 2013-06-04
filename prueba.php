@@ -1,3 +1,27 @@
+<?php 
+	require_once('conect.class.php');
+	require_once('config.php');	
+	session_start();
+	if (!(isset($_SESSION['luser']) && isset($_SESSION['lpasswd']))){
+		header('Location: index.php');
+	}
+
+	$user = (isset($_SESSION['luser'])) ? $_SESSION['luser']:"false";
+	$pass = (isset($_SESSION['lpasswd'])) ? $_SESSION['lpasswd']:'false';
+	$valores = array ('cn','loginshell','sn','mail');
+
+	$list = new phpLDAP();	
+	//Hasta ahora, mis intentos que la conexión y el enlace sean variables de sesión no han dado resultados
+	$list_con = $list->conecLDAP($host,$port);
+
+	$list_bind = $list->enlaceLDAP($list_con,$user,$pass,$base) or die ($list->errorLDAP);
+
+	$list_list = $list->listarLDAP($list_con,$base,"uid=*") or die ($list->errorLDAP);
+	
+	$list_cont = $list->getLDAP($list_con,$list_list) or die ($list->errorLDAP);
+	
+	$list_tabla =	$list->tabDatosLDAP($list_cont,$valores);
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -73,17 +97,13 @@
             <h2 class=" small text-center">Directorio del Ministerio de Salud</h2>
             
               <form class="form-search text-center" action="prueba.php" method="GET">
-              <input class="span6" id="filtro" type="text">
-              <select>
-                    <option>Nombre</option>
-                    <option>Correo</option>
-                    <option>Telefono</option>
-                    <option>Departamento</option>
+              <input class="span6" id="filtro" type="text" name="filtro">
+              <select name="busqueda">
+                    <option value="nombre">Nombre</option>
+                    <option value="departamento">Departamento</option>
               </select>
-              <button class="btn btn-medium" type="button">Búsqueda</button>            
+              <button class="btn btn-medium" type="submit">Búsqueda</button> 
             </form>
-            
-            
           </div>
           <div class="row-fluid">
             <div class="span12">
@@ -98,7 +118,7 @@
                       </tr>
                   </thead>
                   <tbody>
-                      <?php echo $tabla?>
+                      <?php echo $list_tabla?>
                   </tbody>
               </table>
             </div><!--/span-->
