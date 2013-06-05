@@ -1,35 +1,38 @@
 <?php 
+	//Aderezamos con los archivos necesarios
 	require_once('conect.class.php');
 	require_once('config.php');	
-	session_start();
+	
+	//Empieza el breve manejo de sesión
+	session_start(); 
 	if (!(isset($_SESSION['luser']) && isset($_SESSION['lpasswd']))){
 		header('Location: index.php');
 	}
-
+	//Termina el breve manejo de sesión
 	$user = (isset($_SESSION['luser'])) ? $_SESSION['luser']:"false";
 	$pass = (isset($_SESSION['lpasswd'])) ? $_SESSION['lpasswd']:'false';
 	$valores = array ('cn','loginshell','sn','mail');
-
-	$list = new phpLDAP();	
-	//Hasta ahora, mis intentos que la conexión y el enlace sean variables de sesión no han dado resultados
-	$list_con = $list->conecLDAP($host,$port);
-
-	$list_bind = $list->enlaceLDAP($list_con,$user,$pass,$base) or die ($list->errorLDAP);
-
-	$list_list = $list->listarLDAP($list_con,$base,"uid=*") or die ($list->errorLDAP);
 	
-	$list_cont = $list->getLDAP($list_con,$list_list) or die ($list->errorLDAP);
+	$modificar = new phpLDAP();
 	
-	$list_tabla =	$list->tabDatosLDAP($list_cont,$valores);
+	$modificar_con = $modificar->conecLDAP($host,$port);
+	
+	$modificar_bind = $modificar->enlaceLDAP($modificar_con,$user,$pass,$base) or die ($modificar->errorLDAP );
+		
+	$modificar_list = $modificar->listarLDAP($modificar_con,$base,"uid=$user") or die ($modificar->errorLDAP);
+	
+	$modificar_cont = $modificar->getLDAP($modificar_con,$modificar_list) or die ($GLOBALS['errorLDAP']);
+	
+	$modificar_tabla =	$modificar->arrayDatosLDAP($modificar_cont,$valores);
 ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta charset="utf-8">
-        <title>Prueba</title>
+        <title>Directorio Telefónico MINSAL</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Primera prueba de diseño">
+        <meta name="description" content="Directorio Telefónico MINSAL">
         <meta name="author" content="Alexander Ortíz">
         <style type="text/css">
             body {
@@ -56,19 +59,18 @@
       <div class="navbar-inner">
         <div class="container-fluid">
           <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
+            <span class="icon-bar">Esto es ?</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
             <a class="brand" href="index.php">Directorio Telefónico MINSAL</a>
           <div class="nav-collapse collapse">
             <p class="navbar-text pull-right">
-              Usuario: <a href="http://twitter.github.io/bootstrap/examples/fluid.html#" class="navbar-link"><?php echo $usuario?></a>
+              Usuario: <a href="modificar.php" class="navbar-link"><?php echo $user?></a>
             </p>
             <ul class="nav">
-              <li class="active"><a href="http://twitter.github.io/bootstrap/examples/fluid.html#">Home</a></li>
-              <li><a href="http://twitter.github.io/bootstrap/examples/fluid.html#about">About</a></li>
-              <li><a href="http://twitter.github.io/bootstrap/examples/fluid.html#contact">Contact</a></li>
+              <li class="active"><a href="ayuda.php">Ayuda</a></li>
+              <li><a href="sobre.php">Sobre</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -80,48 +82,60 @@
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
               <li class="nav-header">Enlaces de interés</li>
-              <li class="active"><a href="mail.salud.gob.sv">Correo</a></li>
+              <li class="active"><a href="https://mail.salud.gob.sv">Correo</a></li>
             </ul>
           </div><!--/.well -->
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
               <li class="nav-header">Administracion</li>
-              <li class="active"><a href="mail.salud.gob.sv">Cambiar datos</a></li>
-              <li><a href="mail.salud.gob.sv">Cambiar datos</a></li>
-              <li><a href="mail.salud.gob.sv">Cambiar datos</a></li>
+              <li class="active"><a href="modificar.php">Cambiar datos</a></li>
+              <li><a href="logout.php">Salir</a></li>
             </ul>
           </div><!--/.well -->
         </div><!--/span-->
         <div class="span10">
           <div class="brand">
             <h2 class=" small text-center">Directorio del Ministerio de Salud</h2>
-            
-              <form class="form-search text-center" action="prueba.php" method="GET">
-              <input class="span6" id="filtro" type="text" name="filtro">
-              <select name="busqueda">
-                    <option value="nombre">Nombre</option>
-                    <option value="departamento">Departamento</option>
-              </select>
-              <button class="btn btn-medium" type="submit">Búsqueda</button> 
-            </form>
           </div>
           <div class="row-fluid">
             <div class="span12">
-              <h2>Usuarios</h2>
-              <table class="table">
-                  <thead>
-                      <tr>
-                          <th>Nombre</th>
-                          <th>Dependencia</th>
-                          <th>Correo</th>
-                          <th>Teléfono</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      <?php echo $list_tabla?>
-                  </tbody>
-              </table>
-            </div><!--/span-->
+              <h3></h3>
+								<form name = "index" action = "prueba.php" class="form-horizontal " method = "POST">
+								<fieldset>
+								<legend>Datos del Usuario <?php echo $user?></legend>
+									<div class="control-group">
+										<label class="control-label" for="v0">Nombre</label>
+								    <div class="controls">
+											<input class="span7" type = text name="v0" value="<?php print $modificar_tabla[0]?>"/>
+							    		<a href="#" onclick='javascript:window.location.replace("http://filo.xibalba.com/modificar.php?elem=27")'>Cambiar</a>
+							    	</div>
+									</div>
+									<div class="control-group">
+										<label class="control-label" for="v1">E-Mail</label>
+								    <div class="controls">
+											<input class="span7" type = text name="v1" value="<?php print $modificar_tabla[1]?>"/>
+							    		<a href="#" onclick='javascript:window.location.replace("http://filo.xibalba.com/modificar.php?elem=27")'>Cambiar</a>
+							    	</div>
+									</div>
+									<div class="control-group">
+										<label class="control-label" for="v2">Nombre</label>
+								    <div class="controls">
+											<input class="span7" type = text name="v2" value="<?php print $modificar_tabla[2]?>"/>
+							    		<a href="#" onclick='javascript:window.location.replace("http://filo.xibalba.com/modificar.php?elem=27")'>Cambiar</a>
+							    	</div>
+									</div>
+									<div class="control-group">
+										<label class="control-label" for="v3">Nombre</label>
+								    <div class="controls">
+											<input class="span7" type = text name="v3" value="<?php print $modificar_tabla[3]?>"/>
+							    		<a href="#" onclick='javascript:window.location.replace("http://filo.xibalba.com/modificar.php?elem=27")'>Cambiar</a>
+										</div>
+									</div>
+									<button class="btn" onclick='javascript:window.location.replace("http://filo.xibalba.com/modificar.php?elem=27")'>Enviar</button>
+								</fieldset>
+								</form>
+								<h2><?php print $mensaje ?></h2>
+						</div><!--/span-->
           </div><!--/row-->
         </div><!--/span-->
       </div><!--/row-->

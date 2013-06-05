@@ -1,6 +1,13 @@
 <!DOCTYPE html>
-<!-- saved from url=(0055)http://twitter.github.io/bootstrap/examples/signin.html -->
-<html lang="en">
+<?php
+	//Empieza el breve manejo de sesión
+	session_start(); 
+	if ((isset($_SESSION['luser']) && isset($_SESSION['lpasswd']))){
+		header('Location: listado.php');
+	}
+	//Termina el breve manejo de sesión
+?>
+<html lang="es">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta charset="utf-8">
