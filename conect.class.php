@@ -76,6 +76,7 @@ class phpLDAP{
 				}
 				$tabla .= "</td>\n";
 			}
+			$tabla .= "\n\t\t".'<td><a href="#" id="detalle" name="detalle" onclick="javascript: consultar(\'gbena\');">Detalles</a> <td>';
 			$tabla .= "\n\t</tr>";
 		}
 		return $tabla;

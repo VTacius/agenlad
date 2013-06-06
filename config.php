@@ -1,5 +1,5 @@
 <?php
-		$host = '192.168.1.11';
-		$port = '389';
+		$host = 'ldaps://ilaria.xibalba.com';
+		$port = '636';
 		$base = 'ou=people,dc=xibalba,dc=com';
 ?>

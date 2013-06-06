@@ -41,7 +41,7 @@
 	$list_tabla =	$list->tabDatosLDAP($list_cont,$valores);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta charset="utf-8">
@@ -137,6 +137,7 @@
                       <?php echo $list_tabla?>
                   </tbody>
               </table>
+							<div id="resultado"></div>
             </div><!--/span-->
           </div><!--/row-->
         </div><!--/span-->
@@ -152,5 +153,16 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="js/jquery.js" type="text/javascript"></script>
     <script src="js/bootstrap.js" type="text/javascript"></script>
+		<script type="text/JavaScript">
+			function consultar(valor){
+				$("#resultado").html("Cargando...");
+				$.get("detalles.php",{filtro:valor},procesarEventos); 
+			}
+
+			function procesarEventos(datos){
+				$("#resultado").html(datos);
+			}
+		</script>
+
     </body>
 </html>
