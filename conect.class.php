@@ -62,6 +62,19 @@ class phpLDAP{
 		return $objecto;
 	}
 	
+	function arrayLargoDatosLDAP($lcontenido,$valores){
+		$objecto = array();
+			foreach ($valores as $j){
+				if(array_key_exists($j,$lcontenido[0])){
+					print $lcontenido[0][$j]['count']."<br>";
+					print $j." ".$lcontenido[0][$j][0]."<br>";
+				}else{
+					print $j." "."-"."<br>";
+				}
+			}
+		return $objecto;
+	}
+
 	function tabDatosLDAP($lcontenido,$valores){
 		$entradas = $lcontenido['count'];
 		$tabla = "";

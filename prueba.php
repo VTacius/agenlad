@@ -11,7 +11,7 @@
 	//Termina el breve manejo de sesión
 	$user = (isset($_SESSION['luser'])) ? $_SESSION['luser']:"false";
 	$pass = (isset($_SESSION['lpasswd'])) ? $_SESSION['lpasswd']:'false';
-	$valores = array ('cn','loginshell','sn','mail');
+	$valores = array ('cn','objectclass','sn','mail');
 	
 	$modificar = new phpLDAP();
 	
@@ -19,11 +19,13 @@
 	
 	$modificar_bind = $modificar->enlaceLDAP($modificar_con,$user,$pass,$base) or die ($modificar->errorLDAP );
 		
-	$modificar_list = $modificar->listarLDAP($modificar_con,$base,"uid=$user") or die ($modificar->errorLDAP);
+	$modificar_list = $modificar->listarLDAP($modificar_con,$base,"uid=*") or die ($modificar->errorLDAP);
 	
 	$modificar_cont = $modificar->getLDAP($modificar_con,$modificar_list) or die ($GLOBALS['errorLDAP']);
 	
-	$modificar_tabla =	$modificar->arrayDatosLDAP($modificar_cont,$valores);
+	$modificar_tabla =	$modificar->arrayLargoDatosLDAP($modificar_cont,$valores);
+	
+	
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -107,31 +109,30 @@
 										<label class="control-label" for="v0">Nombre</label>
 								    <div class="controls">
 											<input class="span7" type = text name="v0" value="<?php print $modificar_tabla[0]?>"/>
-							    		<a href="#" onclick='javascript:window.location.replace("http://filo.xibalba.com/modificar.php?elem=27")'>Cambiar</a>
+							    		<a href="#" onclick='javascript:window.location.replace("http://filo.xibalba.com/modificar.php?elem=0")'>Cambiar</a>
 							    	</div>
 									</div>
 									<div class="control-group">
 										<label class="control-label" for="v1">E-Mail</label>
 								    <div class="controls">
 											<input class="span7" type = text name="v1" value="<?php print $modificar_tabla[1]?>"/>
-							    		<a href="#" onclick='javascript:window.location.replace("http://filo.xibalba.com/modificar.php?elem=27")'>Cambiar</a>
+							    		<a href="#" onclick='javascript:window.location.replace("http://filo.xibalba.com/modificar.php?elem=1")'>Cambiar</a>
 							    	</div>
 									</div>
 									<div class="control-group">
 										<label class="control-label" for="v2">Nombre</label>
 								    <div class="controls">
 											<input class="span7" type = text name="v2" value="<?php print $modificar_tabla[2]?>"/>
-							    		<a href="#" onclick='javascript:window.location.replace("http://filo.xibalba.com/modificar.php?elem=27")'>Cambiar</a>
+							    		<a href="#" onclick='javascript:window.location.replace("http://filo.xibalba.com/modificar.php?elem=2")'>Cambiar</a>
 							    	</div>
 									</div>
 									<div class="control-group">
 										<label class="control-label" for="v3">Nombre</label>
 								    <div class="controls">
 											<input class="span7" type = text name="v3" value="<?php print $modificar_tabla[3]?>"/>
-							    		<a href="#" onclick='javascript:window.location.replace("http://filo.xibalba.com/modificar.php?elem=27")'>Cambiar</a>
+							    		<a href="#" onclick='javascript:window.location.replace("http://filo.xibalba.com/modificar.php?elem=3")'>Cambiar</a>
 										</div>
 									</div>
-									<button class="btn" onclick='javascript:window.location.replace("http://filo.xibalba.com/modificar.php?elem=27")'>Enviar</button>
 								</fieldset>
 								</form>
 								<h2><?php print $mensaje ?></h2>
