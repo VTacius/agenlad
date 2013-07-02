@@ -62,18 +62,32 @@ class phpLDAP{
 		return $objecto;
 	}
 	
-	function arrayLargoDatosLDAP($lcontenido,$valores){
+	function entradaLDAP ($lcontenido,$i,$valores) {
 		$objecto = array();
 			foreach ($valores as $j){
-				if(array_key_exists($j,$lcontenido[0])){
-					print $lcontenido[0][$j]['count']."<br>";
-					print $j." ".$lcontenido[0][$j][0]."<br>";
+				if(array_key_exists($j,$lcontenido[$i])){
+					if ($lcontenido[$i]['count'] > 2){
+						for ($k = 0; $k < $lcontenido[$i][$j]['count'] ; $i++ ){
+							echo $j." ".$lcontenido[$i][$j][$k]."M<br>";
+						}
+					//Excelente lugar para meter al arreglo
+					//
+					}else{
+							echo $j." ".$lcontenido[$i][$j][0]."K<br>";
+					}
 				}else{
 					print $j." "."-"."<br>";
 				}
 			}
 		return $objecto;
 	}
+	function datosLDAP ($lcontenido,$valores) {
+		$e = $lcontenido['count'];
+		for ($i=0 ; $i <= $e ; $i++) {	
+			$this->entradaLDAP($lcontenido,$i,$valores);
+		}
+	}
+
 
 	function tabDatosLDAP($lcontenido,$valores){
 		$entradas = $lcontenido['count'];
