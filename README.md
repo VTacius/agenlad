@@ -1,9 +1,3 @@
-agenlad
-=======
-
-Agenda en php con conexión a un directorio LDAP
-
-
 ## Agenlap: Agenda telefónica en PHP para directorios LDAP
 
 Este es un proyecto personal basado en un proyecto institucional. 
