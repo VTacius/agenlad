@@ -23,10 +23,9 @@ class phpLDAP{
 		}
 	}	
 
-	function listarLDAP($lcon,$lbase,$lfiltro){
+	function listarLDAP($lcon,$lbase,$lfiltro='objectClass=top'){
 		try{
-			$filtro = (isset($lfiltro))?$lfiltro:'objectClass=top';
-			$llist = ldap_list($lcon,$lbase,$filtro,$GLOBALS['valores']);
+			$llist = ldap_list($lcon,$lbase,$lfiltro,$GLOBALS['valores']);
 			if($llist){
 				return $llist;
 			}else{
@@ -62,23 +61,4 @@ class phpLDAP{
 		return $objecto;
 	}
 	
-	function tabDatosLDAP($lcontenido,$valores){
-		$entradas = $lcontenido['count'];
-		$tabla = "";
-		for ( $i = 0; $i < $entradas; $i++ ) {
-			$tabla .= "\n\t<tr>";
-			foreach ($valores as $j){
-				$tabla .= "\n\t\t<td>";
-				if(array_key_exists($j,$lcontenido[$i])){
-					$tabla .= $lcontenido[$i][$j][0]."" ;
-				}else{
-					$tabla .= "-";
-				}
-				$tabla .= "</td>\n";
-			}
-			$tabla .= "\n\t</tr>";
-		}
-		return $tabla;
-	}	
 }
-?>
