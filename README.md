@@ -7,6 +7,7 @@ Suponemos que esta es la parte que pueda interesarle a otros
 #### Sistema:
     $ aptitude install php5-ldap`
 #### Librerías de terceros:
+    $ wget http://code.jquery.com/jquery-2.1.1.js -O  bootstrap/dist/js/jquery-2.1.1.js
     $ git clone git@github.com:fabpot/Twig.git
     $ git clone https://github.com/twbs/bootstrap.git
 ### Antes de su primer uso:
