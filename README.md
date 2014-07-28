@@ -16,6 +16,10 @@ Suponemos que esta es la parte que pueda interesarle a otros
 [conexion]
 server = ldap.dominio.com
 puerto = 389
+dominio = dominio.com
+[usuario]
+user = usuario
+pass = passito
 [database]
 dbbase = directoriolU
 dbserver = 10.10.20.56
