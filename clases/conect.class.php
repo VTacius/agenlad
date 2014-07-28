@@ -3,20 +3,20 @@
 
 class controlLDAP{
 
-// El dn del usuario estará a nivel de clase.
-  protected $dn;
-// El OU, que representa también la base
-  protected $ou;
-// La conexión estará a nivel de clase, y no se piensa usar fuera de acá
-  protected $lenl = "";
-// El enlace estará a nivel de clase
-  protected $lcon;
-// El contenido de todos los datos estará a nivel de clase
-  protected $datos;
-// Tendremos a la mano la busqueda lista para ordenarla después
-  protected $searchi; 
-// Almacena los errores que puedan producirse
-  protected $errorLDAP = "";
+  // El dn del usuario estará a nivel de clase.
+    protected $dn;
+  // El OU, que representa también la base
+    protected $ou;
+  // La conexión estará a nivel de clase, y no se piensa usar fuera de acá
+    protected $lenl = "";
+  // El enlace estará a nivel de clase
+    protected $lcon;
+  // El contenido de todos los datos estará a nivel de clase
+    protected $datos;
+  // Tendremos a la mano la busqueda lista para ordenarla después
+    protected $searchi; 
+  // Almacena los errores que puedan producirse
+    protected $errorLDAP = "";
   
   /**
 		Empiezan métodos necesarios para establecer cualquier conexión
@@ -30,6 +30,7 @@ class controlLDAP{
    * @param string $rol
    * @return string
    */
+    
   function crearBase ( $base, $rol='usuario' ){
     switch ($rol) {
       case 'usuario':     
@@ -76,12 +77,12 @@ class controlLDAP{
    * @param string $port
    * @return conection
    */
-  function conexion($host,$port){
-    $this->lcon = ldap_connect($host,$port);
-    ldap_set_option($this->lcon,LDAP_OPT_PROTOCOL_VERSION,3);
-    ldap_set_option($this->lcon,LDAP_OPT_NETWORK_TIMEOUT,1);
-    return $this->lcon;
-  }
+    function conexion($host,$port){
+        $this->lcon = ldap_connect($host,$port);
+        ldap_set_option($this->lcon,LDAP_OPT_PROTOCOL_VERSION,3);
+        ldap_set_option($this->lcon,LDAP_OPT_NETWORK_TIMEOUT,1);
+        return $this->lcon;
+    }
   
   /**
    * Realiza el enlace con el servidor LDAP
@@ -91,18 +92,18 @@ class controlLDAP{
    * @throws Exception
    */
   function enlace($lpasswd){	
-    try{
-    if (empty($lpasswd) | empty($this->dn)) {
-      throw new Exception("Error en la conexión: <b> Credenciales vacías</b>");
-    }elseif(($this->lenl = ldap_bind($this->lcon,$this->dn,$lpasswd))){
-        return true;
-      }else{
-        throw new Exception("Error en la conexión: <b>".ldap_error($this->lcon)."</b>");
+      try{
+          if (empty($lpasswd) | empty($this->dn)) {
+              throw new Exception("Error en la conexión: <b> Credenciales vacías</b>");
+          }elseif(($this->lenl = ldap_bind($this->lcon,$this->dn,$lpasswd))){
+              return true;
+          }else{
+              throw new Exception("Error en la conexión: <b>".ldap_error($this->lcon)."</b>");
+          }
+      }catch(Exception $e){
+          $this->errorLDAP = $e->getMessage();	
+          return false;
       }
-    }catch(Exception $e){
-      $this->errorLDAP = $e->getMessage();	
-      return false;
-    }
   }
 	
   // Terminan métodos necesarios para establecer cualquier conexión 
@@ -123,12 +124,12 @@ class controlLDAP{
    * @param int $size
    */
   function datos($base, $filtro, $attributes, $size=500){
-  // Silenciaré el error, pero que conste, estoy usando el sizelimit
-  // pero no lo obedece
-    $this->searchi = ldap_search ($this->lcon, $base, $filtro, $attributes, 0, $size, $size);
-  // probaremos a agregar ldap_sort sin romper compatibilidad
-    ldap_sort($this->lcon, $this->searchi, $attributes[0]);
-    $this->datos = ldap_get_entries ($this->lcon, $this->searchi);
+    // Silenciaré el error, pero que conste, estoy usando el sizelimit
+    // pero no lo obedece
+      $this->searchi = ldap_search ($this->lcon, $base, $filtro, $attributes, 0, $size, $size);
+    // probaremos a agregar ldap_sort sin romper compatibilidad
+      ldap_sort($this->lcon, $this->searchi, $attributes[0]);
+      $this->datos = ldap_get_entries ($this->lcon, $this->searchi);
   }
 
   /**
@@ -151,126 +152,80 @@ class controlLDAP{
 
   // Terminan métodos auxiliares de primer nivel
 
-  /**
-      Empiezan metodos para individuos
-      En principio, prearrayAttr, arrayAttr y arrayDatosLDAP sirven para trabajar cadenas de un solo usuario
-  */
+    /**
+        Métodos para obtención de array con datos
+    */
 
-  /**
-   * Para uso de arrayAttr
-   * Devuelve una cadena que contiene todos los valores de cada atributo
-   * Se auxilia de arraytoCadena para recorrer el array atributo
-   * @param string $atributo
-   * @param array $registro
-   * @return string
-   */
-  function prearrayAttr($atributo, $registro){
-      $objeti = "";
-      if(array_key_exists($atributo, $registro)){
-        $valor = $this->arraytoCadena($registro[$atributo]);
-        $objeti .= $valor;
-      }else{
-        $objeti .= "-";
-      }
-      return $objeti; 
-  }
-
-  function arrayAttr($atributos, $registro){
-  // Para uso de arrayDatosLDAP
-  // Devuelve un array más limpio que el original, los índices son el atributo y los valores son ahora cadenas
-  // pueda ser más fácil mostrar los datos
-      $objetu = array();
-      foreach ($atributos as $i){
-          $cadena = $this->prearrayAttr($i, $registro);
-          $objetu[$i] = $cadena;
-      }
-      return $objetu; 
-  }
-    
-	function arrayDatosLDAP($atributos){
-	// Funcion final de presentación: Es la que usaremos dentro de cada página
-		$objecto = array();
-		for ($i=0; $i < $this->datos['count']; $i++) {
-			array_push($objecto, ($this->arrayAttr($atributos, $this->datos[$i])));
-		}
-		return $objecto;
-	}
-    
-	//	Terminan los métodos para individuos
-	
-	/**
-		Empiezan metodos para Grupos de datos
-		En principio, preaceldaAttr, celdaAttr y celdaDatosLDAP sirven para trabajar array con informacion de varios usuarios
-	*/
-    
-	function preceldaAttr($atributo, $registro){
-	// Para uso de arrayAttr
-	// Devuelve una cadena que contiene todos los valores de cada atributo
-	// Se auxilia de arraytoCadena para recorrer el array atributo
-		$objeti = "";
-		if(array_key_exists($atributo, $registro)){
-				$valor = $this->arraytoCadena($registro[$atributo]);
-				$objeti .= $valor;
-			}else{
-				$objeti .= "-";
-			}
-		return $objeti; 
-	}
-
-	function celdaAttr($atributos, $registro){
-	// Para uso de celdaDatosLDAP
-	// Devuelve un array más limpio que el original, los índices son el atributo y los valores son ahora cadenas
-	// pueda ser más fácil mostrar los datos
-		$objetu = "<tr>";
-		foreach ($atributos as $i){
-			$cadena = $this->preceldaAttr($i, $registro);
-			$objetu .= "<td>" . $cadena . "</td>";
-		}
-		$objetu .= "<tr>";
-		return $objetu; 
-	}
-
-	function datosSelect ($atributo, $listado){
-        /**
-        * 
-        * Para uso de celdaDatosLDAP
-        * Forma item de un selecto con value igual al nombre en minisculas y sin espacios
-        * ADVERTENCIA: Use sólo atributos únicos
-         */
-        $cadena = "";
-        foreach ($listado as $i) {
-            $cadena .= '<option value=" '. $i[$atributo[1]] .' ">' . $i[$atributo[0]] . '</option> ';
+    /**
+     * Para uso de arrayAttr
+     * Devuelve una cadena que contiene todos los valores de cada atributo
+     * Se auxilia de arraytoCadena para recorrer el array atributo
+     * @param string $atributo
+     * @param array $registro
+     * @return string
+     */
+    function prearrayAttr($atributo, $registro){
+        $objeti = "";
+        if(array_key_exists($atributo, $registro)){
+          $valor = $this->arraytoCadena($registro[$atributo]);
+          $objeti .= $valor;
+        }else{
+          $objeti .= "-";
         }
-		return $cadena; 
-	}
-	
-	function celdaDatosLDAP($atributos){
-	// Esta es una funcion final de presentación: Es la que usaremos dentro de cada página
-		$objecto = array();
-		for ($i=0; $i < $this->datos['count']; $i++) {
-			array_push($objecto, ($this->celdaAttr($atributos, $this->datos[$i])));
-		}
-		return $objecto;
-	}
-	//	Terminan los métodos para individuos
+        return $objeti; 
+    }
+
+    /**
+     * Para uso de arrayDatosLDAP
+     * Devuelve un array más limpio que el original, los índices son el atributo y los valores son ahora cadenas
+     * pueda ser más fácil mostrar los datos
+     * @param type $atributos
+     * @param type $registro
+     * @return type
+     */
+    function arrayAttr($atributos, $registro){
+        $objetu = array();
+        foreach ($atributos as $i){
+            $cadena = $this->prearrayAttr($i, $registro);
+            $objetu[$i] = $cadena;
+        }
+        return $objetu; 
+    }
+
+    /**
+     * Obtiene un arreglo de arreglo con información de cada usuarios
+     * @param type $atributos
+     * @return array
+     */
+    function arrayDatosLDAP($atributos){
+        $objecto = array();
+        for ($i=0; $i < $this->datos['count']; $i++) {
+            array_push($objecto, ($this->arrayAttr($atributos, $this->datos[$i])));
+        }
+        return $objecto;
+    }
+
+    /**
+     * Terminan métodos para obtención de array con datos
+     */
 	
 	/*
 		Empiezan métodos para manipulación de datos
 	*/	
 	
-  function modEntrada ($valores) {
-    try{
-      if (ldap_modify($this->lcon, $this->dn, $valores)) {
-        return true;
-      } else {
-        throw new Exception("Error Manipulando datos: <b>".ldap_error($this->lcon)."</b>");
+    function modEntrada ($valores) {
+      try{
+          if (ldap_modify($this->lcon, $this->dn, $valores)) {
+              return true;
+          } else {
+              throw new Exception("Error Manipulando datos: <b>".ldap_error($this->lcon)."</b>");
+          }
+      }catch(Exception $e){
+          print $this->dn;
+          $this->errorLDAP = $e->getMessage();	
+          return false;
       }
-    }catch(Exception $e){
-      print $this->dn;
-      $this->errorLDAP = $e->getMessage();	
-      return false;
     }
-  }
 
 	function nuevaEntrada( $valores, $entry ) {
 		try{
