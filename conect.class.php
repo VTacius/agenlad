@@ -1,20 +1,22 @@
 <?php
 	ini_set('default_charset', 'utf-8');
 
-class phpLDAP{
-    //La conexión estará a nivel de clase, y no se piensa usar fuera de acá
-  protected $lenl = "";
-  protected $errorLDAP = "";
-// El enlace estará a nivel de clase
-  protected $lcon;
-// Tendremos a la mano la busqueda lista para ordenarla después
-  protected $searchi; 
-// El contenido de todos los datos estará a nivel de clase
-  protected $datos;
+class controlLDAP{
+
 // El dn del usuario estará a nivel de clase.
   protected $dn;
 // El OU, que representa también la base
-  protected  $ou;
+  protected $ou;
+// La conexión estará a nivel de clase, y no se piensa usar fuera de acá
+  protected $lenl = "";
+// El enlace estará a nivel de clase
+  protected $lcon;
+// El contenido de todos los datos estará a nivel de clase
+  protected $datos;
+// Tendremos a la mano la busqueda lista para ordenarla después
+  protected $searchi; 
+// Almacena los errores que puedan producirse
+  protected $errorLDAP = "";
   
   /**
 		Empiezan métodos necesarios para establecer cualquier conexión
@@ -229,13 +231,16 @@ class phpLDAP{
 	}
 
 	function datosSelect ($atributo, $listado){
-	// Para uso de celdaDatosLDAP
-	// Forma item de un selecto con value igual al nombre en minisculas y sin espacios
-	// ADVERTENCIA: Use sólo atributos únicos
-	  $cadena = "";
-  	foreach ($listado as $i) {
-    	$cadena .= '<option value=" '. $i[$atributo[1]] .' ">' . $i[$atributo[0]] . '</option> ';
-  	}
+        /**
+        * 
+        * Para uso de celdaDatosLDAP
+        * Forma item de un selecto con value igual al nombre en minisculas y sin espacios
+        * ADVERTENCIA: Use sólo atributos únicos
+         */
+        $cadena = "";
+        foreach ($listado as $i) {
+            $cadena .= '<option value=" '. $i[$atributo[1]] .' ">' . $i[$atributo[0]] . '</option> ';
+        }
 		return $cadena; 
 	}
 	
@@ -299,3 +304,31 @@ class phpLDAP{
 	*/
 	
 }
+
+/**
+ *Ejemplo de uso 
+ */
+//$server = configuracion("server");
+//$puerto = configuracion("puerto");
+//$user = configuracion("user", "usuario");
+//$pass = configuracion("pass", "usuario");
+//$dominio = configuracion("dominio");
+//
+//$login = new controlLDAP();
+//$login->conexion($server, $puerto);
+//$login->crearDN($user,$dominio);
+//$base = $login->crearBase("salud.gob.sv");
+//if ($login->enlace($pass)){
+//    $atributos = ['cn','objectclass','dn'];
+//    $filtro = "uid=*";
+//	$login->datos($base, $filtro, $atributos, 100);
+//}else{
+//	print $login->mostrarERROR();
+//}
+//
+//$template = $twig->loadTemplate('tabla_listado.html.twig');
+//$contenido = $login->arrayDatosLDAP($atributos);
+//$parametros = array(
+//    'empleados' => $contenido
+//);
+//$template->display($parametros);
