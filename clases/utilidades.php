@@ -1,6 +1,6 @@
 <?php
 //Quién invoque este fichero podrá usar plantillas twig
-require_once('./conect.class.php');
+require_once('./clases/conect.class.php');
 require_once './Twig/lib/Twig/Autoloader.php';
 Twig_Autoloader::register();
 $loader = new Twig_Loader_Filesystem('./templates');

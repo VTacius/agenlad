@@ -1,17 +1,37 @@
 <?php
-	require_once('./conect.class.php');
-    $index = phpLDAP();
-	$index_con = conecLDAP("192.168.1.11","389");
-	
-	$index_bind = enlaceLDAP($index->conn,"cn=administrator","pass2025","dc=xibalba,dc=com" );
-	$index_list = $index->listarLDAP($index_con,"ou=people,dc=xibalba,dc=com","uid=*");
-    $index_cont = $index->getLDAP($index_con, $index_list);
-    
-  
-	$valores = ['dn'];
-	$index_tabla =	$index->tabDatosLDAP($index_cont);
-	echo "<br>";
-	echo "<table border=1>";
-	echo $index_tabla;
-	echo "</table>";
-?>
+require_once ('./clases/utilidades.php');
+$server = configuracion("server");
+$puerto = configuracion("puerto");
+$user = configuracion("user", "usuario");
+$pass = configuracion("pass", "usuario");
+$dominio = configuracion("dominio");
+
+$login = new controlLDAP();
+$login->conexion($server, $puerto);
+$login->crearDN($user,$dominio);
+$base = $login->crearBase("salud.gob.sv");
+if ($login->enlace($pass)){
+    $atributos = ['cn','objectclass','dn'];
+    $filtro = "uid=*";
+	$login->datos($base, $filtro, $atributos, 100);
+}else{
+	print $login->mostrarERROR();
+}
+
+$template = $twig->loadTemplate('tabla_listado.html.twig');
+
+$contenido = $login->arrayDatosLDAP($atributos);
+$menu = array(
+    "index"=> "Inicio",
+    "usuarios"=> "Usuarios",
+    "equipos"=> "Computadoras"
+);
+
+$parametros = array(
+    'empleados' => $contenido,
+    'menu' => $menu
+);
+
+$template->display($parametros);
+
+
