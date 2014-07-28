@@ -51,6 +51,11 @@ class verificador {
     }
   }
   
+  /**
+   * La variable en cuestión es un arreglo
+   * @param type $arreglo
+   * @return boolean
+   */
   static function verificaArreglo( $arreglo ){
     $variables = ""; $matches = "";
     if (count($arreglo) > 0) {
@@ -61,6 +66,11 @@ class verificador {
     }
   }
   
+  /**
+   * Cualquier contenido posible hasta 150 caracteres
+   * @param type $cadena
+   * @return boolean|string
+   */
   static function verificaContenido( $cadena ){
     $variables = ""; $matches = "";
     if (preg_match('/^.{1,150}$/', $cadena, $matches)) {
@@ -71,6 +81,11 @@ class verificador {
     }
   }
   
+  /**
+   * Cadenas de texto tipo nombres mediante regex
+   * @param type $cadena
+   * @return boolean|string
+   */
   static function verificaNombres( $cadena ){
     $variables = ""; $matches = "";
     if ( preg_match('/^([A-Za-z]+\s*)+$/', $cadena, $matches)) {
@@ -81,6 +96,11 @@ class verificador {
     }  
   }
   
+  /**
+   * Números mediante regex
+   * @param type $numero
+   * @return boolean|string
+   */
   static function verificaNumeros ( $numero ) {
     $variables = ""; $matches = "";
     if ( preg_match("/^([0-9]+\s*)+$/", $numero, $matches) ) {

@@ -10,6 +10,8 @@ $login = new controlLDAP();
 $login->conexion($server, $puerto);
 $login->crearDN($user,$dominio);
 $base = $login->crearBase("salud.gob.sv");
+// En todo caso, siempre habrás de usar la plantilla
+$template = $twig->loadTemplate('index.html.twig');
 if ($login->enlace($pass)){
     $atributos = ['cn', 'mail', 'title'];
     $filtro = "uid=*";
@@ -30,7 +32,6 @@ if ($login->enlace($pass)){
 
     $template->display($parametros);
 }else{
-    $template = $twig->loadTemplate('index.html.twig');
     $parametros = array(
         'errorLDAP' => $login->mostrarERROR()
     );
