@@ -2,7 +2,6 @@
 	ini_set('default_charset', 'utf-8');
 
 class controlLDAP{
-
   // El dn del usuario estará a nivel de clase.
     protected $dn;
   // El OU, que representa también la base
