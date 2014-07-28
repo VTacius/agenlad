@@ -36,7 +36,11 @@
     </div>
     <div class="container">
       <div class="col-lg-3">{% block lateral %} {%endblock %}      </div>
-      <div class="col-lg-9">{% block contenido %} {%endblock %} </div>
+      <div class="col-lg-9">
+        {% block contenido %} 
+          <center><h3>{{ errorLDAP.titulo }}: <b>{{ errorLDAP.mensaje }}</b></h3></center>
+        {%endblock %} 
+      </div>
     <div class="row">
         <hr>
         <footer class="span12">

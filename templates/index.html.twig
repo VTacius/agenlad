@@ -3,18 +3,28 @@
 
 {% block menu %} 
     {% for archivo, titulo in menu %}
-      <li><a href='{{archivo}}'>{{ titulo }}</a></li>
+        <li><a href='{{archivo}}'>{{ titulo }}</a></li>
     {% endfor %}  
 {% endblock %}
 
 {% block contenido -%}
-  <ul>
-    {% for empleado in empleados %}
-      <li>{{ empleado.dn }} {{ empleado.cn }}</li>
-    {% endfor %}
-  </ul>
+  {{ parent() }}
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th>Nombre</th><th>Correo</th><th>Puesto</th>
+            </tr>
+        </thead>
+        <tbody id=respuesta>
+        {% for empleado in empleados %}
+            <tr>
+                <td>{{ empleado.cn }}</td><td>{{ empleado.mail }}</td><td>{{ empleado.title }}</td>
+            </tr> 
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
 
 {% block lateral %}
-  Contenido a mostrar a la izquierda
+    Contenido a mostrar a la izquierda
 {% endblock %}

@@ -15,7 +15,7 @@ class controlLDAP{
   // Tendremos a la mano la busqueda lista para ordenarla después
     protected $searchi; 
   // Almacena los errores que puedan producirse
-    protected $errorLDAP = "";
+    protected $errorLDAP = array();
   
   /**
 		Empiezan métodos necesarios para establecer cualquier conexión
@@ -93,14 +93,16 @@ class controlLDAP{
   function enlace($lpasswd){	
       try{
           if (empty($lpasswd) | empty($this->dn)) {
-              throw new Exception("Error en la conexión: <b> Credenciales vacías</b>");
+              throw new Exception("Credenciales vacías");
           }elseif(($this->lenl = ldap_bind($this->lcon,$this->dn,$lpasswd))){
               return true;
           }else{
-              throw new Exception("Error en la conexión: <b>".ldap_error($this->lcon)."</b>");
+              throw new Exception(ldap_error($this->lcon));
           }
       }catch(Exception $e){
-          $this->errorLDAP = $e->getMessage();	
+          $this->errorLDAP = array(
+              'titulo' => 'Error en la conexión', 
+              'mensaje'=> $e->getMessage());	
           return false;
       }
   }
@@ -110,8 +112,12 @@ class controlLDAP{
   /**
     Empiezan métodos auxiliares de primer nivel
   */
-    
-  function mostrarERROR(){ // Retorno de la variable erroLDAP
+  
+  /**
+   * 
+   * @return array titulo: error
+   */
+  function mostrarERROR(){ // 
       return $this->errorLDAP;
   }
 
@@ -217,11 +223,13 @@ class controlLDAP{
           if (ldap_modify($this->lcon, $this->dn, $valores)) {
               return true;
           } else {
-              throw new Exception("Error Manipulando datos: <b>".ldap_error($this->lcon)."</b>");
+              throw new Exception(ldap_error($this->lcon));
           }
       }catch(Exception $e){
           print $this->dn;
-          $this->errorLDAP = $e->getMessage();	
+          $this->errorLDAP = array(
+              'titulo' => 'Error manipulando datos: ', 
+              'mensaje'=> $e->getMessage());
           return false;
       }
     }
@@ -231,10 +239,12 @@ class controlLDAP{
 			if (ldap_add($this->lcon, $entry, $valores)) {
 				return true;
 			} else {
-				throw new Exception("Error Manipulando datos: <b>".ldap_error($this->lcon)."</b>");
+				throw new Exception(ldap_error($this->lcon));
 			}
 		}catch(Exception $e){
-			$this->errorLDAP = $e->getMessage();
+            $this->errorLDAP = array(
+              'titulo' => 'Error manipulando datos', 
+              'mensaje'=> $e->getMessage());
 			return false;
 		}
 	}
@@ -246,10 +256,12 @@ class controlLDAP{
 			if (ldap_mod_add($this->lcon, $entry, $valores)) {
 				return true;
 			} else {
-				throw new Exception("Error Manipulando datos: <b>".ldap_error($this->lcon)."</b>");
+				throw new Exception(ldap_error($this->lcon));
 			}
 		}catch(Exception $e){
-			$this->errorLDAP = $e->getMessage();
+            $this->errorLDAP = array(
+              'titulo' => 'Error manipulando datos', 
+              'mensaje'=> $e->getMessage());
 			return false;
 		}
 	}

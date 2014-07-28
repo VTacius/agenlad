@@ -11,27 +11,30 @@ $login->conexion($server, $puerto);
 $login->crearDN($user,$dominio);
 $base = $login->crearBase("salud.gob.sv");
 if ($login->enlace($pass)){
-    $atributos = ['cn','objectclass','dn'];
+    $atributos = ['cn', 'mail', 'title'];
     $filtro = "uid=*";
-	$login->datos($base, $filtro, $atributos, 100);
+	
+    $login->datos($base, $filtro, $atributos, 100);
+    $contenido = $login->arrayDatosLDAP($atributos);
+    
+    $menu = array(
+        "index"=> "Inicio",
+        "usuarios"=> "Usuarios",
+        "equipos"=> "Computadoras"
+    );
+
+    $parametros = array(
+        'empleados' => $contenido,
+        'menu' => $menu
+    );
+
+    $template->display($parametros);
 }else{
-	print $login->mostrarERROR();
+    $template = $twig->loadTemplate('index.html.twig');
+    $parametros = array(
+        'errorLDAP' => $login->mostrarERROR()
+    );
+    $template->display($parametros);
 }
-
-$template = $twig->loadTemplate('tabla_listado.html.twig');
-
-$contenido = $login->arrayDatosLDAP($atributos);
-$menu = array(
-    "index"=> "Inicio",
-    "usuarios"=> "Usuarios",
-    "equipos"=> "Computadoras"
-);
-
-$parametros = array(
-    'empleados' => $contenido,
-    'menu' => $menu
-);
-
-$template->display($parametros);
 
 
