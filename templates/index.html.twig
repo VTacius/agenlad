@@ -1,3 +1,20 @@
-{% extends "capa.html.twig" %}
-{% block title %} {{ parent() }} - About me {% endblock %}
-{% block content %}Lorem ipsum dolor sit amet.{% endblock %}
+{% extends "layout.html.twig" %}
+{% block titulo -%}Listado de usuarios{% endblock %}
+
+{% block menu %} 
+    {% for archivo, titulo in menu %}
+      <li><a href='{{archivo}}'>{{ titulo }}</a></li>
+    {% endfor %}  
+{% endblock %}
+
+{% block contenido -%}
+  <ul>
+    {% for empleado in empleados %}
+      <li>{{ empleado.dn }} {{ empleado.cn }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+
+{% block lateral %}
+  Contenido a mostrar a la izquierda
+{% endblock %}
