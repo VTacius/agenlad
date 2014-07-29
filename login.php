@@ -27,6 +27,7 @@ if ($vlogin->comprobar()){
     $val = $vlogin->resultar();
     try {
         $crearSesion = new crearSesion($server, $puerto, $val['user'], $val['pswd'], $dominio);
+        // La redirección a la página de inicio esta dentro de la clase
         $crearSesion->sesionar($val['user'], $val['pswd'], $val['REMOTE_ADDR']);
     } catch (Exception $e) {
       // Si algo de todo lo que puede fallar dentro de la clase falla, capturamos el

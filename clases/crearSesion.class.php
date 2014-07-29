@@ -122,7 +122,7 @@ class crearSesion {
             // Las funciones anteriores lanzan un error si es que no es así
             session_start();
             $this->banderar ($user, $pass);
-            header('Location: clases/sesion.php');
+            header('Location: index.php');
         }else{
             $this->bd->intento($user);
             throw new Exception("Credenciales incorrectas");
