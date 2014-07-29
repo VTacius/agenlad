@@ -1,31 +1,58 @@
 <?php
-if (!(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') && isset($_POST['accion']))){ 
-	header("Location: index.php");
-}
-// Hare todo el manejo desde acá. Entonces
-ini_set('default_charset','UTF-8');
-
-//Traemos a cuenta la ayuda necesaria
-require_once ('./clases/config.php');
-require_once ('./clases/conect.class.php');
+// Se encarga del cifrado
 require_once ('./clases/cifrado.class.php');
+// Encargada de la conexión ldap
+require_once ('./clases/conect.class.php');
+// Encargada de la conexión a base de datos
 require_once ('./clases/bd.class.php');
+// Encargada de manejar la sesión. Devuelve el array $sesion
+require_once ('../herramientas/sesion.php');
 
-function ejecutar_cambio($user,$pass, $passito){
-  global $server, $port, $base;
-	// Objeto de la clase cifrado
+$server = configuracion("server");
+$puerto = configuracion("puerto");
+$dominio = configuracion("dominio");
+
+// Objeto de la clase cifrado
+$base = new controlDB();
+$hashes = new cifrado();
+$setPass = new controlLDAP();
+
+/**
+ * Crea los hash para actualizar contraseñas dentro de los atributos LDAP
+ * @global cifrado $hashes
+ * @param string $passito
+ * @return array
+ */
+function hashPasswordLdap($passito){
+    global $hashes;    
 	// Creamos un array con todas las contraseñas requeridas para que el usuario pueda cambiarlas realmente
-	$hashes = new cifrado;
 	$password = array();
 	$password['userPassword'] = $hashes->slappasswd($passito);
 	$password['sambaNTPassword'] = $hashes->NTLMHash($passito);
 	$password['sambaLMPassword'] = $hashes->LMhash($passito);
+    return $password;
+}
 
-	// Objeto de la clase conect.class.php
+/**
+ * Configura los hashes necesarios en LDAP para considerar cambiada a la contraseña
+ * @global string $server
+ * @global integer $puerto
+ * @global string $dominio
+ * @global controlLDAP $setPass
+ * @param string $user
+ * @param string $pass
+ * @param array $password
+ * @return string
+ */
+function setPasswordLdap($user, $pass, $password){
+    // Objeto de la clase conect.class.php
 	// La implementación básica de la clase
-	$setPass = new controlLDAP();
-	$setPass->conexion($server, $port);
+    global $server, $puerto, $dominio, $setPass;
+    
+	$setPass->conexion($server, $puerto);
+    $base = $setPass->crearBase($dominio);
 	$setPass->enlace($user, $base, $pass);
+    
 	// Le pasamos como parametro un array cuyos índices se corresponden con los atributos 
 	// que estamos modificando
 	if ( $setPass->modEntrada($password) ){
@@ -35,62 +62,71 @@ function ejecutar_cambio($user,$pass, $passito){
 	}
 }
 
-function ejecutar_cambio_admin($user,$pass, $passito){
-   global $server, $port, $base;
-	// Objeto de la clase cifrado
-	// Creamos un array con todas las contraseñas requeridas para que el usuario pueda cambiarlas realmente
-	$hashes = new cifrado;
-	$password = array();
-	$password['userPassword'] = $hashes->slappasswd($passito);
-	$password['sambaNTPassword'] = $hashes->NTLMHash($passito);
-	$password['sambaLMPassword'] = $hashes->LMhash($passito);
-    
-    // Obtenemos la contraseña desde la base de datos y las desciframos
-    $input = obtenerFirma($user);
-    $firmas = $hashes->descifrada($input['firmas'], $pass);
-    $firmaz = $hashes->descifrada($input['firmaz'], $pass);
-	// Objeto de la clase conect.class.php
-	// La implementación básica de la clase
-	$setPass = new controlLDAP();
-	$setPass->conexion($server, $port);
-	$setPass->enlace($user, $base, $pass);
+/**
+ * 
+ * @global controlDB $base
+ * @global cifrado $hashes
+ * @param string $usuario
+ * @param string $passito
+ */
+function cifrarPasswordBD($usuario, $passito){
+    global $base, $hashes;
+    $contra = $base->obtenerFirma($usuario);
+    $firmas = $hashes->descifrada($contra['firmas'], $passito);
+    $firmaz = $hashes->descifrada($contra['firmaz'], $passito);
     // Creamos las firmas;
     $claves = $hashes->encrypt($firmas, $passito);
     $clavez = $hashes->encrypt($firmaz, $passito);
     // Ahora, que actualice la firma en la base de datos con la nueva contraseña
-    configuraFirma($user, $claves, $clavez);
-	// Le pasamos como parametro un array cuyos índices se corresponden con los atributos 
-	// que estamos modificando
-	if ( $setPass->modEntrada($password) ){
-		return "La contraseña se ha cambiado con exito";
-	}else{
-		return $setPass->mostrarError();
-	}
+    $base->configuraFirma($usuario, $claves, $clavez);
 }
 
-$accion = $_POST['accion'];
+/**
+ * Cambio de contraseña para usuarios normales
+ * Basta con usar setPasswordLdap con el resulta de hashPasswordLdap como parametro
+ * @param string $user
+ * @param string $pass
+ * @param string $passito
+ */
+function ejecutar_cambio($user,$pass, $passito){
+    // Obtenemos los hash de la contraseña
+    $password = hashPasswordLdap($passito);
+    // Configuramos la contraseña en en LDAP 
+    setPasswordLdap($user, $pass, $password);
+	
+}
 
-// Este es el cuerpo del programa. 
-switch ($accion) {
-	case 'cambiarpassword':
-// Iniciamos sesión para ver si ya se ha logueado
-	session_start();
-// Una vez iniciada sesión, vemos que es lo que vamos a hacer
-	if(isset($_SESSION['user'])){
-      $user = $_SESSION['user'];
-      $pass = $_SESSION['pass'];
-      $passito = $_POST['passchangeprima'];
+/**
+ * Cambio de contraseña para usuarios administrador o roles parecidos
+ * @param string $user
+ * @param string $pass
+ * @param string $passito
+ */
+function ejecutar_cambio_admin($user,$pass, $passito){
+    // Obtenemos los hash de la contraseña
+    $password = hashPasswordLdap($passito);
+    // Actualizamos los hash de sus contraseñas en la base de datos
+    cifrarPasswordBD($user, $passito);
+	//	Configuramos la contraseña en en LDAP 
+    setPasswordLdap($user, $pass, $password);
+}
 
-    // TODO: Enviar un mensaje a la vista para que el usuario sepa que debe cambiarla
-      $rol = $_SESSION['rol'];
-      if ($rol !== 'usuario') {
+
+// Acá esta todo el desarrollo del script
+$variables['passchangeprima'] = array(6, 'verificaContenido', 'n');
+
+$vindex = new verificador($variables);
+if ($vindex->comprobar()) {
+    $index = $vindex->resultar();
+    $passito = $index['passchangeprima'];
+    $user = $sesion['user'];
+    $pass = $sesion['pass'];
+    $rol = $sesion['rol']; 
+    if ($rol !== 'usuario') {
         print ejecutar_cambio_admin($user, $pass, $passito);
-      }else{
+    }else{
         print ejecutar_cambio($user,$pass,$passito);	
-      }
     }
-	break;
+}else{
+  
 }
-
-
-?>
