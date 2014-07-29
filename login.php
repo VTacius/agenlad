@@ -1,23 +1,44 @@
 <?php
-	//ini_set('display_errors', '1');
-	//ini_set('error_reporting','-1');
-	require_once('config.php');
-	require_once('conect.class.php');
-	$user = (isset($_POST['luser']))? $_POST['luser']:"false";
-	$pass = (isset($_POST['lpasswd']))?$_POST['lpasswd']:'false';
+require_once('./clases/utilidades.php');
+require_once('./clases/crearSesion.class.php');
+require_once('./clases/conect.class.php');
+require_once('./clases/input_filter.class.php');
 
-	$login = new phpLDAP();	
+// Capturamos las variables desde el fichero de configuracion
+$server = configuracion('server');
+$puerto = configuracion('puerto');
+$dominio = configuracion('dominio');
 
-	$login_con = $login->conecLDAP($host,$port);
-		
-	if ($login_bind = $login->enlaceLDAP($login_con,$user,$pass,$base)){
-		session_start();
-		$_SESSION["luser"] = $user;
-		$_SESSION["lpasswd"] = $pass;
-		header('Location: listado.php');
-	}else{
-		$_POST['mensaje'] = "Credenciales inválidas";
-		header('Location: index.php');	
-	} 
-	
-?>
+// Capturemos las variables del formulario de logueo
+$pv['user']     = array(0, 'verificaNombres', 'n');
+$pv['pswd']     = array(0, 'verificaContenido', 'n');
+$pv['REMOTE_ADDR'] = array(5, 'verificaContenido', 'n' );
+
+$login = new controlLDAP();
+$vlogin = new verificador($pv);
+
+// Necesitas la plantilla en general para fabricar la página normalmente o para
+// Mostrar errores
+$template = $twig->loadTemplate('login.html.twig');
+
+
+if ($vlogin->comprobar()){
+    // Las variables introducidas son válidas
+    $val = $vlogin->resultar();
+    try {
+        $crearSesion = new crearSesion($server, $puerto, $val['user'], $val['pswd'], $dominio);
+        $crearSesion->sesionar($val['user'], $val['pswd'], $val['REMOTE_ADDR']);
+    } catch (Exception $e) {
+      // Si algo de todo lo que puede fallar dentro de la clase falla, capturamos el
+      // mensaje de error y se lo pasamos a la plantilla
+        $parametros = array(
+          'mensaje' => $e->getMessage()
+        );
+        $template->display($parametros);
+    }      
+}else{
+    $parametros = array(
+          'mensaje' => "Hay un problema con los datos introducidos"
+    );
+    $template->display($parametros);
+}

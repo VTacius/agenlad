@@ -90,7 +90,7 @@ class controlDB {
     function verificaPaso($usuario){
         $attr = $this->conexion->real_escape_string($usuario);
 		$sentencia = "select user from bloqueados where user='$attr'";
-        if ($this->afectados($sentencia)==0){
+        if ($this->afectados($sentencia)==1){
             return TRUE;
         }else{
             return FALSE;

@@ -128,10 +128,10 @@ class controlLDAP{
    * @param array $attributes
    * @param int $size
    */
-  function datos($base, $filtro, $attributes, $size=500){
+  function datos($base, $filtro, $attributes, $size=499){
     // Silenciaré el error, pero que conste, estoy usando el sizelimit
     // pero no lo obedece
-      $this->searchi = ldap_search ($this->lcon, $base, $filtro, $attributes, 0, $size, $size);
+      $this->searchi = ldap_search ($this->lcon, $base, $filtro, $attributes, 0, $sizelimit=$size);
     // probaremos a agregar ldap_sort sin romper compatibilidad
       ldap_sort($this->lcon, $this->searchi, $attributes[0]);
       $this->datos = ldap_get_entries ($this->lcon, $this->searchi);

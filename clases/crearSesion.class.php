@@ -10,6 +10,7 @@ require_once './clases/cifrado.class.php';
  *
  * @author alortiz
  */
+
 class crearSesion {
     protected $bd;
     protected $ld;
@@ -45,10 +46,13 @@ class crearSesion {
      */
     function mostrarGrupo ($gidnumber) {
         $atributos = array("cn");
-        $filtro = "(&(objectClass=posixGroup)(gidnumber=$gidnumber))";
+        // Debe volver a configurase la base en 'grupo', no servira si se usa la base por defecto
+        $base = $this->login->crearBase($this->dominio,'grupo');
+        $filtro = "(&(objectclass=posixgroup)(gidnumber=$gidnumber))";
         // Crear una función tan bonita como esa, para al final no poder usarla
-        $this->login->datos($this->base, $filtro, $atributos, 1);
-        return $this->login->arrayDatosLDAP($atributos);
+        $this->login->datos($base, $filtro, $atributos, 1);
+        $contenido = $this->login->arrayDatosLDAP($atributos);
+        return $contenido;
     }
 
 
@@ -65,9 +69,7 @@ class crearSesion {
         $this->login->datos($this->base, $filtro, $atributos, 1);
         $datos = $this->login->arrayDatosLDAP($atributos);
         $grupo = $this->mostrarGrupo($datos[0]['gidnumber']);
-        $datos[0]['cn'] = $grupo['cn'];
-        print_r($datos[0]['cn']);
-        print_r($grupo['cn']);
+        $datos[0]['cn'] = $grupo[0]['cn'];
         //Empezamos a llenar la sesión
         $_SESSION['user'] = $user;
         $_SESSION['pass'] = $pass;
