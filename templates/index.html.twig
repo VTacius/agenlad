@@ -1,13 +1,22 @@
 {% extends "layout.html.twig" %}
-{% block titulo %}Cambio de contraseña{% endblock %}
+{% block titulo -%}Cambio de contraseña{% endblock %}
+{% block javascript %} 
+  <script src="control/indexControl.js" type="text/javascript"></script>
+{% endblock %}
 
 {% block lateral %} 
 <h2>Cambio de contraseña</h2>
 <p>Cambio de contraseña para <b>{{datos.user}}</b></p>
 {% endblock%}
 
+{% block menu %} 
+    {% include 'menu.html.twig' with {'menu': menu  } %}
+{% endblock %}
+
+
 {% block contenido -%}
   {{ parent() }}
+  <div class="col-lg-11">
     <form class="form-horizontal" role="form" method="POST" action="" id="cambiopass" name="cambiopass">
         <div class="form-group">
           <label for="passchangePrima" class="col-lg-3 control-label">Contraseña Nueva</label>
@@ -41,6 +50,7 @@
             </div>
         </div>
     </form>
+  </div>
 {% endblock %}
 
         

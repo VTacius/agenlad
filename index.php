@@ -1,8 +1,10 @@
 <?php
-require_once 'clases/utilidades.php';
-require_once 'clases/sesion.php';
+require_once 'herramientas/utilidades.php';
+require_once 'herramientas/sesion.php';
 $template = $twig->loadTemplate('index.html.twig');
 $parametros = array(
-    'datos'=> $sesion['datos'][0]
+    'menu' => $menu,
+    'datos'=> $sesion['datos'][0],
+    'pagina'=> $sesion['pagina']
 );
 $template->display($parametros);
