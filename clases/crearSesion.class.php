@@ -34,12 +34,11 @@ class crearSesion {
         $this->login = new controlLDAP();
         $this->login->conexion($server, $puerto);
         $this->login->crearDN($user,$dominio);
-        $this->base = $this->login->crearBase("salud.gob.sv");
+        $this->base = $this->login->crearBase($dominio);
     }
     
     /**
      * Consulta para averiguar gidNumber y sambaSID del grupo
-     * NO HACE LO QUE DESCRIBI HACE MUCHO
      * @param string $logueo
      * @param string $gidnumber
      * @return array
@@ -120,7 +119,10 @@ class crearSesion {
         if ($this->login->enlace($pass) ){
             $this->bd->logueado ($user, $remota);		
             $this->banderar ($user, $pass);
-            header('Location: index.php');
+            // Creemos que es seguro colocarlo acá
+            // Las funciones anteriores lanzan un error si es que no es así
+            session_start();
+            header('Location: clases/sesion.php');
         }else{
             $this->bd->intento($user);
             throw new Exception("Credenciales incorrectas");
