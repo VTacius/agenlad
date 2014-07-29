@@ -90,10 +90,10 @@ class controlDB {
     function verificaPaso($usuario){
         $attr = $this->conexion->real_escape_string($usuario);
 		$sentencia = "select user from bloqueados where user='$attr'";
-        if ($this->afectados($sentencia)){
-            return FALSE;
-        }else{
+        if ($this->afectados($sentencia)==0){
             return TRUE;
+        }else{
+            return FALSE;
         }
 	}
     
@@ -135,7 +135,7 @@ class controlDB {
     }
     
     /**
-     * Obtiene el rol desde la tabla roles
+     * Obtiene el rol expresado en una arreglo json con sus permisos desde la tabla roles
      * @param string $usuario
      * @return json
      */
@@ -194,7 +194,7 @@ class controlDB {
         
         $bandera = $this->afectados($consulta);
         if ($bandera>0){
-            return banderaAdmin($user);
+            return $this->banderaAdmin($user);
         }else{
             // El usuario no es administrador
             return "a";
