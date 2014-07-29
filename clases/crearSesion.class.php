@@ -39,7 +39,6 @@ class crearSesion {
     /**
      * Consulta para averiguar gidNumber y sambaSID del grupo
      * NO HACE LO QUE DESCRIBI HACE MUCHO
-     * @global string $base
      * @param string $logueo
      * @param string $gidnumber
      * @return array
@@ -47,8 +46,8 @@ class crearSesion {
     function mostrarGrupo ($gidnumber) {
         $atributos = array("cn");
         $filtro = "(&(objectClass=posixGroup)(gidnumber=$gidnumber))";
-        $bg = $this->login->crearBase($this->base, 'grupo');
-        $this->login->datos($bg, $filtro, $atributos, 1);
+        // Crear una función tan bonita como esa, para al final no poder usarla
+        $this->login->datos($this->base, $filtro, $atributos, 1);
         return $this->login->arrayDatosLDAP($atributos);
     }
 
@@ -56,20 +55,20 @@ class crearSesion {
     /**
      * Hace una busqueda de algunos atributos del usuario en LDAP y BD
      * Luego, llena $_SESSION con ellos
-     * @global string $base
-     * @global controlLDAP $login
      * @param string $user
      * @param string $pass
      */
     function llenardatos ($user, $pass) {
       // Buscamos por algunos datos en LDAP
         $atributos = array('uid', 'gecos', 'mail', 'o','ou', 'title','gidnumber');
-        $filtro = "uid=" . $this->user;
-        $basel = $this->login->crearBase($this->base);
-        $this->login->datos($basel, $filtro, $atributos, 1);
+        $filtro = "uid=" . $user;
+        $this->login->datos($this->base, $filtro, $atributos, 1);
         $datos = $this->login->arrayDatosLDAP($atributos);
-        $grupo = mostrarGrupo($datos[0]['gidnumber']);
-        $datos[0]['cn'] = $grupo[0]['cn'];
+        $grupo = $this->mostrarGrupo($datos[0]['gidnumber']);
+        $datos[0]['cn'] = $grupo['cn'];
+        print_r($datos[0]['cn']);
+        print_r($grupo['cn']);
+        //Empezamos a llenar la sesión
         $_SESSION['user'] = $user;
         $_SESSION['pass'] = $pass;
         $_SESSION['datos']= $datos;      
@@ -84,7 +83,6 @@ class crearSesion {
      * Una vez logueado, el usuario debe verificar que tiene acceso a las contraseñas
      * cifradas de administrador
      * Luego, hace uso de llenardatos()
-     * @global cifrado $hashito
      * @param string $user
      * @param string $pass
      */
@@ -119,7 +117,7 @@ class crearSesion {
     function credenciales($user, $pass, $remota){
         if ($this->login->enlace($pass) ){
             $this->bd->logueado ($user, $remota);		
-            //$this->banderar ($user, $pass);
+            $this->banderar ($user, $pass);
             header('Location: index.php');
         }else{
             $this->bd->intento($user);
@@ -133,11 +131,11 @@ class crearSesion {
      * @param string $user
      * @param string $pass
      */
-    function crearSession($user, $pass){
-        if ( $this->bd->verificaPaso($user) == 0 ){
-            $this->credenciales($user, $pass);
+    function sesionar($user, $pass, $remota){
+        if ( $this->bd->verificaPaso($user) ){
+            throw new Exception("Su usuario esta bloqueado");
         }else{
-          throw new Exception("Su usuario esta bloqueado");
+            $this->credenciales($user, $pass, $remota);
         }
     }
 }
