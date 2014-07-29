@@ -1,6 +1,6 @@
 <?php
-require_once ('./clases/utilidades.php');
-require_once ('./clases/sesion.php');
+require_once ('./herramientas/utilidades.php');
+require_once ('./herramientas/sesion.php');
 $server = configuracion("server");
 $puerto = configuracion("puerto");
 $dominio = configuracion("dominio");

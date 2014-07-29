@@ -1,5 +1,5 @@
 <?php
-require_once('./clases/utilidades.php');
+require_once('./herramientas/utilidades.php');
 require_once('./clases/crearSesion.class.php');
 require_once('./clases/conect.class.php');
 require_once('./clases/input_filter.class.php');
