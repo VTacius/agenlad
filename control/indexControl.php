@@ -1,12 +1,12 @@
 <?php
 // Se encarga del cifrado
-require_once ('./clases/cifrado.class.php');
+require_once ('/var/www/agenlad/clases/cifrado.class.php');
 // Encargada de la conexión ldap
-require_once ('./clases/conect.class.php');
+require_once ('/var/www/agenlad/clases/conect.class.php');
 // Encargada de la conexión a base de datos
-require_once ('./clases/bd.class.php');
-// Encargada de manejar la sesión. Devuelve el array $sesion
-require_once ('../herramientas/sesion.php');
+require_once ('/var/www/agenlad/clases/bd.class.php');
+// Encargada de la magia con las variables
+require_once ('/var/www/agenlad/clases/input_filter.class.php');
 
 $server = configuracion("server");
 $puerto = configuracion("puerto");
@@ -87,12 +87,13 @@ function cifrarPasswordBD($usuario, $passito){
  * @param string $user
  * @param string $pass
  * @param string $passito
+ * @return string
  */
 function ejecutar_cambio($user,$pass, $passito){
     // Obtenemos los hash de la contraseña
     $password = hashPasswordLdap($passito);
     // Configuramos la contraseña en en LDAP 
-    setPasswordLdap($user, $pass, $password);
+    return setPasswordLdap($user, $pass, $password);
 	
 }
 
@@ -101,6 +102,7 @@ function ejecutar_cambio($user,$pass, $passito){
  * @param string $user
  * @param string $pass
  * @param string $passito
+ * @return string
  */
 function ejecutar_cambio_admin($user,$pass, $passito){
     // Obtenemos los hash de la contraseña
@@ -108,25 +110,40 @@ function ejecutar_cambio_admin($user,$pass, $passito){
     // Actualizamos los hash de sus contraseñas en la base de datos
     cifrarPasswordBD($user, $passito);
 	//	Configuramos la contraseña en en LDAP 
-    setPasswordLdap($user, $pass, $password);
+    return setPasswordLdap($user, $pass, $password);
 }
 
 
 // Acá esta todo el desarrollo del script
 $variables['passchangeprima'] = array(6, 'verificaContenido', 'n');
+$variables['user'] = array(6, 'verificaContenido', 'n');
+$variables['pass'] = array(6, 'verificaContenido', 'n');
+$variables['rol'] = array(6, 'verificaContenido', 'n');
 
 $vindex = new verificador($variables);
 if ($vindex->comprobar()) {
     $index = $vindex->resultar();
     $passito = $index['passchangeprima'];
-    $user = $sesion['user'];
-    $pass = $sesion['pass'];
-    $rol = $sesion['rol']; 
+    $user = $index['user'];
+    $pass = $index['pass'];
+    $rol = $index['rol']; 
     if ($rol !== 'usuario') {
-        print ejecutar_cambio_admin($user, $pass, $passito);
+        $msg =  ejecutar_cambio_admin($user, $pass, $passito);
     }else{
-        print ejecutar_cambio($user,$pass,$passito);	
+        $msg =  ejecutar_cambio($user,$pass,$passito);	
     }
+    $template = $twig->loadTemplate('login.html.twig');
+    $parametros = array(
+        'mensaje' => $msg
+    );
+    $template->display($parametros);
 }else{
-  
+    $msg = "Revise los datos introducidos";
+    $template = $twig->loadTemplate('index.html.twig');
+    $parametros = array(
+        'mensaje' => $msg
+    );
+    $template->display($parametros);
 }
+
+
