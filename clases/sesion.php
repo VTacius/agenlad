@@ -1,13 +1,14 @@
 <?php
 require_once './clases/input_filter.class.php';
+require_once ('./clases/utilidades.php');
 // Inicio sesión
 session_start();
 // ¿Tengo configuradas las variables de sesión que configuramos antes?
-$variables['permisos'] = array(6, 'verificaArreglo', 'u');
-$variables['datos'] = array(6, 'verificaArreglo', 'u');
-$variables['pass'] = array(6, 'verificaContenido', 'u');
-$variables['user'] = array(6, 'verificaNombres', 'u');
-$variables['rol'] = array(6, 'verificaNombres', 'u');
+$variables['permisos'] = array(6, 'verificaArreglo', 'n');
+$variables['datos'] = array(6, 'verificaArreglo', 'n');
+$variables['pass'] = array(6, 'verificaContenido', 'n');
+$variables['user'] = array(6, 'verificaNombres', 'n');
+$variables['rol'] = array(6, 'verificaNombres', 'n');
 
 $v = new verificador($variables);
 if ($v->comprobar()) {
@@ -21,7 +22,11 @@ if ($v->comprobar()) {
     exit();
   }
 }else{
-  print "Debe autenticarse para usar el sistema";
+ $template = $twig->loadTemplate('login.html.twig');
+ $parametros = array(
+          'mensaje' => "Debe iniciar sesión para usar el sistema"
+    );
+  $template->display($parametros);
   exit();
 }
 
