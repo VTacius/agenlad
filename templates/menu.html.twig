@@ -1,0 +1,8 @@
+{% for archivo, titulo in menu %}
+    {% if archivo == pagina %}
+        <li class="active"><a href='{{archivo}}.php'>{{ titulo }}</a></li>
+    {% else %}
+        <li><a href='{{archivo}}.php'>{{ titulo }}</a></li>
+    {% endif %}
+{% endfor %}  
+    
