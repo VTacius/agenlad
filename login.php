@@ -35,7 +35,7 @@ if ($vlogin->comprobar()){
           'mensaje' => $e->getMessage()
         );
         $template->display($parametros);
-    }      
+    }     
 }else{
     $parametros = array(
           'mensaje' => "Hay un problema con los datos introducidos"

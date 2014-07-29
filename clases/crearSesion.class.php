@@ -118,10 +118,10 @@ class crearSesion {
     function credenciales($user, $pass, $remota){
         if ($this->login->enlace($pass) ){
             $this->bd->logueado ($user, $remota);		
-            $this->banderar ($user, $pass);
             // Creemos que es seguro colocarlo acá
             // Las funciones anteriores lanzan un error si es que no es así
             session_start();
+            $this->banderar ($user, $pass);
             header('Location: clases/sesion.php');
         }else{
             $this->bd->intento($user);

@@ -3,7 +3,11 @@
 
 {% block menu %} 
     {% for archivo, titulo in menu %}
-        <li><a href='{{archivo}}'>{{ titulo }}</a></li>
+        {% if archivo == pagina %}
+            <li class="active"><a href='{{archivo}}.php'>{{ titulo }}</a></li>
+        {% else %}
+            <li><a href='{{archivo}}.php'>{{ titulo }}</a></li>
+        {% endif %}
     {% endfor %}  
 {% endblock %}
 
@@ -27,4 +31,5 @@
 
 {% block lateral %}
     Contenido a mostrar a la izquierda
+    {{ pagina }}
 {% endblock %}

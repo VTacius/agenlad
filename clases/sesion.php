@@ -12,10 +12,10 @@ $variables['rol'] = array(6, 'verificaNombres', 'u');
 $v = new verificador($variables);
 if ($v->comprobar()) {
   $sesion = $v->resultar();
-  $sesion['PHP_SELF'] =  $_SERVER['PHP_SELF'];
-  $lugarActual = rtrim(ltrim($sesion['PHP_SELF'], "/"),".php");
+  $lugarActual = rtrim(ltrim($_SERVER['PHP_SELF'], "/"),".php");
+  $sesion['pagina'] =  $lugarActual;
   if (array_key_exists($lugarActual, $sesion['permisos'])) {
-    $menu = $lg['permisos'];
+    $menu = $sesion['permisos'];
   }else{
     header("HTTP/1.0 404 Not Found");
     exit();

@@ -1,10 +1,11 @@
 <?php
 require_once ('./clases/utilidades.php');
+require_once ('./clases/sesion.php');
 $server = configuracion("server");
 $puerto = configuracion("puerto");
-$user = configuracion("user", "usuario");
-$pass = configuracion("pass", "usuario");
 $dominio = configuracion("dominio");
+$user = $sesion['user'];
+$pass = $sesion['pass'];
 
 $login = new controlLDAP();
 $login->conexion($server, $puerto);
@@ -12,6 +13,10 @@ $login->crearDN($user,$dominio);
 $base = $login->crearBase("salud.gob.sv");
 // En todo caso, siempre habrás de usar la plantilla
 $template = $twig->loadTemplate('index.html.twig');
+// Estoy discutiendo si debo seguir haciendo esta comprobación
+// Se supone que no puedo entrar a esta página si no tengo 
+// las variables dentro de sesión, por tanto es redundante porque sabemos que si 
+// lo va a procesar esas variables harán un bind exitoso
 if ($login->enlace($pass)){
     $atributos = ['cn', 'mail', 'title'];
     $filtro = "uid=*";
@@ -19,15 +24,11 @@ if ($login->enlace($pass)){
     $login->datos($base, $filtro, $atributos, 100);
     $contenido = $login->arrayDatosLDAP($atributos);
     
-    $menu = array(
-        "index"=> "Inicio",
-        "usuarios"=> "Usuarios",
-        "equipos"=> "Computadoras"
-    );
-
     $parametros = array(
         'empleados' => $contenido,
-        'menu' => $menu
+        // Traemos $menu desde clase/sesion.php
+        'menu' => $menu,
+        'pagina'=> $sesion['pagina']
     );
 
     $template->display($parametros);
