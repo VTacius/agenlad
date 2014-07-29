@@ -1,6 +1,11 @@
 {% extends "layout.html.twig" %}
 {% block titulo -%}Listado de usuarios{% endblock %}
 
+{% block lateral %}
+Contenido a mostrar a la izquierda
+{{ pagina }}
+{% endblock %}
+
 {% block menu %} 
     {% for archivo, titulo in menu %}
         {% if archivo == pagina %}
@@ -27,9 +32,4 @@
         {% endfor %}
         </tbody>
     </table>
-{% endblock %}
-
-{% block lateral %}
-    Contenido a mostrar a la izquierda
-    {{ pagina }}
 {% endblock %}
