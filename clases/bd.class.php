@@ -1,6 +1,6 @@
 <?php
     ini_set('default_charset', 'utf-8');
-    require_once './clases/utilidades.php';
+    require_once './herramientas/utilidades.php';
 class controlDB {
     // Almacena los errores que puedan producirse
     protected $errorDB = array();
@@ -202,8 +202,8 @@ class controlDB {
     }
     
     /**
-     * ACASO NO PUEDO HACERLO EN obtenerBandera
      * Obtiene firmas y firmaz en un array.
+     * Un dia te darás cuenta que podrías hacerlo con obtener bandera, pero ese día será muy tarde ya
      * @param string $usuario
      * @return diccionario
      */
