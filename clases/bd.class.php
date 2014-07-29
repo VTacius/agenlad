@@ -1,6 +1,6 @@
 <?php
     ini_set('default_charset', 'utf-8');
-    require_once './herramientas/utilidades.php';
+    require_once '/var/www/agenlad/herramientas/utilidades.php';
 class controlDB {
     // Almacena los errores que puedan producirse
     protected $errorDB = array();
@@ -29,7 +29,7 @@ class controlDB {
         } catch(Exception $e ) {
             $this->errorDB = array(
                 'titulo' => 'Error en la conexión', 
-                'mensaje'=> $intentos->connect_errno);	
+                'mensaje'=> $this->conexion->connect_errno);	
         }
     }
     

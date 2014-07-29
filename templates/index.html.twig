@@ -17,7 +17,7 @@
 {% block contenido -%}
   {{ parent() }}
   <div class="col-lg-11">
-    <form class="form-horizontal" role="form" method="POST" action="" id="cambiopass" name="cambiopass">
+    <form class="form-horizontal" role="form" method="POST" action="control/indexControl.php" id="cambiopass" name="cambiopass">
         <div class="form-group">
           <label for="passchangePrima" class="col-lg-3 control-label">Contraseña Nueva</label>
             <div class="col-lg-8">
@@ -40,7 +40,7 @@
             </div>
         <div class="col-lg-8 alert alert-error" id="advertencia">
           <ul class="list-unstyled">
-                      <li class="invalid"><strong></strong></li>
+                      <li class="invalid"><strong>{{mensaje}}</strong></li>
           </ul>
             </div>
       </div>

@@ -83,7 +83,7 @@ $(function() {
       
     } else {
       $("#pswd_info").hide();
-      $("#advertencia").hide()
+      $("#advertencia").hide();
     }
   });
 
@@ -97,53 +97,58 @@ $(function() {
   $("#passchangeprima").blur(function() {
     var confirma = $("#passchangeprima").val();
     verifica(confirma);
-    if (!resultado == false) {
+    if (!resultado === false) {
       $("#pswd_info").hide();
     }
   });
 
   var cerrarVentana = function () {
     window.setTimeout(location.href="loginControl.php?msg=5",2000000);
-  }
-  var procesarDatos = function () {
-    $.ajax({ 
-      type: 'POST',
-      url: 'indexControl.php',
-      data: {
-      accion: "cambiarpassword",
-              passchangeprima: $("#passchangeprima").val(),
-              passchangeconfirm: $("#passchangeconfirm").val(),
-      },
-      success: function(data){
-        $("#advertencia").html('<li class="valid"><strong>' + data + '</strong></li>');
-        $("#passchangeprima").prop('disabled', true);
-        $("#passchangeconfirm").prop('disabled', true);
-        cerrarVentana();
-        }
-    });
   };
   
-  $("#enviar").click(function(){ 
-    if ( comprobarContra() ) {
-     verifica($("#passchangeprima").val());
-     if (resultado){
-        procesarDatos();
-       $("#advertencia").show();
-     }else{
-       $("#passchangeprima").focus();
-       $("#advertencia").show();
-       $("#advertencia").html('<li class="invalid"><strong>Su contraseña esta vacía</strong></li>');
-     }
-    }else{
-       $("#passchangeprima").focus();
-       $("#advertencia").show();
-       $("#advertencia").html('<li class="invalid"><strong>Las contraseñas no son iguales</strong></li>');
-    }
+//  var procesarDatos = function () {
+//    $.ajax({ 
+//      type: 'POST',
+//      url: 'indexControl.php',
+//      data: {
+//      accion: "cambiarpassword",
+//              passchangeprima: $("#passchangeprima").val(),
+//              passchangeconfirm: $("#passchangeconfirm").val()
+//      },
+//      success: function(data){
+//        $("#advertencia").html('<li class="valid"><strong>' + data + '</strong></li>');
+//        $("#passchangeprima").prop('disabled', true);
+//        $("#passchangeconfirm").prop('disabled', true);
+//        cerrarVentana();
+//        }
+//    });
+//  };
+  
+  $("#enviar").click(function(e){ 
+      e.stopPropagation();
+      e.stopPropagation();
+      if ( comprobarContra() ) {    
+          verifica($("#passchangeprima").val());
+          if (resultado){
+            //Dejaremos esto en manos de PHP puro, por favor
+              //procesarDatos();
+              $("#advertencia").show();
+          }else{
+              $("#passchangeprima").focus();
+              $("#advertencia").show();
+              $("#advertencia").html('<li class="invalid"><strong>Su contraseña esta vacía</strong></li>');     
+          }
+      }else{
+          $("#passchangeprima").focus();
+          $("#advertencia").show();
+          $("#advertencia").html('<li class="invalid"><strong>Las contraseñas no son iguales</strong></li>');
+          
+      }
   });
 
-  $("#cambiopass").submit(function(e) {
-    //e.stopPropagation();
-    return false; // Evitar ejecutar el submit del formulario.
-    // Solo quiero recordarte que no debes hacer esto
-  });
+$( "cambiopass" ).submit(function( event ) {
+  event.preventDefault();
+});
+
+
 });

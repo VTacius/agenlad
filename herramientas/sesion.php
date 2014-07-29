@@ -1,6 +1,6 @@
 <?php
-require_once './clases/input_filter.class.php';
-require_once ('./herramientas/utilidades.php');
+require_once '/var/www/agenlad/clases/input_filter.class.php';
+require_once ('/var/www/agenlad/herramientas/utilidades.php');
 // Inicio sesión
 session_start();
 // ¿Tengo configuradas las variables de sesión que configuramos antes?

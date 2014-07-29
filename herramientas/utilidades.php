@@ -1,16 +1,15 @@
 <?php
 //Quién invoque este fichero podrá usar plantillas twig
-require_once('./clases/conect.class.php');
-require_once './Twig/lib/Twig/Autoloader.php';
+require_once '/var/www/agenlad/Twig/lib/Twig/Autoloader.php';
 Twig_Autoloader::register();
-$loader = new Twig_Loader_Filesystem('./templates');
+$loader = new Twig_Loader_Filesystem('/var/www/agenlad/templates');
 $twig = new Twig_Environment($loader, array(
-  'cache' => './tmp/cache',
+  'cache' => '/var/www/agenlad/tmp/cache',
   'auto_reload'=> TRUE
 ));
 
 //Nombre del fichero con las configuraciones
-$parametros_aplicacion = './parametros.ini';
+$parametros_aplicacion = '/var/www/agenlad/parametros.ini';
 
 /**
  * 
