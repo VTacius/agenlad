@@ -1,0 +1,37 @@
+{% extends "layout.html.twig" %}
+{% block titulo -%}Cambio de contraseña{% endblock %}
+{% block javascript %} 
+  <script src="{{ activos('control/indexControl.js') }}" type="text/javascript"></script>
+{% endblock %}
+
+{% block lateral %} 
+<h2>Error de la aplicación</h2>
+<p>Contacte al administrador de la aplicación usando el mensaje a la derecha</p>
+{% endblock%}
+
+{% block menu %} 
+    {% include 'menu.html.twig' with {'menu': menu  } %}
+{% endblock %}
+
+{% block contenido -%}
+  {{ parent() }}
+  <h2>{{ status }}</h2>
+  <h3>{{ title }}</h3>
+  <p>{{ text }}</p>
+  {% for linea in trace %}
+    {% for item, traza in linea %}
+      {% if item=='args'%}
+        {% for i, l in traza %}
+          <b>{{ i }}</b>: {{ l }} <br>
+        {% endfor %}
+      {% else %}
+        <b>{{ item }}</b>: {{ traza }} <br>
+      {% endif %}
+    {% endfor %}  
+    <br><br>
+  {% endfor %}
+{% endblock %}
+
+        
+        
+
