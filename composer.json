@@ -1,42 +1,13 @@
 {
-	"name": "bcosca/fatfree",
-	"description": "A powerful yet easy-to-use PHP micro-framework designed to help you build dynamic and robust Web applications - fast!",
-	"homepage": "http://fatfreeframework.com/",
-	"license": "GPL-3.0",
-	"require": {
-		"php": ">=5.3.0",
-		"twitter/bootstrap": "*",
-		"components/jquery": ">= 1.9.0"
-	},
-	"repositories": [
-		{
-			"type": "vcs",
-			"url": "https://github.com/bcosca/fatfree"
-		},
-		{
-       "type": "package",
-       "package": {
-           "version": "2.1.0",
-           "name": "jquery/jquery",
-           "dist": {
-               "url": "https://github.com/jquery/jquery/zipball/master",
-               "type": "zip"
-           }
-       }
-  	},
-		{
-       "type": "package",
-       "package": {
-           "version": "3.1.0",
-           "name": "twitter/bootstrap",
-           "dist": {
-               "url": "https://github.com/twitter/bootstrap/zipball/master",
-               "type": "zip"
-           }
-       }
-		}
-	],
-	"scripts": {
-		"post-update-cmd": "bash instalar.sh"
-  }
+    "name": "alortiz/agenlap",
+    "require": {
+				"php": ">=5.4.0",
+				"ext-mysqli": ">=0.1",
+				"ext-ldap": ">=0",
+  			"ext-mcrypt": ">=0",
+				"twig/twig": "1.16.0",
+				"bcosca/fatfree": ">=3.2.0",
+				"twitter/bootstrap": "3.1.0",
+				"components/jquery": "2.1.0"
+    }
 }

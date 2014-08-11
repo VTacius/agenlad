@@ -3,17 +3,23 @@
  * Esta es la forma en que iniciamos el framework. 
  * Parece estar bajo el patrón Singleton, por lo que esta es la variable que ha de comunicar a todos
  */
-$index = require('lib/base.php');
+$index = require(__DIR__ . '/vendor/bcosca/fatfree/lib/base.php');
+
+/**
+ * Leemos el fichero de configuración y configuramos las variables para todo el proyecto
+ */
+$index->config(__DIR__ . '/configuracion.ini');
 
 /**
  * Ponemos a nuestro disposición todo nuestro código
  */
-$index->set('AUTOLOAD','app/; lib/');
+$index->set('AUTOLOAD','app/; vendor/');
 
 /**
  * Nos encargamos de convocar el poder de Twig
  */
-require_once __DIR__ . '/lib/Twig/Autoloader.php';
+//require_once __DIR__ . '/lib/Twig/Autoloader.php';
+require './vendor/autoload.php';
 Twig_Autoloader::register();
 $twig_loader = new Twig_Loader_Filesystem(__DIR__ . '/ui/plantillas');
 
@@ -54,10 +60,6 @@ $function = new Twig_SimpleFunction('activos', function ($activos) {
 });
 $twig->addFunction($function);
 
-/**
- * Leemos el fichero de configuración y configuramos las variables para todo el proyecto
- */
-$index->config(__DIR__ . '/configuracion.ini');
 
 /**
  * Veamos que tal le va con una conexión a nivel de aplicación
