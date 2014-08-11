@@ -16,13 +16,6 @@ public $bit_check=8; // bit amount for diff algor.
    */
 	function slappasswd($Input){
       $lpass = "{SHA}" . base64_encode( pack( "H*", sha1($Input) ) );
-//      $debug = debug_backtrace();
-//      openlog('aplicacion', LOG_NDELAY, LOG_USER);
-//      foreach ($debug as $value) {
-//        foreach ($value as $key => $valor) {
-//          syslog(LOG_NOTICE, (string)$key . ": " . (string)$valor);   
-//        }
-//      }
       return $lpass;
 	}
 	

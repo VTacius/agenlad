@@ -6,8 +6,21 @@ namespace clases;
  * @author alortiz
  */
 class user extends \clases\controlLDAP{
-    /** @var array 
-     * Arreglo de los atributos del usuario. Recuerde que DN no se considera atributo
+    /**
+     * Caracteres permitidos para la contraseña
+     * @var array 
+     */
+    private $letras = array(
+        'a','b','c','d','e',
+        'f','g','h','i','j',
+        'k','l','m','n','ñ',
+        'o', 'p','q','r','s',
+        't','u','v','w','x',
+        'y','z','_','.','1',
+        '2','3','4','5','6',
+        '7','8','9','0');
+    /** Arreglo de los atributos del usuario. Recuerde que DN no se considera atributo
+    / @var array 
      */
     private $atributos = array(    
     'cn','displayName','dn','gecos','gidNumber',
@@ -20,14 +33,43 @@ class user extends \clases\controlLDAP{
     'userPassword');
     
     /**
-     *
+     * El contenido de todo cuanto el usurio puede ser
      * @var array
      */
-    public $usuario = array();
+    private $usuario = array();
     
+    /**
+     * 
+     * @var clases\cifrado
+     */
+    private $hashito;
+    
+    /**
+     *
+     * @var string (ObjectClass) 
+     */
+    private $objeto;
+    
+    /**
+     * Configura el valor de un elemento cualquiera dentro del árbol LDAP
+     * Use para los atributos que no son de búsqueda
+     * @param string $atributo
+     * @param string $especificacion
+     */
+    private function configurarValor($atributo, $especificacion){
+        $this->usuario[$atributo] = $especificacion;
+    }
+    
+    /**
+     * Configurar atributos único con los cuales es posible buscar 
+     * entradas existente dentro del árbol LDAP
+     * En caso 
+     * @param string $atributo
+     * @param string $especificacion
+     */
     private function configurarDatos($atributo, $especificacion){
         $valor = strtolower($atributo);
-        $filtro = "$valor=$especificacion";
+        $filtro = "(&($valor=$especificacion)(objectClass=$this->objeto))";
         if (empty($this->usuario)) {
             // Si esta vacío, llene el array por primera vez
             $this->usuario = $this->getDatos($filtro, $this->atributos)[0];
@@ -39,7 +81,18 @@ class user extends \clases\controlLDAP{
             // Si alguien ya lleno el array, vea que tiene datos que pueda tener
             $this->usuario[$atributo] = $especificacion;
         }
-        
+    }
+    
+    public function __construct($rdnLDAP, $passLDAP) {
+        parent::__construct($rdnLDAP, $passLDAP);
+        // Usamos desde acá la clase cifrado. 
+        $this->hashito = new \clases\cifrado();
+        $this->objeto='shadowAccount';
+    }
+    
+
+    public function getGidNumber() {
+        return $this->usuario['gidNumber'];
     }
     
     public function getCn() {
@@ -47,31 +100,31 @@ class user extends \clases\controlLDAP{
     }
 
     public function getDisplayName() {
-        return $this->displayName;
+        return $this->usuario['displayName'];
     }
 
     public function getGecos() {
-        return $this->gecos;
-    }
-
-    public function getGidNumber() {
-        return $this->gidNumber;
+        return $this->usuario['gecos'];
     }
 
     public function getGivenName() {
-        return $this->givenName;
+        return $this->usuario['givenName'];
+    }
+    
+    public function getSn() {
+        return $this->usuario['sn'];
     }
 
     public function getHomeDirectory() {
-        return $this->homeDirectory;
+        return $this->usuario['homeDirectory'];
     }
 
     public function getLoginShell() {
-        return $this->loginShell;
+        return $this->usuario['loginShell'];
     }
 
     public function getMail() {
-        return $this->mail;
+        return $this->usuario['mail'];
     }
 
     public function getO() {
@@ -106,10 +159,6 @@ class user extends \clases\controlLDAP{
         return $this->sambaKickoffTime;
     }
 
-    public function getSambaLMPassword() {
-        return $this->sambaLMPassword;
-    }
-
     public function getSambaLogoffTime() {
         return $this->sambaLogoffTime;
     }
@@ -120,10 +169,6 @@ class user extends \clases\controlLDAP{
 
     public function getSambaLogonTime() {
         return $this->sambaLogonTime;
-    }
-
-    public function getSambaNTPassword() {
-        return $this->sambaNTPassword;
     }
 
     public function getSambaPrimaryGroupSID() {
@@ -158,9 +203,6 @@ class user extends \clases\controlLDAP{
         return $this->shadowMin;
     }
 
-    public function getSn() {
-        return $this->usuario['sn'];
-    }
 
     public function getTelephoneNumber() {
         return $this->telephoneNumber;
@@ -176,32 +218,13 @@ class user extends \clases\controlLDAP{
 
     public function getUidNumber() {
         return $this->uidNumber;
-    }
+    }    
 
-    public function getUserPassword() {
-        return $this->userPassword;
-    }
 
-    public function setCn($cn) {
-        $this->cn = $cn;
-    }
-
-    public function setDisplayName($displayName) {
-        $this->displayName = $displayName;
-    }
-
-    public function setGecos($gecos) {
-        $this->gecos = $gecos;
-    }
 
     public function setGidNumber($gidNumber) {
         $this->gidNumber = $gidNumber;
     }
-
-    public function setGivenName($givenName) {
-        $this->givenName = $givenName;
-    }
-
     public function setHomeDirectory($homeDirectory) {
         $this->homeDirectory = $homeDirectory;
     }
@@ -226,6 +249,10 @@ class user extends \clases\controlLDAP{
         $this->configurarDatos('ou', $ou);
     }
 
+    /**
+     * Tamaño permitido para ownCloud
+     * @param integer $postalAddress
+     */
     public function setPostalAddress($postalAddress) {
         $this->postalAddress = $postalAddress;
     }
@@ -246,10 +273,6 @@ class user extends \clases\controlLDAP{
         $this->sambaKickoffTime = $sambaKickoffTime;
     }
 
-    public function setSambaLMPassword($sambaLMPassword) {
-        $this->sambaLMPassword = $sambaLMPassword;
-    }
-
     public function setSambaLogoffTime($sambaLogoffTime) {
         $this->sambaLogoffTime = $sambaLogoffTime;
     }
@@ -261,11 +284,7 @@ class user extends \clases\controlLDAP{
     public function setSambaLogonTime($sambaLogonTime) {
         $this->sambaLogonTime = $sambaLogonTime;
     }
-
-    public function setSambaNTPassword($sambaNTPassword) {
-        $this->sambaNTPassword = $sambaNTPassword;
-    }
-
+    
     public function setSambaPrimaryGroupSID($sambaPrimaryGroupSID) {
         $this->sambaPrimaryGroupSID = $sambaPrimaryGroupSID;
     }
@@ -275,39 +294,35 @@ class user extends \clases\controlLDAP{
     }
 
     public function setSambaPwdLastSet($sambaPwdLastSet) {
-        $this->sambaPwdLastSet = $sambaPwdLastSet;
+        $this->configurarValor('sambaPwdLastSet', $sambaPwdLastSet);
     }
 
     public function setSambaPwdMustChange($sambaPwdMustChange) {
-        $this->sambaPwdMustChange = $sambaPwdMustChange;
+        $this->configurarValor('sambaPwdMustChange', $sambaPwdMustChange);
     }
 
     public function setSambaSID($sambaSID) {
-        $this->sambaSID = $sambaSID;
+        $this->configurarDatos('sambaSID', $sambaSID);
     }
 
     public function setShadowLastChange($shadowLastChange) {
-        $this->shadowLastChange = $shadowLastChange;
+        $this->configurarValor('shadowLastChange', $shadowLastChange);
     }
 
     public function setShadowMax($shadowMax) {
-        $this->shadowMax = $shadowMax;
+        $this->configurarValor('shadowMax', $shadowMax);
     }
 
     public function setShadowMin($shadowMin) {
-        $this->shadowMin = $shadowMin;
-    }
-
-    public function setSn($sn) {
-        $this->configurarDatos('sn', $sn);
+        $this->configurarValor('shadowMin', $shadowMin);
     }
 
     public function setTelephoneNumber($telephoneNumber) {
-        $this->telephoneNumber = $telephoneNumber;
+        $this->configurarValor('telephoneNumber', $telephoneNumber);
     }
 
     public function setTitle($title) {
-        $this->title = $title;
+        $this->configurarValor('title', $title);
     }
 
     public function setUid($uid) {
@@ -315,12 +330,109 @@ class user extends \clases\controlLDAP{
     }
 
     public function setUidNumber($uidNumber) {
-        $this->uidNumber = $uidNumber;
+        $this->configurarValor('uidNumber', $uidNumber);
+    }
+    
+    /**
+     * Función pública para el uso de 
+     * usuario::setCn, usuario::setSn, usuario::setGecos, usuario::setGivenName, usuario::setDisplayName
+     * @param string $nombre
+     * @param string $apellido
+     */
+    public function configuraNombre($nombre, $apellido){
+        $this->setCn($nombre . " " . $apellido);
+        $this->setSn($apellido);
+        $this->setGecos($nombre . " " .  $apellido);
+        $this->setGivenName($nombre);
+        $this->setDisplayName($nombre . " " .  $apellido);
+    }
+    
+    /**
+     * Los siguientes procedimientos son de uso protegido por parte de configuraNombre
+     * Pueden sin embargo obtenerse publicamente por separado, pero la configuración no 
+     * tiene sentido por separados
+     * 
+     */
+    
+    protected function setSn($sn) {
+        $this->configurarValor('sn', $sn);
+    }
+    
+    protected function setCn($cn) {
+        $this->configurarValor('cn', $cn);
+    }
+    
+    protected function setDisplayName($displayName) {
+        $this->configurarValor('displayName', $displayName);
     }
 
-    public function setUserPassword($userPassword) {
-        $this->userPassword = $userPassword;
+    protected function setGecos($gecos) {
+        $this->configurarValor('gecos', $gecos);
     }
 
+    protected function setGivenName($givenName) {
+        $this->givenName = $givenName;
+    }
 
+    
+    /**
+     * Función pública para el uso de
+     * usuario::setUserPassword, usuario::setSambaNTPassword, usuario::setSambaLMPassword
+     * @param string $password
+     */
+    public function configuraPassword($password){
+        $this->setUserPassword($password);
+        $this->setSambaNTPassword($password);
+        $this->setSambaLMPassword($password);
+    }
+    
+    /**
+     * 
+     * Los siguiente procedimientos quedan para uso protegido de la clase por parte de configuraPassword
+     * Según las especificaciones, ¿Para qué tendríamos que buscar estos atributos?
+     */
+    
+    protected function setUserPassword($userPassword) {
+        $this->configurarValor('userPassword', $this->hashito->slappasswd($userPassword));
+    }
+    
+    protected function setSambaLMPassword($sambaLMPassword) {
+        $this->configurarValor('sambaLMPassword', $this->hashito->NTLMHash($sambaLMPassword));
+    }
+
+    protected function setSambaNTPassword($sambaNTPassword) {
+        $this->configurarValor('sambaNTPassword', $this->hashito->NTLMHash($sambaNTPassword));
+    }
+
+/**
+   * Representa el algoritmo de la contraseña
+   * Auxiliar de $this->getuserPassword
+   * @param string $cadena
+   * @return string
+   */
+    private function password($cadena){
+        $valores = array();
+        $valor = 0;
+        $encadena = str_split(strtolower($cadena));
+        foreach ($encadena as $i){
+            $j = array_search($i, $this->letras) % 10;
+            $valores[] = $j;
+            $valor += $j;
+        }
+        $digito = implode(array_slice(str_split($valor), -1 ));
+        $prima = implode(array_slice($valores,0, 3));
+        $secon = implode(array_slice($valores,-2));
+        $operacion = abs($prima - $secon);
+        $longitud = strlen($operacion);
+        if ($longitud == 1){
+            $resultado_final = "00" . $operacion;
+        }elseif($longitud == 2){
+            $resultado_final = "0" . $operacion;
+        }else{
+            $resultado_final = $operacion;
+        }
+        $texto = ucfirst(implode(array_slice($encadena,0, 3)));
+        $this->usuario['password'] = $texto . "_" . $digito . $resultado_final;
+        return $this->usuario['password'];
+    }
 }

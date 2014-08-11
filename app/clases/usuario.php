@@ -9,140 +9,18 @@ use Exception;
 
 
 /**
+ * 
  * Vas a usar user.php, solo agrega las cosas de acá que no estén allí
+ * 
+ * Vas bien, pero te hace falta mucho trabajo duro para terminar
+ * 
  */
 class usuario extends \clases\controlLDAP{
-    /** @var array 
-     * Arreglo de los atributos del usuario. Recuerde que DN no se considera atributo
-     */
-    private $atributos = array(    
-    'cn','displayName','dn','gecos','gidNumber',
-    'givenName','homeDirectory','loginShell','mail','o',
-    'objectClass','ou','postalAddress','sambaAcctFlags','sambaHomeDrive',
-    'sambaHomePath','sambaKickoffTime','sambaLMPassword','sambaLogoffTime','sambaLogonScript',
-    'sambaLogonTime','sambaNTPassword','sambaPrimaryGroupSID','sambaPwdCanChange','sambaPwdLastSet',
-    'sambaPwdMustChange','sambaSID','shadowLastChange','shadowMax','shadowMin',
-    'sn','telephoneNumber','title','uid','uidNumber',
-    'userPassword');
-    
-    /** @var string Identificador único del usuario dentro de LDAP */
-    private $uid; 
-    /** @var array Arreglo de los caracteres permitidos en la contraseña*/
-    private $letras = array(
-        'a','b','c','d','e',
-        'f','g','h','i','j',
-        'k','l','m','n','ñ',
-        'o', 'p','q','r','s',
-        't','u','v','w','x',
-        'y','z','_','.','1',
-        '2','3','4','5','6',
-        '7','8','9','0');
-    /** @var integer */
-    private $gidNumber;
-    /** @var string */
-    private $grupoPrimario;
-    /** @var string.*/
-    private $userPassword;
-    /** @var string */
-    private $cn;
-    /** @var string */
-    private $o;
-    /** @var string */
-    private $ou;
-    /** @var array */
-    private $usuario = array();
-    
-    public function obtener($attibuto){
-        return isset($this->usuario[$attibuto])? $this->usuario[$attibuto] : '-' ;
-    }
-    /**
-     * Configure el usuario sobre el cual hemos de trabajar
-     * @param string $uid
-     */
-    public function setuid($uid){
-        $this->uid = $uid;
-        $filtro = "uid=$this->uid";
-        $this->usuario = $this->getDatos($filtro, $this->atributos)[0];
-    }
-    
-    public function getgidNumber(){
-        return $this->usuario['gidNumber'] ;
-    }
-    
-    public function getuserPassword(){
-        return $this->password($this->uid);
-    }
-    
-    public function setuserPassword($userPassword){
-        $this->userPassword = $userPassword;
-    }
-    
-    public function getGrupoPrimario() {
-        return $this->grupoPrimario[0]['cn'];
-    }
-
-    public function setGrupoPrimario($grupoPrimario) {
-        $this->grupoPrimario = $grupoPrimario;
-    }
-
-    public function getCn() {
-        return $this->obtener('cn');
-    }
-
-    public function setCn($cn) {
-        $this->cn = $cn;
-    }
-    
-    public function getO() {
-        return isset($this->usuario['o'])? $this->usuario['o'] : '-' ;
-    }
-
-    public function setO($o) {
-        $this->o = $o;
-    }
-
-    public function getOu() {
-        return isset($this->usuario['ou'])? $this->usuario['ou'] : '-' ;
-    }
-
-    public function setOu($ou) {
-        $this->ou = $ou;
-    }
-
-    
-    public function __construct($rdnLDAP, $passLDAP) {
-        parent::__construct($rdnLDAP, $passLDAP);
-    }
 
 
-    /**
-   * Inicializa la clase con una conexión ldap con nivel de administrador
-   * Su nivel de usuario debe ser administrador para tener la contraseña necesaria
-   * @param string $server
-   * @param string $port
-   * @param string $user
-   * @param string $base
-   * @param string $pass
-   * @param string $SIDSamba
-   * @param string $PDC Nombre NetBIOS del servidor
-   */
-//  function adduser ($server, 
-//  $port, 
-//  $user, 
-//  $base, 
-//  $pass , 
-//  $rol='admin', 
 //  $SIDSamba = "S-1-5-21-371878337-141820978-2368272707", 
 //  $PDC = "PDC-DEBIAN"){
-//  //    $this->SIDSamba = $SIDSamba;
-//    $this->PDC = $PDC;
-//    $this->conexion($server, $port);
-//    $this->crearDN($user,$base, $rol);
-//    if (!($this->enlace($pass))){
-//      print $this->mostrarERROR();
-//    }
-//    $this->hashes = new cifrado();
-//  }
+
   
   /**
    * Ninguna consulta hecha 
@@ -168,19 +46,6 @@ class usuario extends \clases\controlLDAP{
    * @return boolean
    */
 //  function verificauid  ($uid, $base) {
-//    $atributos = array('uid');
-//    $filtro = "uid=$uid";
-//    $basel = $this->crearBase($base);
-//    $this->datos($basel, $filtro, $atributos, 5);
-//    $listado = $this->arrayDatosLDAP($atributos);
-//    // Devolvemos falso o verdadero y el resultado lo tiramos aparte
-//    if (empty($listado)){
-//      $this->usuario['verificauid'] = "Usuario válido";
-//      return TRUE;
-//    }else{
-//      $this->usuario['verificauid'] = "Ese usuario ya esta ocupado";
-//      return FALSE;
-//    }
 //  }
   
   /**
@@ -192,44 +57,6 @@ class usuario extends \clases\controlLDAP{
    * @param string $base
    */
 //  function crearuid     ($nombre, $apellido, $base) {
-//    $i=0;
-//    while(true){
-//      $pre_nombre = explode(" ", $nombre);
-//      $pre_apellido = explode(" ", $apellido);
-//      $int_posible = count($pre_apellido);
-//      $p = $i > $int_posible ? 0 :  1;
-//      if ($i<=1) {
-//        $nombres = str_split($pre_nombre[0]);
-//        $uid = $nombres[0] . $pre_apellido[$p-1] ;
-//      }else{
-//        $uid = $nombres[0] . $pre_apellido[0] . $pre_apellido[$p][0] ;
-//      }
-//      if ( $this->verificauid( $uid,$base) ){
-//        break;
-//      } elseif ($i >= 2) {
-//        $uid = "No pudimos crear un usuario único";
-//        break;
-//      }
-//      $i +=1;
-//    }
-//    $this->usuario['uid'] = strtolower($uid);
-//    return $uid;
-//  }
-  
-  /**
-   * Ninguna consulta hecha 
-   * Atributos relacionados con el nombre
-   * @param string $uid
-   * @param string $nombre
-   * @param string $apellido
-   */
-//  function nombreusario ( $uid, $nombre, $apellido ){
-//    $this->usuario['uid']        = $uid;
-//    $this->usuario['cn']         = $nombre . " " . $apellido;
-//    $this->usuario['sn']         = $apellido ;
-//    $this->usuario['gecos']      = $nombre . " " .  $apellido;
-//    $this->usuario['givenName']  = $nombre ;
-//    $this->usuario['displayName']= $nombre . " " .  $apellido;
 //  }
   
   /**
@@ -298,35 +125,6 @@ class usuario extends \clases\controlLDAP{
    */
 //  function cargousuario   ($cargo) {
 //    $this->usuario['title'] = $cargo;	
-//  }
-  
-  /**
-   * Ninguna consulta hecha
-   * Llena el array con datos para el usuario
-   * @param string $telefono
-   */
-//  function telefono       ( $telefono ) {
-//    $this->usuario['telephoneNumber'] = $telefono;
-//  }
-  
-  /**
-   * Ninguna consulta hecha 
-   * Llena el array con datos para el usuario
-   * @param string $shell
-   */
-//  function loginshell     ( $shell ){
-//    $this->usuario['loginshell'] = $shell;	
-//  }
-  
-  /**
-   * Ninguna consulta hecha
-   * Llena el array con datos para el usuario
-   * @param string $company
-   * @param string $office
-   */
-//  function company    ( $company, $office ){
-//    $this->usuario['o'] = $company;
-//    $this->usuario['ou']= $office;
 //  }
     
   /**
@@ -398,49 +196,5 @@ class usuario extends \clases\controlLDAP{
 //      $listado = $this->arrayDatosLDAP($atributos);
 //      return $this->datosSelect($atributos, $listado); 
 //  }
-  
-  /**
-   * Ninguna consulta hecha
-   * Uso un objeto de la clase cifrado
-   * @param string $passito
-   */
-//  function password ( $passito ) {
-//    $this->usuario['Password'] = $passito;
-//    $this->usuario['userPassword'] = $this->hashes->slappasswd($passito);
-//    $this->usuario['sambaNTPassword'] = $this->hashes->NTLMHash($passito);
-//    $this->usuario['sambaLMPassword'] = $this->hashes->LMhash($passito);
-//  }
-
-  /**
-   * Ninguna consulta hecha
-   * Auxiliar de $this->getuserPassword
-   * @param string $cadena
-   * @return string
-   */
-    private function password($cadena){
-        $valores = array();
-        $valor = 0;
-        $encadena = str_split(strtolower($cadena));
-        foreach ($encadena as $i){
-            $j = array_search($i, $this->letras) % 10;
-            $valores[] = $j;
-            $valor += $j;
-        }
-        $digito = implode(array_slice(str_split($valor), -1 ));
-        $prima = implode(array_slice($valores,0, 3));
-        $secon = implode(array_slice($valores,-2));
-        $operacion = abs($prima - $secon);
-        $longitud = strlen($operacion);
-        if ($longitud == 1){
-            $resultado_final = "00" . $operacion;
-        }elseif($longitud == 2){
-            $resultado_final = "0" . $operacion;
-        }else{
-            $resultado_final = $operacion;
-        }
-        $texto = ucfirst(implode(array_slice($encadena,0, 3)));
-        $this->usuario['password'] = $texto . "_" . $digito . $resultado_final;
-        return $this->usuario['password'];
-    }
   
 }

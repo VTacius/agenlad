@@ -34,9 +34,6 @@ class tecnicoControl extends \clases\sesion {
         } catch (Exception $e) {
             echo $e->getmessage();
         }
-
-//        $grupo->setGidNumber($usuario->getgidNumber());
-        // Objeto mailbox, que necesitamos datos desde zimbra
         $mailbox = new \clases\mailbox($clavez);
         $mailbox->setUid($usuarioCliente);
         $datos = array(
