@@ -1,0 +1,42 @@
+{
+	"name": "bcosca/fatfree",
+	"description": "A powerful yet easy-to-use PHP micro-framework designed to help you build dynamic and robust Web applications - fast!",
+	"homepage": "http://fatfreeframework.com/",
+	"license": "GPL-3.0",
+	"require": {
+		"php": ">=5.3.0",
+		"twitter/bootstrap": "*",
+		"components/jquery": ">= 1.9.0"
+	},
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "https://github.com/bcosca/fatfree"
+		},
+		{
+       "type": "package",
+       "package": {
+           "version": "2.1.0",
+           "name": "jquery/jquery",
+           "dist": {
+               "url": "https://github.com/jquery/jquery/zipball/master",
+               "type": "zip"
+           }
+       }
+  	},
+		{
+       "type": "package",
+       "package": {
+           "version": "3.1.0",
+           "name": "twitter/bootstrap",
+           "dist": {
+               "url": "https://github.com/twitter/bootstrap/zipball/master",
+               "type": "zip"
+           }
+       }
+		}
+	],
+	"scripts": {
+		"post-update-cmd": "bash instalar.sh"
+  }
+}
