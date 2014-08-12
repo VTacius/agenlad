@@ -169,10 +169,11 @@ class user extends \clases\entrada{
     public function setGidNumber($gidNumber) {
         $this->gidNumber = $gidNumber;
     }
+
     public function setHomeDirectory($homeDirectory) {
         $this->homeDirectory = $homeDirectory;
     }
-
+    
     public function setLoginShell($loginShell) {
         $this->loginShell = $loginShell;
     }
@@ -230,7 +231,7 @@ class user extends \clases\entrada{
     }
     
     public function setSambaPrimaryGroupSID($sambaPrimaryGroupSID) {
-        $this->sambaPrimaryGroupSID = $sambaPrimaryGroupSID;
+        $this->configurarValor('sambaPrimaryGroupSID', $sambaPrimaryGroupSID);
     }
 
     public function setSambaPwdCanChange($sambaPwdCanChange) {
