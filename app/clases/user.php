@@ -150,6 +150,7 @@ class user extends \clases\entrada{
     }
 
     public function setShadowLastChange($shadowLastChange) {
+        //Default: Usar 16139
         $this->configurarValor('shadowLastChange', $shadowLastChange);
     }
 
@@ -191,6 +192,9 @@ class user extends \clases\entrada{
         $this->setHomeDirectory($homeDirectory);
         $mail = $uid . "@" . $this->mailDomain;
         $this->setMail($mail);
+        $sambaHomePath = "\\\\" .$this->netbiosName . "\\" . $uid;
+        $this->setSambaHomePath($sambaHomePath);
+        
     }
 
     protected function setHomeDirectory($homeDirectory) {

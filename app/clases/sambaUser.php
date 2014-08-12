@@ -25,7 +25,7 @@ class sambaUser extends \clases\user {
         return $this->entrada['sambaHomeDrive'];
     }
 
-    public function getSambaHomePath() {
+    protected function getSambaHomePath() {
         return $this->entrada['sambaHomePath'];
     }
 
@@ -73,6 +73,10 @@ class sambaUser extends \clases\user {
         $this->sambaHomeDrive = $sambaHomeDrive;
     }
 
+    /**
+     * Configurado desde usuario::setUid
+     * @return array 
+     */
     public function setSambaHomePath($sambaHomePath) {
         $this->sambaHomePath = $sambaHomePath;
     }

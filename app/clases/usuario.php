@@ -7,34 +7,6 @@
  * 
  */
 class usuario extends \clases\controlLDAP{
-    
-  /**
-   * Ninguna consulta hecha 
-   * Llena el array con datos para el usuario
-   * @param string $uid
-   */
-//  function sambapath    ( $uid ) {
-//    $this->usuario["sambaHomePath"] = "\\\\$this->PDC\\$uid";
-//  }
-  
-  /**
-   * Consulta por todos los uidNumber
-   * Crea el uidNumber y verifica que sea único
-   * @param string $base
-   */
-//  function crearuidnumber ( $base ) {
-//  }
-    
-  /**
-   * Ninguna consulta hecha 
-   * Llena el array con datos para el usuario
-   */
-//  function defposix   () {	
-//      $this->usuario['shadowMin'] = "99999";	
-//      $this->usuario['shadowMax'] = "99999";	
-//      $this->usuario['shadowLastChange'] = "16139";
-//  }
-  
   /**
    * Ninguna consulta hecha 
    * Llena el array con datos para el usuario
