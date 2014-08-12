@@ -16,12 +16,7 @@ use Exception;
  * 
  */
 class usuario extends \clases\controlLDAP{
-
-
-//  $SIDSamba = "S-1-5-21-371878337-141820978-2368272707", 
-//  $PDC = "PDC-DEBIAN"){
-
-  
+ 
   /**
    * Ninguna consulta hecha 
    * Llena el array con datos para el usuario
@@ -168,18 +163,6 @@ class usuario extends \clases\controlLDAP{
    * @param string $base
    */
 //  function datosgrupo ( $grupo, $base ) {
-//    $atributos = array('cn','gidnumber','sambasid');
-//    $filtro = "cn=$grupo";
-//    $basel = $this->crearBase($base, 'grupo');
-//    $this->datos($basel, $filtro, $atributos, 5);
-//    $listado = $this->arrayDatosLDAP($atributos);
-//    if (count($listado) >= 1) {
-//      $this->usuario['gidNumber'] =  $listado[0]['gidnumber'];
-//      $this->usuario['sambaPrimaryGroupSID'] = $listado[0]['sambasid'];
-//    }else{
-//      $this->usuario['gidNumber'] = "Ese grupo no existe";
-//    }
-//    
 //  }
   
   /**
@@ -189,12 +172,6 @@ class usuario extends \clases\controlLDAP{
    * @return string
    */
 //  function listargrupos ( $base ) {
-//      $atributos = array("cn","gidnumber");
-//      $filtro = "(objectClass=posixGroup)";
-//      $basel = $this->crearBase($base, 'grupo');
-//      $this->datos($basel, $filtro, $atributos, 500);
-//      $listado = $this->arrayDatosLDAP($atributos);
-//      return $this->datosSelect($atributos, $listado); 
 //  }
   
 }

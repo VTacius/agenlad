@@ -17,7 +17,7 @@ class mailbox extends \clases\controlLDAP {
     /** @var string block|active */
     private $zimbraMailStatus;
     /** @var string */
-    private $mailbox;
+    private $entrada;
 
     public function __construct($passLDAP) {
         $server = "zserver";
@@ -35,12 +35,12 @@ class mailbox extends \clases\controlLDAP {
     public function setUid($uid) {
         $this->uid = $uid;
         $filtro = "uid=$this->uid";
-        $this->mailbox = $this->getDatos($filtro, $this->atributos)[0];
+        $this->entrada = $this->getDatos($filtro, $this->atributos)[0];
     }
 
         
     public function getZimbraAccountStatus() {
-        return isset($this->mailbox['zimbraaccountstatus'])? $this->mailbox['zimbraaccountstatus'] : '-' ;
+        return isset($this->entrada['zimbraaccountstatus'])? $this->entrada['zimbraaccountstatus'] : '-' ;
     }
 
     public function setZimbraAccountStatus($zimbraAccountStatus) {
@@ -48,7 +48,7 @@ class mailbox extends \clases\controlLDAP {
     }
     
     public function getZimbraMailStatus() {
-        return isset($this->mailbox['zimbramailstatus'])? $this->mailbox['zimbramailstatus'] : '-' ;
+        return isset($this->entrada['zimbramailstatus'])? $this->entrada['zimbramailstatus'] : '-' ;
     }
 
     public function setZimbraMailStatus($zimbraMailStatus) {

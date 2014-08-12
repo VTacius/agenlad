@@ -5,7 +5,7 @@ namespace clases;
  *
  * @author alortiz
  */
-class user extends \clases\controlLDAP{
+class user extends \clases\entrada{
     /**
      * Caracteres permitidos para la contraseña
      * @var array 
@@ -19,208 +19,152 @@ class user extends \clases\controlLDAP{
         'y','z','_','.','1',
         '2','3','4','5','6',
         '7','8','9','0');
-    /** Arreglo de los atributos del usuario. Recuerde que DN no se considera atributo
-    / @var array 
-     */
-    private $atributos = array(    
-    'cn','displayName','dn','gecos','gidNumber',
-    'givenName','homeDirectory','loginShell','mail','o',
-    'objectClass','ou','postalAddress','sambaAcctFlags','sambaHomeDrive',
-    'sambaHomePath','sambaKickoffTime','sambaLMPassword','sambaLogoffTime','sambaLogonScript',
-    'sambaLogonTime','sambaNTPassword','sambaPrimaryGroupSID','sambaPwdCanChange','sambaPwdLastSet',
-    'sambaPwdMustChange','sambaSID','shadowLastChange','shadowMax','shadowMin',
-    'sn','telephoneNumber','title','uid','uidNumber',
-    'userPassword');
-    
-    /**
-     * El contenido de todo cuanto el usurio puede ser
-     * @var array
-     */
-    private $usuario = array();
-    
-    /**
-     * 
-     * @var clases\cifrado
-     */
-    private $hashito;
-    
-    /**
-     *
-     * @var string (ObjectClass) 
-     */
-    private $objeto;
-    
-    /**
-     * Configura el valor de un elemento cualquiera dentro del árbol LDAP
-     * Use para los atributos que no son de búsqueda
-     * @param string $atributo
-     * @param string $especificacion
-     */
-    private function configurarValor($atributo, $especificacion){
-        $this->usuario[$atributo] = $especificacion;
-    }
-    
-    /**
-     * Configurar atributos único con los cuales es posible buscar 
-     * entradas existente dentro del árbol LDAP
-     * En caso 
-     * @param string $atributo
-     * @param string $especificacion
-     */
-    private function configurarDatos($atributo, $especificacion){
-        $valor = strtolower($atributo);
-        $filtro = "(&($valor=$especificacion)(objectClass=$this->objeto))";
-        if (empty($this->usuario)) {
-            // Si esta vacío, llene el array por primera vez
-            $this->usuario = $this->getDatos($filtro, $this->atributos)[0];
-            
-            foreach ($this->atributos as $attr) {
-                $this->usuario[$attr] = isset($this->usuario[$attr])?$this->usuario[$attr]:"--"; 
-            }
-        }else{
-            // Si alguien ya lleno el array, vea que tiene datos que pueda tener
-            $this->usuario[$atributo] = $especificacion;
-        }
-    }
     
     public function __construct($rdnLDAP, $passLDAP) {
         parent::__construct($rdnLDAP, $passLDAP);
         // Usamos desde acá la clase cifrado. 
         $this->hashito = new \clases\cifrado();
         $this->objeto='shadowAccount';
+        
+        $this->atributos = array(    
+            'cn','displayName','dn','gecos','gidNumber',
+            'givenName','homeDirectory','loginShell','mail','o',
+            'objectClass','ou','postalAddress','sambaAcctFlags','sambaHomeDrive',
+            'sambaHomePath','sambaKickoffTime','sambaLMPassword','sambaLogoffTime','sambaLogonScript',
+            'sambaLogonTime','sambaNTPassword','sambaPrimaryGroupSID','sambaPwdCanChange','sambaPwdLastSet',
+            'sambaPwdMustChange','sambaSID','shadowLastChange','shadowMax','shadowMin',
+            'sn','telephoneNumber','title','uid','uidNumber',
+            'userPassword');
     }
     
 
     public function getGidNumber() {
-        return $this->usuario['gidNumber'];
+        return $this->entrada['gidNumber'];
     }
     
     public function getCn() {
-        return $this->usuario['cn'];
+        return $this->entrada['cn'];
     }
 
     public function getDisplayName() {
-        return $this->usuario['displayName'];
+        return $this->entrada['displayName'];
     }
 
     public function getGecos() {
-        return $this->usuario['gecos'];
+        return $this->entrada['gecos'];
     }
 
     public function getGivenName() {
-        return $this->usuario['givenName'];
+        return $this->entrada['givenName'];
     }
     
     public function getSn() {
-        return $this->usuario['sn'];
+        return $this->entrada['sn'];
     }
 
     public function getHomeDirectory() {
-        return $this->usuario['homeDirectory'];
+        return $this->entrada['homeDirectory'];
     }
 
     public function getLoginShell() {
-        return $this->usuario['loginShell'];
+        return $this->entrada['loginShell'];
     }
 
     public function getMail() {
-        return $this->usuario['mail'];
+        return $this->entrada['mail'];
     }
 
     public function getO() {
-        return $this->usuario['o'];
+        return $this->entrada['o'];
+    }
+    
+    public function getOu() {
+        return $this->entrada['ou'];
     }
 
     public function getObjectClass() {
-        return $this->objectClass;
-    }
-
-    public function getOu() {
-        return $this->usuario['ou'];
+        return $this->entrada['objectClass'];
     }
 
     public function getPostalAddress() {
-        return $this->usuario['postalAddress'];
+        return $this->entrada['postalAddress'];
     }
 
     public function getSambaAcctFlags() {
-        return $this->sambaAcctFlags;
+        return $this->entrada['sambaAcctFlags'];
     }
 
     public function getSambaHomeDrive() {
-        return $this->sambaHomeDrive;
+        return $this->entrada['sambaHomeDrive'];
     }
 
     public function getSambaHomePath() {
-        return $this->sambaHomePath;
+        return $this->entrada['sambaHomePath'];
     }
 
     public function getSambaKickoffTime() {
-        return $this->sambaKickoffTime;
+        return $this->entrada['sambaKickoffTime'];
     }
 
     public function getSambaLogoffTime() {
-        return $this->sambaLogoffTime;
+        return $this->entrada['sambaLogoffTime'];
     }
 
     public function getSambaLogonScript() {
-        return $this->sambaLogonScript;
+        return $this->entrada['sambaLogonScript'];
     }
 
     public function getSambaLogonTime() {
-        return $this->sambaLogonTime;
+        return $this->entrada['sambaLogonTime'];
     }
 
     public function getSambaPrimaryGroupSID() {
-        return $this->sambaPrimaryGroupSID;
+        return $this->entrada['sambaPrimaryGroupSID'];
     }
 
     public function getSambaPwdCanChange() {
-        return $this->sambaPwdCanChange;
+        return $this->entrada['sambaPwdCanChange'];
     }
 
     public function getSambaPwdLastSet() {
-        return $this->sambaPwdLastSet;
+        return $this->entrada['sambaPwdLastSet'];
     }
 
     public function getSambaPwdMustChange() {
-        return $this->sambaPwdMustChange;
+        return $this->entrada['sambaPwdMustChange'];
     }
 
     public function getSambaSID() {
-        return $this->sambaSID;
+        return $this->entrada['sambaSID'];
     }
 
     public function getShadowLastChange() {
-        return $this->shadowLastChange;
+        return $this->entrada['shadowLastChange'];
     }
 
     public function getShadowMax() {
-        return $this->shadowMax;
+        return $this->entrada['shadowMax'];
     }
 
     public function getShadowMin() {
-        return $this->shadowMin;
+        return $this->entrada['shadowMin'];
     }
 
-
     public function getTelephoneNumber() {
-        return $this->telephoneNumber;
+        return $this->entrada['telephoneNumber'];
     }
 
     public function getTitle() {
-        return $this->title;
+        return $this->entrada['title'];
     }
 
     public function getUid() {
-        return $this->uid;
+        return $this->entrada['uid'];
     }
 
     public function getUidNumber() {
-        return $this->uidNumber;
+        return $this->entrada['uidNumber'];
     }    
-
-
 
     public function setGidNumber($gidNumber) {
         $this->gidNumber = $gidNumber;
@@ -432,7 +376,7 @@ class user extends \clases\controlLDAP{
             $resultado_final = $operacion;
         }
         $texto = ucfirst(implode(array_slice($encadena,0, 3)));
-        $this->usuario['password'] = $texto . "_" . $digito . $resultado_final;
-        return $this->usuario['password'];
+        $this->entrada['password'] = $texto . "_" . $digito . $resultado_final;
+        return $this->entrada['password'];
     }
 }

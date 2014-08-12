@@ -14,8 +14,8 @@ class pruebaControl extends \clases\sesion{
         print "<br>";
         print_r($usuario->getCn());
         print "<br>";
-        $usuario->setOu('Nuevo lugar');
-        $usuario->setO('Nueva oficina');
+//        $usuario->setOu('Nuevo lugar');
+//        $usuario->setO('Nueva oficina');
 //        $usuario->setUserPassword('tracio');
         print_r($usuario->getO());
         print "<br>";
@@ -24,6 +24,12 @@ class pruebaControl extends \clases\sesion{
         $grupo = new \clases\grupo($this->dn, $this->pswd);
         $grupo->setGidNumber($usuario->getGidNumber());
         print_r($grupo->getCn());
+        print "<br>";
+        print_r($usuario->getSambaSID());
+        print "<br>";
+        print_r($usuario->getSambaAcctFlags());
+        print "<br>";
+        print_r($usuario->getSambaHomeDrive());
         print "<br>";
     }
 }
