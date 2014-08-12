@@ -5,11 +5,11 @@ Supuse que a alguien podrá interesarle.
 Latimos con el corazón de Fat Free Framework, e intentamos parecernos un poco a 
 
 ### Pasos previos
-La dependencia de terceros es manejada con composer
+* La dependencia de terceros es manejada con composer
     $ composer update
-Aplique el pequeño parche para hacerlo funcionar
+* Aplique el pequeño parche para hacerlo funcionar
     $ patch < auth.php.patch
-Cree el fichero `parametros.ini` para configurar el servidor remoto. Su contenido va de la siguiente forma:
+* Cree el fichero `parametros.ini` para configurar el servidor remoto. Su contenido va de la siguiente forma:
 ```ini
 [globals]
 DEBUG=3
