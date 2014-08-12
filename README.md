@@ -7,6 +7,9 @@ Latimos con el corazón de Fat Free Framework, e intentamos parecernos un poco a
 ### Pasos previos
 * La dependencia de terceros es manejada con composer
     $ composer update
+* Cree un directorio temporal para que Twig cree las plantillas
+    $ mkdir -p tmp/cache
+    $ chown www-data:www-data -R tmp/
 * Aplique el pequeño parche para hacerlo funcionar
     $ patch < auth.php.patch
 * Cree el fichero `parametros.ini` para configurar el servidor remoto. Su contenido va de la siguiente forma:
