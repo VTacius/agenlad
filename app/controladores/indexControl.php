@@ -19,7 +19,7 @@ class indexControl extends \clases\sesion {
         // Objetos que hemos de usar
         $this->db = $this->index->get('dbconexion');
         $this->hashes = new \clases\cifrado();
-        $this->ldap = new \clases\controlLDAP($this->dn, $this->pswd);
+        $this->ldap = new \Modelos\controlLDAP($this->dn, $this->pswd);
         
         
   }
@@ -123,7 +123,7 @@ class indexControl extends \clases\sesion {
       return preg_match_all('.{8}', $password);
     }
 
-    public function cambioCredenciales($base, $parametros){
+    public function cambioCredenciales(){
         // Tenemos permiso para acceder a esta funcion contenida en este método
         $this->comprobar($this->pagina);
         $rol = $this->index->get('SESSION.rol');

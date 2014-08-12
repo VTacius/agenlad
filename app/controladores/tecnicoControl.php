@@ -26,19 +26,17 @@ class tecnicoControl extends \clases\sesion {
         $hashito = new \clases\cifrado();
         $clavez = $hashito->descifrada($firmaz, $this->pswd);
         // Empezamos con un objeto usuario
-        $usuario = new \clases\usuario($this->dn, $this->pswd);
-        $grupo = new \clases\grupo($this->dn, $this->pswd);
+        $usuario = new \Modelos\userSamba($this->dn, $this->pswd);
+        $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
         // Obtenemos los datos que hemos de enviar a la vista
-        try {
-            @$usuario->setuid($usuarioCliente);
-        } catch (Exception $e) {
-            echo $e->getmessage();
-        }
-        $mailbox = new \clases\mailbox($clavez);
+        $usuario->setUid($usuarioCliente);
+        $grupo->setGidNumber($usuario->getGidNumber());
+        
+    $mailbox = new \Modelos\mailbox($clavez);
         $mailbox->setUid($usuarioCliente);
         $datos = array(
             'psswduser' => $usuario->getuserPassword(),
-//            'grupouser' => $grupo->getCn(),
+            'grupouser' => $grupo->getCn(),
             'nameuser' => $usuario->getCn(),
             'localidad' => $usuario->getO(),
             'oficina' => $usuario->getOu(),

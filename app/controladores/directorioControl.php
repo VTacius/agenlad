@@ -15,7 +15,7 @@ class directorioControl extends \clases\sesion {
         // Nombramos la página que hemos de producir
         $this->pagina = "directorio";
         // Objetos que hemos de usar
-        $this->ldap = new \clases\controlLDAP($this->dn, $this->pswd);
+        $this->ldap = new \Modelos\controlLDAP($this->dn, $this->pswd);
     }
      
     private function usuarios () {
