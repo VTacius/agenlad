@@ -7,33 +7,38 @@ namespace controladores;
  * @author alortiz
  */
 class pruebaControl extends \clases\sesion{
+    protected function mostrarHtml($mensaje){
+        if (is_array($mensaje)) {
+            print_r($mensaje);
+            print "<br>";
+        }else{
+            print "$mensaje <br>";
+        }
+    }
     public function display(){
-        $usuario = new \clases\sambaUser($this->dn, $this->pswd);
+        $usuario = new \Modelos\userSamba($this->dn, $this->pswd);
         $usuario->setUid('alortiz');
-        print_r($usuario->getSn());
-        print "<br>";
-        print_r($usuario->getCn());
-        print "<br>";
+        $this->mostrarHtml($usuario->getSn());
+        $this->mostrarHtml($usuario->getCn());
 //        $usuario->setOu('Nuevo lugar');
 //        $usuario->setO('Nueva oficina');
 //        $usuario->setUserPassword('tracio');
-        print_r($usuario->getO());
-        print "<br>";
-        print_r($usuario->getOu());
-        print "<br>";
-        $grupo = new \clases\grupo($this->dn, $this->pswd);
+        $this->mostrarHtml($usuario->getO());
+        $this->mostrarHtml($usuario->getOu());
+        print "Atributos samba <br>";
+        $this->mostrarHtml($usuario->getSambaSID());
+        $this->mostrarHtml($usuario->getSambaAcctFlags());
+        $this->mostrarHtml($usuario->getSambaHomeDrive());
+        print "Atributos desde Grupos: <br>";
+        $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
         $grupo->setGidNumber($usuario->getGidNumber());
-        print_r($grupo->getCn());
-        print "<br>";
-        print_r($usuario->getSambaSID());
-        print "<br>";
-        print_r($usuario->getSambaAcctFlags());
-        print "<br>";
-        print_r($usuario->getSambaHomeDrive());
-        print "<br>";
-        print_r($usuario->setUidNumber('1038'));
-        print "<br>";
-        print_r($usuario->getSambaSID());
-        print "<br>";
+        $this->mostrarHtml($usuario->getCn());
+        print "Configurando setUidNumber en 1038 <br>";
+        $usuario->setUidNumber('1038');
+        $this->mostrarHtml($usuario->getSambaSID());
+        print "Verifico atributos zimbra: <br>";
+        $mailbox = new \Modelos\mailbox('Zimbra2025_Lector');
+        $mailbox->setUid('alortiz');
+        $this->mostrarHtml($mailbox->getZimbraAccountStatus());
     }
 }
