@@ -6,7 +6,7 @@
  * Vas bien, pero te hace falta mucho trabajo duro para terminar
  * 
  */
-class usuario extends \clases\controlLDAP{
+class usuario{
   /**
    * Ninguna consulta hecha 
    * Llena el array con datos para el usuario
