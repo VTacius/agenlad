@@ -8,7 +8,7 @@ namespace clases;
 use Exception;
 class controlLDAP {
     /** @var \Base */
-    private $index;
+    protected $index;
     // Configuración de parametros
     private $server;
     private $puerto;

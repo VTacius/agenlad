@@ -8,7 +8,7 @@ namespace controladores;
  */
 class pruebaControl extends \clases\sesion{
     public function display(){
-        $usuario = new \clases\user($this->dn, $this->pswd);
+        $usuario = new \clases\sambaUser($this->dn, $this->pswd);
         $usuario->setUid('alortiz');
         print_r($usuario->getSn());
         print "<br>";
@@ -30,6 +30,10 @@ class pruebaControl extends \clases\sesion{
         print_r($usuario->getSambaAcctFlags());
         print "<br>";
         print_r($usuario->getSambaHomeDrive());
+        print "<br>";
+        print_r($usuario->setUidNumber('1038'));
+        print "<br>";
+        print_r($usuario->getSambaSID());
         print "<br>";
     }
 }

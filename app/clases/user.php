@@ -20,6 +20,8 @@ class user extends \clases\entrada{
         '2','3','4','5','6',
         '7','8','9','0');
     
+    private $mailDomain;
+    
     public function __construct($rdnLDAP, $passLDAP) {
         parent::__construct($rdnLDAP, $passLDAP);
         // Usamos desde acá la clase cifrado. 
@@ -35,6 +37,7 @@ class user extends \clases\entrada{
             'sambaPwdMustChange','sambaSID','shadowLastChange','shadowMax','shadowMin',
             'sn','telephoneNumber','title','uid','uidNumber',
             'userPassword');
+        $this->mailDomain = $this->index->get('maildomain');
     }
     
 
@@ -90,54 +93,6 @@ class user extends \clases\entrada{
         return $this->entrada['postalAddress'];
     }
 
-    public function getSambaAcctFlags() {
-        return $this->entrada['sambaAcctFlags'];
-    }
-
-    public function getSambaHomeDrive() {
-        return $this->entrada['sambaHomeDrive'];
-    }
-
-    public function getSambaHomePath() {
-        return $this->entrada['sambaHomePath'];
-    }
-
-    public function getSambaKickoffTime() {
-        return $this->entrada['sambaKickoffTime'];
-    }
-
-    public function getSambaLogoffTime() {
-        return $this->entrada['sambaLogoffTime'];
-    }
-
-    public function getSambaLogonScript() {
-        return $this->entrada['sambaLogonScript'];
-    }
-
-    public function getSambaLogonTime() {
-        return $this->entrada['sambaLogonTime'];
-    }
-
-    public function getSambaPrimaryGroupSID() {
-        return $this->entrada['sambaPrimaryGroupSID'];
-    }
-
-    public function getSambaPwdCanChange() {
-        return $this->entrada['sambaPwdCanChange'];
-    }
-
-    public function getSambaPwdLastSet() {
-        return $this->entrada['sambaPwdLastSet'];
-    }
-
-    public function getSambaPwdMustChange() {
-        return $this->entrada['sambaPwdMustChange'];
-    }
-
-    public function getSambaSID() {
-        return $this->entrada['sambaSID'];
-    }
-
     public function getShadowLastChange() {
         return $this->entrada['shadowLastChange'];
     }
@@ -167,87 +122,31 @@ class user extends \clases\entrada{
     }    
 
     public function setGidNumber($gidNumber) {
-        $this->gidNumber = $gidNumber;
+        $this->configurarValor('gidNumber', $gidNumber);
     }
 
-    public function setHomeDirectory($homeDirectory) {
-        $this->homeDirectory = $homeDirectory;
-    }
-    
     public function setLoginShell($loginShell) {
-        $this->loginShell = $loginShell;
-    }
-
-    public function setMail($mail) {
-        $this->mail = $mail;
-    }
-
-    public function setO($o) {
-        $this->configurarDatos('o', $o);
+        $this->configurarValor('loginShell', $loginShell);
     }
 
     public function setObjectClass($objectClass) {
-        $this->objectClass = $objectClass;
+        $this->configurarValor('objectClass', $objectClass);
+    }
+
+    public function setO($o) {
+        $this->configurarValor('o', $o);
     }
 
     public function setOu($ou) {
-        $this->configurarDatos('ou', $ou);
+        $this->configurarValor('ou', $ou);
     }
 
     /**
-     * Tamaño permitido para ownCloud
+     * Quota de espacio para ownCloud
      * @param integer $postalAddress
      */
     public function setPostalAddress($postalAddress) {
-        $this->postalAddress = $postalAddress;
-    }
-
-    public function setSambaAcctFlags($sambaAcctFlags) {
-        $this->sambaAcctFlags = $sambaAcctFlags;
-    }
-
-    public function setSambaHomeDrive($sambaHomeDrive) {
-        $this->sambaHomeDrive = $sambaHomeDrive;
-    }
-
-    public function setSambaHomePath($sambaHomePath) {
-        $this->sambaHomePath = $sambaHomePath;
-    }
-
-    public function setSambaKickoffTime($sambaKickoffTime) {
-        $this->sambaKickoffTime = $sambaKickoffTime;
-    }
-
-    public function setSambaLogoffTime($sambaLogoffTime) {
-        $this->sambaLogoffTime = $sambaLogoffTime;
-    }
-
-    public function setSambaLogonScript($sambaLogonScript) {
-        $this->sambaLogonScript = $sambaLogonScript;
-    }
-
-    public function setSambaLogonTime($sambaLogonTime) {
-        $this->sambaLogonTime = $sambaLogonTime;
-    }
-    
-    public function setSambaPrimaryGroupSID($sambaPrimaryGroupSID) {
-        $this->configurarValor('sambaPrimaryGroupSID', $sambaPrimaryGroupSID);
-    }
-
-    public function setSambaPwdCanChange($sambaPwdCanChange) {
-        $this->sambaPwdCanChange = $sambaPwdCanChange;
-    }
-
-    public function setSambaPwdLastSet($sambaPwdLastSet) {
-        $this->configurarValor('sambaPwdLastSet', $sambaPwdLastSet);
-    }
-
-    public function setSambaPwdMustChange($sambaPwdMustChange) {
-        $this->configurarValor('sambaPwdMustChange', $sambaPwdMustChange);
-    }
-
-    public function setSambaSID($sambaSID) {
-        $this->configurarDatos('sambaSID', $sambaSID);
+        $this->configurarValor('postalAddress', $postalAddress);
     }
 
     public function setShadowLastChange($shadowLastChange) {
@@ -269,15 +168,40 @@ class user extends \clases\entrada{
     public function setTitle($title) {
         $this->configurarValor('title', $title);
     }
+    
+    public function setUidNumber($uidNumber) {
+        $this->configurarDatos('uidNumber', $uidNumber);
+        // $this->sambaSID y $this->setSambaSID están definidas en sambaUser
+        // Pues parece que funciona después de todo, aunque creo que esto es una de esas cosas
+        // que cualquiera en su sano juicio desaconsejaría
+        $sambaSID = $this->sambaSID . "-" . strval(($uidNumber *2) + 1000);
+        $this->setSambaSID($sambaSID);
+    }
 
+    /**
+     * Aprovechamos la ocasión para configurar algunos parametros dependientes:
+     * usuario::setHomeDirectory, usuario::setHomeMail
+     * @param string $uid
+     */
     public function setUid($uid) {
         $this->configurarDatos('uid', $uid);
+        
+        // Esto tiene un poco de sentido, pero si se hace por defecto. No hay razón para hacerlo en este momentos
+        $homeDirectory = "/home/" . $uid;
+        $this->setHomeDirectory($homeDirectory);
+        $mail = $uid . "@" . $this->mailDomain;
+        $this->setMail($mail);
     }
 
-    public function setUidNumber($uidNumber) {
-        $this->configurarValor('uidNumber', $uidNumber);
+    protected function setHomeDirectory($homeDirectory) {
+        $this->configurarValor('homeDirectory', $homeDirectory);
     }
     
+    protected function setMail($mail) {
+        $this->configurarValor('mail', $mail);
+    }
+
+
     /**
      * Función pública para el uso de 
      * usuario::setCn, usuario::setSn, usuario::setGecos, usuario::setGivenName, usuario::setDisplayName
@@ -294,8 +218,7 @@ class user extends \clases\entrada{
     
     /**
      * Los siguientes procedimientos son de uso protegido por parte de configuraNombre
-     * Pueden sin embargo obtenerse publicamente por separado, pero la configuración no 
-     * tiene sentido por separados
+     * Protegidos, porque la configuracion de los mismos no tiene sentido individualmente
      * 
      */
     
@@ -316,10 +239,9 @@ class user extends \clases\entrada{
     }
 
     protected function setGivenName($givenName) {
-        $this->givenName = $givenName;
+        $this->configurarValor('givenName', $givenName);
     }
-
-    
+  
     /**
      * Función pública para el uso de
      * usuario::setUserPassword, usuario::setSambaNTPassword, usuario::setSambaLMPassword
@@ -327,26 +249,14 @@ class user extends \clases\entrada{
      */
     public function configuraPassword($password){
         $this->setUserPassword($password);
-        $this->setSambaNTPassword($password);
-        $this->setSambaLMPassword($password);
     }
     
     /**
-     * 
      * Los siguiente procedimientos quedan para uso protegido de la clase por parte de configuraPassword
      * Según las especificaciones, ¿Para qué tendríamos que buscar estos atributos?
      */
-    
     protected function setUserPassword($userPassword) {
         $this->configurarValor('userPassword', $this->hashito->slappasswd($userPassword));
-    }
-    
-    protected function setSambaLMPassword($sambaLMPassword) {
-        $this->configurarValor('sambaLMPassword', $this->hashito->NTLMHash($sambaLMPassword));
-    }
-
-    protected function setSambaNTPassword($sambaNTPassword) {
-        $this->configurarValor('sambaNTPassword', $this->hashito->NTLMHash($sambaNTPassword));
     }
 
 /**
