@@ -1,7 +1,6 @@
 #Librerias externas
 #bootstrap
 #Twig
-vendor/
 app/herramientas
 # Si no enviamos vendor, entonces no necesitamos este
 composer.lock
