@@ -83,7 +83,6 @@ class loginControl extends \clases\sesion{
     private function banderaAdmin($usuario, $password){
         $base = $this->conectarDB();
 //        // Operamos
-////        $cmds = 'select rol, bandera, firmas, firmaz from roles where user=:user and bandera=1';
         $cmds = 'select bandera, firmas, firmaz from user where user=:user and bandera=1';
         $args = array('user'=>$usuario);
         $resultado = $base->exec($cmds, $args);
@@ -94,8 +93,6 @@ class loginControl extends \clases\sesion{
         $cmds = 'select titulo as rol, permisos, firmas, firmaz from user join rol on user.rol=rol.rol where user=:user';
         $args = array('user'=>$usuario);
         $resultado = $base->exec($cmds, $args);
-//        print_r($resultado);
-//        exit();
         return $resultado;
     }
     
@@ -114,8 +111,9 @@ class loginControl extends \clases\sesion{
             // El usuario tiene un rol de administrador
             return $this->banderaAdmin($usuario, $password);
         }else{
-            // Acá no es administrador, por lo que seguimos
-            $cmds = 'select titulo as rol, permisos from user join rol on user.rol=rol.rol where user=:user';
+            // Vaya, no es un administrador, pero veamos 
+            $cmds = 'select rol, permisos from roles where user=:user';
+            $args = array('user'=>'usuario');
             $resultado = $base->exec($cmds, $args);
             return $resultado;
         }
@@ -144,7 +142,7 @@ class loginControl extends \clases\sesion{
         // Funciona sin los dos puntos y con los dos puntos antes del índice
         $pams = array(':user' => $usuario);
         $resultado = $base->exec($cmds, $pams)[0]['intentos'];
-        if ($resultado ==4){
+        if ($resultado == 4 ){
             $this->index->reroute('@login_mensaje(@mensaje=Su usuario esta bloqueado)');
         }else{
             $this->intentoUsuario($usuario);
@@ -173,11 +171,13 @@ class loginControl extends \clases\sesion{
             $this->index->set('SESSION.user', $this->usuario);
             $this->index->set('SESSION.dn', $login->getDN());
             $this->index->set('SESSION.pswd', $this->password);
+            
+            // Obtenemos los procedimientos de roles de la base de datos
             $roles = $this->obtenerBandera($this->usuario, $this->password);
+            
+            // Llenamos los siguiente datos en base a lo obtenido en roles
             $this->index->set('SESSION.permisos', unserialize($roles[0]['permisos']));
             $this->index->set('SESSION.rol', $roles[0]['rol']);
-            $this->index->set('SESSION.firmas', $roles[0]['firmas']);
-            $this->index->set('SESSION.firmaz', $roles[0]['firmaz']);
             // Ha finalizado el procedimiento
             $this->index->reroute('@main');
         }else{
