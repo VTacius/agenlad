@@ -178,6 +178,7 @@ class loginControl extends \clases\sesion{
             // Llenamos los siguiente datos en base a lo obtenido en roles
             $this->index->set('SESSION.permisos', unserialize($roles[0]['permisos']));
             $this->index->set('SESSION.rol', $roles[0]['rol']);
+            // No, ya no llenaremos acá las firmas. Es peligroso
             // Ha finalizado el procedimiento
             $this->index->reroute('@main');
         }else{

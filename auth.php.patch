@@ -35,9 +35,8 @@
  			@ldap_bind($dc,$info[0]['dn'],$pw) &&
  			@ldap_close($dc)) {
 -			return $info[0]['uid'][0]==$id;
-+            $dn = $info[0]['uid'][0];
-+            $this->setDN($dn);
-+			return $dn==$id;
++                       $this->setDN($info[0]['dn']);
++			return $info[0]['uid'][0]==$id;
  		}
  		user_error(self::E_LDAP);
  	}
