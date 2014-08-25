@@ -17,7 +17,7 @@ Latimos con el corazón de Fat Free Framework, e intentamos parecernos un poco a
 
 * Aplique el pequeño parche para hacerlo funcionar
 
-    $ patch < auth.php.patch
+    $ patch -p4 < auth.php.patch
 
 * Cree el fichero `parametros.ini` para configurar el servidor remoto. Su contenido va de la siguiente forma:
 ```ini

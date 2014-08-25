@@ -144,7 +144,7 @@ class loginControl extends \clases\sesion{
         // Funciona sin los dos puntos y con los dos puntos antes del índice
         $pams = array(':user' => $usuario);
         $resultado = $base->exec($cmds, $pams)[0]['intentos'];
-        if ($resultado >3){
+        if ($resultado ==4){
             $this->index->reroute('@login_mensaje(@mensaje=Su usuario esta bloqueado)');
         }else{
             $this->intentoUsuario($usuario);
