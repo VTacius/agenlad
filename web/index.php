@@ -8,7 +8,7 @@ $index = require(__DIR__ . '/../vendor/bcosca/fatfree/lib/base.php');
 /**
  * Leemos el fichero de configuración y configuramos las variables para todo el proyecto
  */
-$index->config(__DIR__ . '/../configuracion.ini');
+$index->config(__DIR__ . '/../parametros.ini');
 
 /**
  * Ponemos a nuestro disposición todo nuestro código

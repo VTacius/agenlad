@@ -1,5 +1,5 @@
 #Librerias externas
-#bootstrap
+vendor
 #Twig
 app/herramientas
 # Si no enviamos vendor, entonces no necesitamos este
@@ -10,3 +10,5 @@ tmp
 *.ini
 # El favicon es nuestro
 favicon.ico
+/nbproject/private/
+nbproject/

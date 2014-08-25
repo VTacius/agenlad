@@ -12,6 +12,7 @@ Latimos con el corazón de Fat Free Framework, e intentamos parecernos un poco a
 * Cree un directorio temporal para que Twig cree las plantillas
 
     $ mkdir -p tmp/cache
+    
     $ chown www-data:www-data -R tmp/
 
 * Aplique el pequeño parche para hacerlo funcionar
@@ -59,3 +60,6 @@ shadowMax = "99999"
 sambasid = "S-1-5-21-37xxxxxxx-14xxxxxx-23xxxxxxxx"
 netbiosname = "NETBIOS"
 ```
+ * Active el módulo Rewrite de Apache
+
+    $ a2enmod rewrite
