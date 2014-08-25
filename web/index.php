@@ -4,6 +4,7 @@
  * Parece estar bajo el patrón Singleton, por lo que esta es la variable que ha de comunicar a todos
  */
 $index = require(__DIR__ . '/../vendor/bcosca/fatfree/lib/base.php');
+include_once '../vendor/autoload.php';
 
 /**
  * Leemos el fichero de configuración y configuramos las variables para todo el proyecto
@@ -13,14 +14,11 @@ $index->config(__DIR__ . '/../parametros.ini');
 /**
  * Ponemos a nuestro disposición todo nuestro código
  */
-$index->set('AUTOLOAD','../app/; ../vendor/');
+$index->set('AUTOLOAD','../app/');
 
 /**
  * Nos encargamos de convocar el poder de Twig
  */
-//require_once __DIR__ . '/lib/Twig/Autoloader.php';
-require __DIR__ .'/../vendor/autoload.php';
-Twig_Autoloader::register();
 $twig_loader = new Twig_Loader_Filesystem(__DIR__ . '/ui/plantillas');
 
 $index->set('twig', 
