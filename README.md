@@ -66,8 +66,8 @@ netbiosname = "NETBIOS"
 
 * Para no complicar las cosas, por ahora, copie los ficheros necesarios:
 
-     $ cp vendor/components/jquery/ web/ui/js/vendor/
-     $ cp vendor/components/jquery/jquery.min.js web/ui/js/vendor/
-     $ cp vendor/components/bootstrap/js/bootstrap.min.js web/ui/js/vendor/
-     $ cp vendor/components/bootstrap/css/bootstrap.min.css web/ui/css/vendor/
-     $ cp vendor/components/bootstrap/css/bootstrap-theme.min.css web/ui/css/vendor/
+    $ cp vendor/components/jquery/ web/ui/js/vendor/
+    $ cp vendor/components/jquery/jquery.min.js web/ui/js/vendor/
+    $ cp vendor/components/bootstrap/js/bootstrap.min.js web/ui/js/vendor/
+    $ cp vendor/components/bootstrap/css/bootstrap.min.css web/ui/css/vendor/
+    $ cp vendor/components/bootstrap/css/bootstrap-theme.min.css web/ui/css/vendor/
