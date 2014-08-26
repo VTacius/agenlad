@@ -7,7 +7,6 @@
                                 "ext-mcrypt": ">=0",
 				"twig/twig": "1.16.0",
 				"bcosca/fatfree": ">=3.2.0",
-				"twitter/bootstrap": "3.1.0",
-				"components/jquery": "2.1.0"
+                                "components/bootstrap":"3.1.0"
     }
 }

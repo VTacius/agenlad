@@ -12,4 +12,5 @@ tmp
 favicon.ico
 /nbproject/private/
 nbproject/
-components/
+#web/ui/js/vendor
+#web/ui/css/vendor
