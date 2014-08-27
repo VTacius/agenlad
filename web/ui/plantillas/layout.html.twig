@@ -6,11 +6,11 @@
     <meta name="author" content="Alexander Ortiz">
     <link rel="shortcut icon" href="favicon.ico">
     <title>Directorio MINSAL - {% block titulo %}  {# Personalizamos titulo #} {% endblock%}</title>
-    <link href="{{ activos('css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ activos('css/vendor/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ activos('css/jumbotron.css') }} " rel="stylesheet">
     {% block css %} {% endblock %}
-    <script src="{{ activos('jquery.min.js') }}" type="text/javascript"></script>
-    <script src="{{ activos('js/bootstrap.min.js') }}" type="text/javascript"></script>
+    <script src="{{ activos('js/vendor/jquery.min.js') }}" type="text/javascript"></script>
+    <script src="{{ activos('js/vendor/bootstrap.min.js') }}" type="text/javascript"></script>
     {% block javascript %} {% endblock %}
   </head>
   <body>

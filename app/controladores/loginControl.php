@@ -149,6 +149,26 @@ class loginControl extends \clases\sesion{
         }
     }
     
+    protected function sesionar($login){
+        // Iniciamos la sesion con datos a guardar en la base de datos
+        $db = $this->index->get('dbconexion');
+        // Señores, he acá donde se inicia la puta sesión
+        $sesion = new \DB\SQL\Session($db);
+        $this->index->set('SESSION.user', $this->usuario);
+        $this->index->set('SESSION.dn', $login->getDN());
+        $this->index->set('SESSION.pswd', $this->password);
+
+        // Obtenemos los procedimientos de roles de la base de datos
+        $roles = $this->obtenerBandera($this->usuario, $this->password);
+
+        // Llenamos los siguiente datos en base a lo obtenido en roles
+        $this->index->set('SESSION.permisos', unserialize($roles[0]['permisos']));
+        $this->index->set('SESSION.rol', $roles[0]['rol']);
+        // No, ya no llenaremos acá las firmas. Es peligroso
+        // Ha finalizado el procedimiento
+    }
+
+
     /**
      * Controlador para el proceso de autenticacion
      * TODO: Quizá puedas meter después los datos ('uid', 'gecos', 'mail', 'o','ou', 'title','gidnumber')
@@ -156,7 +176,7 @@ class loginControl extends \clases\sesion{
      */
     public function autenticar(){
         $this->comprobarBloqueo($this->usuario);
-        $login = new \Auth('ldap', array(
+        $login = new \clases\authentication('ldap', array(
             'dc' => $this->server,
             'rdn' => $this->index->get('lectorldap'),
             'base_dn'=> $this->index->get('sbase'),
@@ -165,21 +185,7 @@ class loginControl extends \clases\sesion{
         );
         if (@$login->login($this->usuario, $this->password)){
             $this->logueado($this->usuario);
-            // Iniciamos la sesion con datos a guardar en la base de datos
-            $db = $this->index->get('dbconexion');
-            $sesion = new \DB\SQL\Session($db);
-            $this->index->set('SESSION.user', $this->usuario);
-            $this->index->set('SESSION.dn', $login->getDN());
-            $this->index->set('SESSION.pswd', $this->password);
-            
-            // Obtenemos los procedimientos de roles de la base de datos
-            $roles = $this->obtenerBandera($this->usuario, $this->password);
-            
-            // Llenamos los siguiente datos en base a lo obtenido en roles
-            $this->index->set('SESSION.permisos', unserialize($roles[0]['permisos']));
-            $this->index->set('SESSION.rol', $roles[0]['rol']);
-            // No, ya no llenaremos acá las firmas. Es peligroso
-            // Ha finalizado el procedimiento
+            $this->sesionar($login);
             $this->index->reroute('@main');
         }else{
             $this->intentoUsuario($this->usuario);
