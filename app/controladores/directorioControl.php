@@ -17,11 +17,22 @@ class directorioControl extends \clases\sesion {
         // Objetos que hemos de usar
         $this->ldap = new \Modelos\controlLDAP($this->dn, $this->pswd);
     }
-     
-    private function usuarios () {
+    
+    
+    /**
+     * 
+     * @return array
+     */
+    private function usuarios() {
         $atributos = array('cn','title','ou', 'mail');
         $filtro = "uid=*";
         return $this->ldap->getDatos($filtro, $atributos, 1000);
+    }
+    
+    public function resultados() {
+        $atributos = array('cn','title','ou', 'mail');
+        $filtro = "uid=*";
+        print(json_encode($this->ldap->getDatos($filtro, $atributos, 1000))) ;
     }
     
     /**
