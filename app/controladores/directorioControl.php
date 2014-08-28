@@ -21,18 +21,27 @@ class directorioControl extends \clases\sesion {
     
     /**
      * 
+     * @param array $filtro Use los siguiente valores: ('cn','title','o', 'ou','mail')
      * @return array
      */
-    private function usuarios() {
-        $atributos = array('cn','title','ou', 'mail');
-        $filtro = "uid=*";
-        return $this->ldap->getDatos($filtro, $atributos, 1000);
+    private function usuarios_sync($filtro = array()) {
+        $filtrado = "";
+        $atributos = array('uid','cn','title','o', 'ou','mail');
+        foreach ($atributos as $value) {
+            if (array_key_exists($value, $filtro)) {
+                $filtrado .= "($value=$filtro[$value])";
+            }
+        }
+        $filtrador = empty($filtrado)? "(uid=*)" : $filtrado;
+        return $this->ldap->getDatos($filtrador, $atributos, 1000);
     }
     
-    public function resultados() {
-        $atributos = array('cn','title','ou', 'mail');
-        $filtro = "uid=*";
-        print(json_encode($this->ldap->getDatos($filtro, $atributos, 1000))) ;
+    /**
+     * Devuelve usuarios
+     * @param array $filtro Use los siguiente valores: ('cn','title','o', 'ou','mail')
+     */
+    public function usuarios_ajax() {
+        print(json_encode($this->usuarios_sync($this->index->get('PARAMS'))));
     }
     
     /**
@@ -44,7 +53,7 @@ class directorioControl extends \clases\sesion {
         // ¿Tenemos en serio acceso a esta página?
         $this->comprobar($this->pagina); 
         // Obtenemos los datos que hemos de enviar a la vista
-        $usuarios = $this->usuarios();    
+        $usuarios = $this->usuarios_sync();    
         $this->parametros['pagina'] = $this->pagina;
         $this->parametros['datos'] = $usuarios;
         echo $this->twig->render('directorio.html.twig', $this->parametros);       

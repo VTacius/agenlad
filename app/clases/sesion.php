@@ -61,7 +61,6 @@ abstract class sesion {
         if (empty($valor)) {
             $this->parametros['mensajeError'] = "Error: $mensaje";
             $this->display();
-            exit();
         }else{
             return $valor;
         }
