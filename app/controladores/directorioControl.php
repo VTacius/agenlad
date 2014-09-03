@@ -25,14 +25,8 @@ class directorioControl extends \clases\sesion {
      * @return array
      */
     private function usuarios_sync($filtro = array()) {
-        $filtrado = "";
         $atributos = array('uid','cn','title','o', 'ou','mail');
-        foreach ($atributos as $value) {
-            if (array_key_exists($value, $filtro)) {
-                $filtrado .= "($value=$filtro[$value])";
-            }
-        }
-        $filtrador = empty($filtrado)? "(uid=*)" : $filtrado;
+        $filtrador = $this->ldap->createFiltro($filtro);
         return $this->ldap->getDatos($filtrador, $atributos, 1000);
     }
     
@@ -50,17 +44,12 @@ class directorioControl extends \clases\sesion {
     public function display() {
         // Esto es importante en la vista
         $this->parametros['pagina'] = $this->pagina;
-        foreach ($this->index->get('POST') as $key => $value) {
-            print $key . ": " . $value . "\n<br>";
-        }
-        exit();
         // ¿Tenemos en serio acceso a esta página?
         $this->comprobar($this->pagina); 
+        // Usamos los valores enviados por POST para construir el filtro
+        $filtro = $this->index->get('POST');
         // Obtenemos los datos que hemos de enviar a la vista
-        $filtro = array('uid'=>'alortiz');
-        $usuarios = $this->usuarios_sync($filtro);    
-        $this->parametros['pagina'] = $this->pagina;
-        $this->parametros['datos'] = $usuarios;
+        $this->parametros['datos'] = $this->usuarios_sync($filtro);
         echo $this->twig->render('directorio.html.twig', $this->parametros);       
         
     }

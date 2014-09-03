@@ -42,11 +42,10 @@ class controlLDAP {
         $this->dn = $dn;
     }
     
-  /**
-		Empiezan métodos necesarios para establecer cualquier conexión
-	*/
-  
-  
+    /**
+     * Empiezan métodos necesarios para establecer cualquier conexión
+     */
+    
   /**
    * El constructor inicia la conexión hacia el servidor LDAP leyendo algunos datos desde el fichero de configuración
    * @param string $rdnLDAP
@@ -54,34 +53,34 @@ class controlLDAP {
    * @return boolean
    * @throws Exception
    */
-  function __construct($rdnLDAP, $passLDAP, $server = "sserver", $puerto = "spuerto", $base = "sbase"){
-      $this->index = \Base::instance();
-      // Traemos los parametros que necesitamos desde el archivo de configuración que 
-      // leímos en index.php
-      $this->server = $this->index->get($server);
-      $this->puerto = $this->index->get($puerto);
-      $this->base = $this->index->get($base);
-      // Empezamos la conexión
-      $this->conLDAP = ldap_connect($this->server,  $this->puerto);
-      ldap_set_option($this->conLDAP, LDAP_OPT_PROTOCOL_VERSION, 3);
-      ldap_set_option($this->conLDAP, LDAP_OPT_NETWORK_TIMEOUT, 1);
-      // Hacemos el enlace de una vez
-      try{
-          if (empty($rdnLDAP) | empty($passLDAP)) {
-              throw new Exception("Error en la conexión: <b> Credenciales vacías</b>");
-          }elseif(($this->bindLDAP = ldap_bind($this->conLDAP, $rdnLDAP, $passLDAP))){
-              // No entiendo porque mi necesidad de configurar acá el controLDAP::dn, si
-              // Ya esta configurado en las variables de sesión
-              $this->dn = $rdnLDAP;
-              return true;
-          }else{
-              throw new Exception("Error en la conexión: <b>".ldap_error($this->conLDAP)."</b>");
-          }
-      }catch(Exception $e){
-          $this->errorLDAP = $e->getMessage();	
-          return false;
-      }
-  }
+    function __construct($rdnLDAP, $passLDAP, $server = "sserver", $puerto = "spuerto", $base = "sbase"){
+        $this->index = \Base::instance();
+        // Traemos los parametros que necesitamos desde el archivo de configuración que 
+        // leímos en index.php
+        $this->server = $this->index->get($server);
+        $this->puerto = $this->index->get($puerto);
+        $this->base = $this->index->get($base);
+        // Empezamos la conexión
+        $this->conLDAP = ldap_connect($this->server,  $this->puerto);
+        ldap_set_option($this->conLDAP, LDAP_OPT_PROTOCOL_VERSION, 3);
+        ldap_set_option($this->conLDAP, LDAP_OPT_NETWORK_TIMEOUT, 1);
+        // Hacemos el enlace de una vez
+        try{
+            if (empty($rdnLDAP) | empty($passLDAP)) {
+                throw new Exception ("Error en la conexión: <b> Credenciales vacías</b>");
+            } elseif (($this->bindLDAP = ldap_bind($this->conLDAP, $rdnLDAP, $passLDAP))){
+                // No entiendo porque mi necesidad de configurar acá el controLDAP::dn, si
+                // Ya esta configurado en las variables de sesión
+                $this->dn = $rdnLDAP;
+                return true;
+            } else {
+                throw new Exception ("Error en la conexión: <b>".ldap_error($this->conLDAP)."</b>");
+            }
+        }catch (Exception $e) {
+                $this->errorLDAP = $e->getMessage();	
+                return false;
+        }
+    }
 	
   // Terminan métodos necesarios para establecer cualquier conexión 
 	
@@ -130,18 +129,36 @@ class controlLDAP {
             $entrada = ldap_first_entry($this->conLDAP, $this->searchLDAP);
             do {
                 array_push($this->datos, $this->mapa($atributos, $entrada));
-            }while($entrada = @ldap_next_entry($this->conLDAP, $entrada));
+            } while ($entrada = @ldap_next_entry($this->conLDAP, $entrada));
             
         } catch (Exception $e) {
             $this->errorLDAP = $e->getMessage();
         }
         return $this->datos;
     }
-  
-  	/*
-		Empiezan métodos para manipulación de datos
-	*/	
-	
+    
+    /**
+     * Crea un filtro con los índices=>valor del array pasado como parametros
+     * Por ahora, usar sólo con un único filtro, por favor
+     * @param array $filtro Use array('uid','cn','title','o', 'ou','mail')
+     * @return string Valores por defecto
+     */
+    public function createFiltro($filtro){
+        $filtrado = "(&(&(!(uid=root))(!(uid=nobody)))";
+        $atributos = array('uid','cn','title','o', 'ou','mail');
+        foreach ($atributos as $value) {
+            if (array_key_exists($value, $filtro)) {
+                $filtrado .= "($value=$filtro[$value])";
+            }
+        }
+        $filtrado .= $filtrado=="(&(&(!(uid=root))(!(uid=nobody)))" ? "(uid=*))" :  ")";
+        return $filtrado;
+    }
+
+    /**
+     * Empiezan métodos para manipulación de datos
+     */
+    
     /**
      * Modifica los valores del controlLDAP::$dn que ha hecho la conexión
      * @param array $valores
@@ -161,34 +178,35 @@ class controlLDAP {
       }
   }
 
-	function nuevaEntrada( $valores, $entry ) {
-		try{
-			if (ldap_add($this->lcon, $entry, $valores)) {
-				return true;
-			} else {
-				throw new Exception("Error Manipulando datos: <b>".ldap_error($this->lcon)."</b>");
-			}
-		}catch(Exception $e){
-			$this->errorLDAP = $e->getMessage();
-			return false;
-		}
-	}
+    function nuevaEntrada( $valores, $entry ) {
+        try{
+            if (ldap_add($this->lcon, $entry, $valores)) {
+                return true;
+            } else {
+                throw new Exception("Error Manipulando datos: <b>".ldap_error($this->lcon)."</b>");
+            }
+        }catch(Exception $e){
+            $this->errorLDAP = $e->getMessage();
+            return false;
+        }
+    }
 
-	function agregarAtributosGrupo( $valores, $entry ) {
-	// En realidad, parece que esta función agrega un atributo del tipo 
-	// "permito varios y no me ahuevo"
-		try{
-			if (ldap_mod_add($this->lcon, $entry, $valores)) {
-				return true;
-			} else {
-				throw new Exception("Error Manipulando datos: <b>".ldap_error($this->lcon)."</b>");
-			}
-		}catch(Exception $e){
-			$this->errorLDAP = $e->getMessage();
-			return false;
-		}
-	}
-	/*
-		Terminan métodos para manipulación de datos	
-	*/
+    function agregarAtributosGrupo( $valores, $entry ) {
+        // En realidad, parece que esta función agrega un atributo del tipo 
+        // "permito varios y no me ahuevo"
+        try{
+            if (ldap_mod_add($this->lcon, $entry, $valores)) {
+                return true;
+            } else {
+                throw new Exception("Error Manipulando datos: <b>".ldap_error($this->lcon)."</b>");
+            }
+        }catch(Exception $e){
+            $this->errorLDAP = $e->getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Terminan métodos para manipulación de datos	
+     */
 }

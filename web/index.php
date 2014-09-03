@@ -79,8 +79,6 @@ $index->set('dbconexion',new DB\SQL($dsn, $dbusuario, $dbpassword));
 // Rutas hacia directorio
 $index->route('GET|POST @directorio: /directorio [sync]', 
         'controladores\directorioControl->display');
-$index->route('POST @directorio: /directorio/@passchangeconfirm [sync]', 
-        'controladores\directorioControl->display');
 $index->route('GET|POST @directorioAjax: /directorio [ajax]', 
         'controladores\directorioControl->usuarios_ajax');
 //Rutas hacia login
@@ -109,4 +107,6 @@ $index->route('GET|POST @tecnicoDatos: /mostrarpass/datos',
 // Estas son algunas rutas de pruebas, que espero que no sean muchas
 $index->route('GET|POST @prueba_user: /pruebas', 
         'controladores\pruebaControl->display');
+
+// Esta es la forma en que la aplicación empieza
 $index->run();
