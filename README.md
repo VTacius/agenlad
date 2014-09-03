@@ -8,14 +8,14 @@ Latimos con el corazón de Fat Free Framework, e intentamos parecernos un poco a
 * La dependencia de terceros es manejada con [composer](https://gist.github.com/VTacius/4b9ed8b1deee1ecdfb04)
 
 ```shell 
-    $ composer update
+$ composer update
 ```
 
 * Cree un directorio temporal para que Twig cree las plantillas
 ```shell
-    $ mkdir -p tmp/cache
+$ mkdir -p tmp/cache
     
-    $ chown www-data:www-data -R tmp/
+$ chown www-data:www-data -R tmp/
 ```
 
 * Cree el fichero `parametros.ini` para configurar el servidor remoto. Su contenido va de la siguiente forma:
@@ -60,13 +60,15 @@ sambasid = "S-1-5-21-37xxxxxxx-14xxxxxx-23xxxxxxxx"
 netbiosname = "NETBIOS"
 ```
  * Active el módulo Rewrite de Apache
-
+```shell 
     $ a2enmod rewrite
+```
 
 * Para no complicar las cosas, por ahora, copie los ficheros necesarios:
-
+```shell 
     $ cp vendor/components/jquery/ web/ui/js/vendor/
     $ cp vendor/components/jquery/jquery.min.js web/ui/js/vendor/
     $ cp vendor/components/bootstrap/js/bootstrap.min.js web/ui/js/vendor/
     $ cp vendor/components/bootstrap/css/bootstrap.min.css web/ui/css/vendor/
     $ cp vendor/components/bootstrap/css/bootstrap-theme.min.css web/ui/css/vendor/
+```
