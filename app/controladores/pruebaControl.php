@@ -40,5 +40,6 @@ class pruebaControl extends \clases\sesion{
         $mailbox = new \Modelos\mailbox('Zimbra2025_Lector');
         $mailbox->setUid('alortiz');
         $this->mostrarHtml($mailbox->getZimbraAccountStatus());
+        echo $this->twig->render('pruebas.html.twig');
     }
 }

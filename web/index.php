@@ -66,9 +66,9 @@ $twig->addFunction($function);
  */
 $dbbase = $index->get('dbbase');
 $dbserver = $index->get('dbserver');
-$dsn = "mysql:host=$dbserver;port=3306;dbname=$dbbase";
 $dbusuario = $index->get('dbusuario');
 $dbpassword = $index->get('dbpassword');
+$dsn = "mysql:host=$dbserver;port=3306;dbname=$dbbase";
 $index->set('dbconexion',new DB\SQL($dsn, $dbusuario, $dbpassword));
 
 /**
@@ -77,7 +77,9 @@ $index->set('dbconexion',new DB\SQL($dsn, $dbusuario, $dbpassword));
  */
 
 // Rutas hacia directorio
-$index->route('GET|POST @directorio: /directorio/@uid [sync]', 
+$index->route('GET|POST @directorio: /directorio [sync]', 
+        'controladores\directorioControl->display');
+$index->route('POST @directorio: /directorio/@passchangeconfirm [sync]', 
         'controladores\directorioControl->display');
 $index->route('GET|POST @directorioAjax: /directorio [ajax]', 
         'controladores\directorioControl->usuarios_ajax');
