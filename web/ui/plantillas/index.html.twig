@@ -15,11 +15,11 @@
 
 {% block contenido -%}
   {{ parent() }}
-  <div class="col-lg-11">
-    <form class="form-horizontal" role="form" method="POST" action="/index/cambio" id="cambiopass" name="cambiopass">
+{#  <div class="col-lg-12">#}
+    <form class="form-horizontal col-lg-12" role="form" method="POST" action="/index/cambio" id="cambiopass" name="cambiopass">
         <div class="form-group">
           <label for="passchangePrima" class="col-lg-3 control-label">Contraseña Nueva</label>
-            <div class="col-lg-8">
+            <div class="col-lg-9">
               <input type="password" class="form-control" id="passchangeprima" name="passchangeprima" placeholder="Contraseña nueva" autofocus>
             </div>
         </div>
@@ -34,24 +34,16 @@
         </div>
         <div class="form-group">
             <label for="passchangeConfirm" class="col-lg-3 control-label">Confirmar Contraseña Nueva</label>
-                <div class="col-lg-8">
+                <div class="col-lg-9">
                   <input type="password" class="form-control" id="passchangeconfirm" name="passchangeconfirm" placeholder="Confirmar Contraseña">
                 </div>
         </div>
-        <div class="form-group">
-            <div class="col-lg-offset-5 col-lg-12">
+        <div class="form-group text-center">
                 <button type="submit" class="btn btn-primary" id="enviar" name="enviar">Cambiar Contraseña</button>
-            </div>
         </div>
-        {% if mensajeError %}
-        <div class="col-lg-8 alert alert-error" id="advertencia">
-            <ul class="list-unstyled">
-                <li class="invalid"><strong>{{mensajeError}}</strong></li>
-            </ul>
-        </div>
-        {% endif %}                
+
     </form>
-  </div>
+{#  </div>#}
 {% endblock %}
 
         

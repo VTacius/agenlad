@@ -1,7 +1,7 @@
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{#    <meta name="viewport" content="width=device-width, initial-scale=0.9">#}
     <meta name="description" content="Directorio Telefónico en PHP">
     <meta name="author" content="Alexander Ortiz">
     <link rel="shortcut icon" href="favicon.ico">
@@ -36,24 +36,26 @@
       </div>
     </div>
     <div class="container">
-      <div class="col-lg-3">
-      {% block lateral %}  
-      {%endblock %}
-      </div>
-        <div class="col-lg-9">
-        {% block contenido %} 
-        {% if errorLDAP %}
-            <center><h3>{{ errorLDAP.titulo }}: <b>{{ errorLDAP.mensaje }}</b></h3></center>
-        {% endif %}
-        {%endblock %} 
+        <div class="row">
+            <div class="col-lg-3">
+                {% block lateral %}  
+                {%endblock %}
+            </div>
+            <div class="col-lg-9">
+                {% block contenido %} 
+                {%endblock %} 
+                {% if errorLDAP %}
+                    <center><h3>{{ errorLDAP.titulo }}: <b>{{ errorLDAP.mensaje }}</b></h3></center>
+                {% endif %}
+            </div>
+{#        </div>
+        <div class="row">#}
+            <hr>
+            <footer class="span12">
+                <p class="text-center text-info">DTIC - Unidad de Redes y Seguridad Informática 2014  </p>
+            </footer>
         </div>
-    <div class="row">
-        <hr>
-        <footer class="span12">
-        <p class="text-center text-info">DTIC - Unidad de Redes y Seguridad Informática 2014  </p>
-      </footer>
     </div>
-    </div><!-- /container -->
   </body>
     {% block javascript %} {% endblock %}
 </html>
