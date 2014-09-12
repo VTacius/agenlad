@@ -4,12 +4,20 @@ $(document).ready(function() {
     $.indexControl.validacion = false;
     // Asegurarnos que las instrucciones estén ocultas
     $("#pswd_info").hide();
+    $("#msgadvertencia").hide();
 });
 
 
 $('#passchangeprima').keyup(function(){
     $("#pswd_info").show();
+    $("#msgadvertencia").hide();
     validar($("#passchangeprima").val());
+});
+
+
+$('#passchangeprima').focusin(function(){
+    $("#msgadvertencia").hide();
+    console.log("En este momento debería desaparecer");
 });
 
 $('#passchangeprima').blur(function(e){
@@ -26,15 +34,51 @@ $('#passchangeconfirm').focus(function(e){
     }
 });
 
+$('#passchangeconfirm').focusin(function(){
+    $("#msgadvertencia").hide();
+});
+
+
+
 $('#enviar').click(function(e){
     e.stopPropagation(); 
     e.preventDefault();
-    if ($.indexControl.validacion){
+    if (comprobarPassword()){
         console.log("Parece que si la lee acá, ahora es True");
     } else {
         console.log("Parece que si la lee acá, ahora es False");
     }
 });
+
+/**
+ * Comprueba 
+ * passchangeprima cumple los requisitos
+ * passchangeprima y confirmacion no están vacías, aunque esto es redundante
+ * passchangeprima y confirmacion son iguales
+ * @returns {Boolean}
+ */
+var comprobarPassword = function(){
+    var password = $("#passchangeprima").val();
+    var confirmacion = $("#passchangeconfirm").val();
+    if ($.indexControl.validacion){
+        console.log("Ha pasado la primera comprobación");
+        if (password === confirmacion){
+            return true;
+        }else if (password === "" || confirmacion=== ""){
+            $("#msgadvertencia").show();
+            $("#advertencia").text("La confirmación esta vacía");
+            return false;
+        }else{
+            $("#msgadvertencia").show();
+            $("#advertencia").text("Las confirmación no coincide");
+            return false;
+        }
+    }else{
+        $("#msgadvertencia").show();
+        $("#advertencia").text("Por favor, introduzca valores válidos");
+        return false;
+    }
+}
 
 /**
  * Auxiliar de validar: ¿Cumple texto con regex? 

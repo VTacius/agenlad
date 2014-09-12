@@ -9,18 +9,17 @@
 {% set pagina = pagina %}
 
 {% block lateral %} 
-<h3>Cambio de contraseña</h3>
-<p>Cambio de contraseña para <b>{{usuario}}</b></p>
+    <h3>Cambio de contraseña</h3>
+    <p>Cambio de contraseña para <b>{{usuario}}</b></p>
 {% endblock%}
 
 {% block contenido -%}
-  {{ parent() }}
-{#  <div class="col-lg-12">#}
-    <form class="form-horizontal col-lg-12" role="form" method="POST" action="/index/cambio" id="cambiopass" name="cambiopass">
+    {{ parent() }}
+    <form class="form-horizontal" role="form" method="POST" action="/index/cambio" id="cambiopass" name="cambiopass">
         <div class="form-group">
-          <label for="passchangePrima" class="col-lg-3 control-label">Contraseña Nueva</label>
+            <label for="passchangePrima" class="col-lg-3 control-label">Contraseña Nueva</label>
             <div class="col-lg-9">
-              <input type="password" class="form-control" id="passchangeprima" name="passchangeprima" placeholder="Contraseña nueva" autofocus>
+                <input type="password" class="form-control" id="passchangeprima" name="passchangeprima" placeholder="Contraseña nueva" autofocus>
             </div>
         </div>
         <div id="pswd_info">
@@ -34,16 +33,18 @@
         </div>
         <div class="form-group">
             <label for="passchangeConfirm" class="col-lg-3 control-label">Confirmar Contraseña Nueva</label>
-                <div class="col-lg-9">
-                  <input type="password" class="form-control" id="passchangeconfirm" name="passchangeconfirm" placeholder="Confirmar Contraseña">
-                </div>
+            <div class="col-lg-9">
+                <input type="password" class="form-control" id="passchangeconfirm" name="passchangeconfirm" placeholder="Confirmar Contraseña">
+            </div>
+        </div>
+        <div class="form-group" id="msgadvertencia">
+            <p class="text-center"><strong class="invalid" id="advertencia">{{mensajeError}}</strong></p>
         </div>
         <div class="form-group text-center">
-                <button type="submit" class="btn btn-primary" id="enviar" name="enviar">Cambiar Contraseña</button>
+            <button type="submit" class="btn btn-primary" id="enviar" name="enviar">Cambiar Contraseña</button>
         </div>
-
     </form>
-{#  </div>#}
+    
 {% endblock %}
 
         
