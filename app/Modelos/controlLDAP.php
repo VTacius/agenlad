@@ -68,7 +68,8 @@ class controlLDAP {
         try{
             if (empty($rdnLDAP) | empty($passLDAP)) {
                 throw new Exception ("Error en la conexión: <b> Credenciales vacías</b>");
-            } elseif (($this->bindLDAP = ldap_bind($this->conLDAP, $rdnLDAP, $passLDAP))){
+                // Odio tener que enmascarar los errores
+            } elseif ((@$this->bindLDAP = ldap_bind($this->conLDAP, $rdnLDAP, $passLDAP))){
                 // No entiendo porque mi necesidad de configurar acá el controLDAP::dn, si
                 // Ya esta configurado en las variables de sesión
                 $this->dn = $rdnLDAP;
