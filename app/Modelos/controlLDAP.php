@@ -171,7 +171,7 @@ class controlLDAP {
           if (ldap_modify($this->conLDAP, $this->dn, $valores)) {
               return true;
           } else {
-              throw new Exception("Error Manipulando datos: <b>".ldap_error($this->lcon)."</b>");
+              throw new Exception("Error Manipulando datos: <b>".ldap_error($this->conLDAP)."</b>");
           }
       }catch(Exception $e){
           $this->errorLDAP = $e->getMessage();	
@@ -181,10 +181,10 @@ class controlLDAP {
 
     function nuevaEntrada( $valores, $entry ) {
         try{
-            if (ldap_add($this->lcon, $entry, $valores)) {
+            if (ldap_add($this->conLDAP, $entry, $valores)) {
                 return true;
             } else {
-                throw new Exception("Error Manipulando datos: <b>".ldap_error($this->lcon)."</b>");
+                throw new Exception("Error Manipulando datos: <b>".ldap_error($this->conLDAP)."</b>");
             }
         }catch(Exception $e){
             $this->errorLDAP = $e->getMessage();
@@ -196,10 +196,10 @@ class controlLDAP {
         // En realidad, parece que esta función agrega un atributo del tipo 
         // "permito varios y no me ahuevo"
         try{
-            if (ldap_mod_add($this->lcon, $entry, $valores)) {
+            if (ldap_mod_add($this->conLDAP, $entry, $valores)) {
                 return true;
             } else {
-                throw new Exception("Error Manipulando datos: <b>".ldap_error($this->lcon)."</b>");
+                throw new Exception("Error Manipulando datos: <b>".ldap_error($this->conLDAP)."</b>");
             }
         }catch(Exception $e){
             $this->errorLDAP = $e->getMessage();
