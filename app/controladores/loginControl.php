@@ -154,8 +154,8 @@ class loginControl extends \clases\sesion{
         $db = $this->index->get('dbconexion');
         // Señores, he acá donde se inicia la puta sesión
         $sesion = new \DB\SQL\Session($db);
-        $this->index->set('SESSION.user', $this->usuario);
         $this->index->set('SESSION.dn', $login->getDN());
+        $this->index->set('SESSION.user', $this->usuario);
         $this->index->set('SESSION.pswd', $this->password);
 
         // Obtenemos los procedimientos de roles de la base de datos
@@ -165,6 +165,9 @@ class loginControl extends \clases\sesion{
         $this->index->set('SESSION.permisos', unserialize($roles[0]['permisos']));
         $this->index->set('SESSION.rol', $roles[0]['rol']);
         // No, ya no llenaremos acá las firmas. Es peligroso
+        // Pues lo seguiremos haciendo hasta hallar una forma mejor de hacerlo
+        $this->index->set('SESSION.firmaz', $roles[0]['firmaz']);
+        $this->index->set('SESSION.firmas', $roles[0]['firmas']);
         // Ha finalizado el procedimiento
     }
 
