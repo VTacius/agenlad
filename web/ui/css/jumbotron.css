@@ -1,39 +1,4 @@
-/**
-Ahora en Jumbotron iremos marcando lo que necesitemos aparte*/
-
-/* Move down content because we have a fixed navbar that is 50px tall */
-body {
-  padding-top: 50px;
-  padding-bottom: 20px;
-}
-
-.form-horizontal {
-  padding-top: 15px;
-}
-
-.invalid:first-child {
-  padding-left:22px;
-  line-height:24px;
-}
-
-.valid:first-child {
-  padding-left:22px;
-  line-height:24px;
-}
-
-.invalid {
-  background:url(/bootstrap/dist/ico/cross.png) no-repeat 0 50%;
-  padding-left:22px;
-  line-height:24px;
-  color:#ec3f41;
-}
-
-.valid {
-  background:url(/bootstrap/dist/ico/accept.png) no-repeat 0 50%;
-  padding-left:22px;
-  line-height:24px;
-  color:#3a7d34;
-}
+/** Autocompletado */
 
 .tt-dropdown-menu {
   background-color: #fff;
@@ -87,8 +52,10 @@ body {
 @media (min-width: 768px) {
   .dl-horizontal dt {
     width: 240px;
+    margin-bottom: 17px
   }
   .dl-horizontal dd {
     margin-left: 260px;
+    margin-bottom: 17px
   }
 }

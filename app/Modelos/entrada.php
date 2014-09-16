@@ -57,7 +57,7 @@ class entrada extends \Modelos\controlLDAP{
             $this->entrada = $this->getDatos($filtro, $this->atributos)[0];
             
             foreach ($this->atributos as $attr) {
-                $this->entrada[$attr] = isset($this->entrada[$attr])?$this->entrada[$attr]:"$attr: {empty}"; 
+                $this->entrada[$attr] = isset($this->entrada[$attr])?$this->entrada[$attr]:"{empty}"; 
             }
         }else{
             // Si alguien ya lleno el array, vea que tiene datos que pueda tener
