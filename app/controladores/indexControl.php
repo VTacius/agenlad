@@ -15,7 +15,7 @@ class indexControl extends \clases\sesion {
         // Consigue el objeto F3 en uso mediante el constructor de la clase padre
         parent::__construct();
         // Nombramos la página que hemos de producir
-        $this->pagina = "index";
+        $this->pagina = "main";
         // Objetos que hemos de usar
         $this->db = $this->index->get('dbconexion');
         $this->hashes = new \clases\cifrado();
