@@ -111,8 +111,8 @@ class loginControl extends \clases\sesion{
             // El usuario tiene un rol de administrador
             return $this->banderaAdmin($usuario, $password);
         }else{
-            // Vaya, no es un administrador, pero veamos 
-            $cmds = 'select rol, permisos from roles where user=:user';
+            // Vaya, no tiene un rol administrativos, pero siempre obtendremos los permisos por defecto para 'usuario'
+            $cmds = 'select rol, permisos from rol where rol=:user';
             $args = array('user'=>'usuario');
             $resultado = $base->exec($cmds, $args);
             return $resultado;

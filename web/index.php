@@ -93,11 +93,11 @@ $index->route('GET|POST @login_finalMensaje: /login/cambio/@mensaje',
 $index->route('GET|POST @login_mensaje: /login/@mensaje',
         'controladores\loginControl->display');
 //Rutas hacia main
-$index->route('GET|POST @main: /index', 
-        'controladores\indexControl->display');
 $index->route('GET|POST @main: /', 
         'controladores\indexControl->display');
-$index->route('GET|POST @cambiologin: /index/cambio',
+$index->route('GET|POST @main_index: /main', 
+        'controladores\indexControl->display');
+$index->route('GET|POST @cambiologin: /main/cambio',
         'controladores\indexControl->cambioCredenciales');
 //Rutas hacia técnico
 $index->route('GET|POST @tecnico: /mostrarpass', 
