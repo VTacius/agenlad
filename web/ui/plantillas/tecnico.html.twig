@@ -1,6 +1,8 @@
 {% extends "layout.html.twig" %}
 {% block titulo -%}Listado de usuarios{% endblock %}
-
+{% block css -%} 
+    <link href="{{ activos('css/jumbotron.css') }} " rel="stylesheet">
+{% endblock %}
 {# Configuramos las variables que la plantilla padre usa para formar el menu #}
 {% set menu = menu %}
 {% set pagina = pagina %}
@@ -27,12 +29,21 @@
         </div>
     </form>
     {% if datos %}
-        <h2 id="psswduser">{{datos.psswduser}}</h2>	
-        <h3 id="nameuser">{{datos.nameuser}}</h3>
-        <h3 id="localidad"><b>{{datos.oficina}}</b> en <b>{{datos.localidad}}</b></h3>
-        <h3 id="cuentastatus">{{datos.cuentastatus}}</h3>	
-        <h3 id="buzonstatus">{{datos.buzonstatus}}</h3>
-        <h3 id="grupouser">{{datos.grupouser}}</h3>
+        
+        <dl class="dl-horizontal">
+            <h2><dt>Contraseña</dt>
+                <dd id="psswduser">{{datos.psswduser}}</dd></h2>
+            <h3><dt>Nombre de usuario</dt>
+            <dd id="nameuser">{{datos.nameuser}}</dd>
+            <dt>Localidad</dt>
+            <dd><b>{{datos.oficina}}</b> en <b>{{datos.localidad}}</b></dd>
+            <dt>Estado de la Cuenta</dt>
+            <dd id="cuentastatus">{{datos.cuentastatus}}</dd>
+            <dt>Estado del Buzón</dt>
+            <dd id="buzonstatus">{{datos.buzonstatus}}</dd>
+            <dt>Grupo Principal </dt>
+            <dd id="grupouser">{{datos.grupouser}}</dd></h3>
+        </dl>
     {% endif %}
     {% if mensajeError %}
     <div class="col-lg-8 alert alert-error" id="advertencia">
