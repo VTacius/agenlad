@@ -7,21 +7,13 @@
 
 namespace Modelos;
 
-class mailbox extends \Modelos\controlLDAP {
-    /** @var array 
-     * Arreglo de los atributos del usuario. Recuerde que DN no se considera atributo
-     */
-    private $atributos = array('zimbraaccountstatus', 'zimbramailstatus');
-    /** @var string */
-    private $uid;
-    /** @var string block|enable */
-    private $zimbraAccountStatus;
-    /** @var string block|active */
-    private $zimbraMailStatus;
-    /** @var string */
-    private $entrada;
-
+class mailbox extends \Modelos\entrada {
     public function __construct($passLDAP) {
+        // Configuramos para usar \Modelos\entrada
+        $this->objeto='*';
+        $this->atributos = array('zimbraaccountstatus', 'zimbramailstatus');
+        
+        // Demás valores
         $server = "zserver";
         $puerto = "zpuerto";
         $base = "zbase";
@@ -35,14 +27,12 @@ class mailbox extends \Modelos\controlLDAP {
     }
 
     public function setUid($uid) {
-        $this->uid = $uid;
-        $filtro = "uid=$this->uid";
-        $this->entrada = $this->getDatos($filtro, $this->atributos)[0];
+        $this->configurarDatos('uid', $uid);
     }
 
         
     public function getZimbraAccountStatus() {
-        return isset($this->entrada['zimbraaccountstatus'])? $this->entrada['zimbraaccountstatus'] : '-' ;
+        return $this->entrada['zimbraaccountstatus'];
     }
 
     public function setZimbraAccountStatus($zimbraAccountStatus) {
@@ -50,7 +40,7 @@ class mailbox extends \Modelos\controlLDAP {
     }
     
     public function getZimbraMailStatus() {
-        return isset($this->entrada['zimbramailstatus'])? $this->entrada['zimbramailstatus'] : '-' ;
+        return $this->entrada['zimbramailstatus'];
     }
 
     public function setZimbraMailStatus($zimbraMailStatus) {
