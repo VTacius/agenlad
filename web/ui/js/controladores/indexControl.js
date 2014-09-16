@@ -75,7 +75,7 @@ var comprobarPassword = function(){
         $("#advertencia").text("Por favor, introduzca valores válidos");
         return false;
     }
-}
+};
 
 /**
  * Auxiliar de validar: ¿Cumple texto con regex? 
@@ -105,15 +105,20 @@ var procesarDatos = function () {
         url: '/main/cambio',
         data: {
             passchangeprima: $("#passchangeprima").val(),
-            passchangeconfirm: $("#passchangeconfirm").val(),
+            passchangeconfirm: $("#passchangeconfirm").val()
         },
         success: function(data){
             $("#msgadvertencia").show();
             $("#advertencia").text(data);
             $("#passchangeprima").prop('disabled', true);
             $("#passchangeconfirm").prop('disabled', true);
+            setTimeout(
+                function() 
+                {
+                    document.location.reload(true);
+                }, 4000);
         },
-        error: function(data){
+        error: function(){
             $("#msgadvertencia").show();
             $("#advertencia").text("El procedimiento ha fallado por alguna razón");
         }

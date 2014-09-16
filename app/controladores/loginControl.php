@@ -197,7 +197,7 @@ class loginControl extends \clases\sesion{
      * Auxiliar para cerrar y cerrarMensaje
      * Acciones para el cierre de sesión
      */
-    private function cerrarSesion(){
+    public function cerrarSesion(){
         $db = $this->index->get('dbconexion');
         new \DB\SQL\Session($db);
         $this->index->clear('SESSION');

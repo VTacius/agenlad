@@ -145,7 +145,10 @@ class indexControl extends \clases\sesion {
         $passchangeconfirm = $this->index->get('POST.passchangeconfirm');
         if ($passchangeconfirm == $passchangeprima){
             if ($this->complejidad($passchangeprima)) {
+                //
                 print $this->credenciales($rol, $usuario, $passchangeprima);
+                $cierre = new \controladores\loginControl();
+                $cierre->cerrarSesion();
             } else {
                 print("Las contraseña no tiene la complejidad necesaria");
             }
