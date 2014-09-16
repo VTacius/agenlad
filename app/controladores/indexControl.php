@@ -19,9 +19,7 @@ class indexControl extends \clases\sesion {
         // Objetos que hemos de usar
         $this->db = $this->index->get('dbconexion');
         $this->hashes = new \clases\cifrado();
-        $this->ldap = new \Modelos\controlLDAP($this->dn, $this->pswd);
-        
-        
+        $this->ldap = new \Modelos\controlLDAP($this->dn, $this->pswd);   
   }
     
     /**
@@ -34,7 +32,7 @@ class indexControl extends \clases\sesion {
         $credenciales['userPassword'] = $this->hashes->slappasswd($password);
         $credenciales['sambaNTPassword'] = $this->hashes->NTLMHash($password);
         $credenciales['sambaLMPassword'] = $this->hashes->LMhash($password);
-        return $this->ldap->modEntrada($credenciales);
+        return $this->ldap->modificarEntrada($credenciales);
     }
     
     /**
@@ -43,7 +41,11 @@ class indexControl extends \clases\sesion {
      * @param string $password
      */
     private function cambioPassword($password){
-        $this->cifrado($password);
+        if ($this->cifrado($password)) {
+            return "Contraseña cambiada con exito";
+        }else{
+            return ($this->ldap->mostrarERROR());
+        }
     }
     
     /**
@@ -74,8 +76,8 @@ class indexControl extends \clases\sesion {
 
 
     /**
-     * Bifurcación de credenciales para usuarios normales
-     * No sólo cambia la contraseña en LDAP, sino que configura sus firmaS en 
+     * Bifurcación de credenciales para usuarios con nivel administrativo
+     * No sólo cambia la contraseña en LDAP, sino que configura sus firmas en 
      * la base de datos
      * @param type $usuario
      * @param type $password
@@ -91,9 +93,10 @@ class indexControl extends \clases\sesion {
             $clavez = $this->hashes->encrypt($firmaz, $password);
             // Ahora, que actualice la firma en la base de datos con la nueva contraseña
             $this->configurarFirma($usuario, $claves, $clavez);
-            $this->index->reroute('@login_finalMensaje(@mensaje=La contraseña ha sido cambiada con éxito)');
+            // Devuelvo un mensaje para la vista
+            return "Contraseña cambiada con exito";
         }else{
-            $this->index->reroute('@login_mensaje(@mensaje=Ha ocurrido un problema al cambiar las contraseñas)');
+            return ($this->ldap->mostrarERROR());
         }
     }
 
@@ -104,25 +107,35 @@ class indexControl extends \clases\sesion {
      * @param string $rol
      * @param string $usuario
      * @param string $password
+     * @return string
      */
     protected function credenciales($rol, $usuario, $password){
         if ($rol=='usuario'){
-            $this->cambioPassword($password);
+            return $this->cambioPassword($password);
         }else{
-            $this->cambioPasswordAdmin($usuario, $password);
+            return $this->cambioPasswordAdmin($usuario, $password);
         }
     }
 
     /**
      * Auxiliar de cambioCredenciales
      * Verifica la complejidad de las contraseñas dadas
+     * La complejidad viene dada por:
+     *  Longitud de 8 caracteres
+     *  Un número 
+     *  Una letra mayúscula
+     *  Un caracter especial entre los siguientes . _ @ & + ! $ *
+     *  Basado en http://runnable.com/UmrnTejI6Q4_AAIM/how-to-validate-complex-passwords-using-regular-expressions-for-php-and-pcre
      * @param type $password
-     * @return type
+     * @return boolean
      */
     private function complejidad($password){
-      return preg_match_all('.{8}', $password);
+        return preg_match_all('$\S*(?=\S{8,})(?=\S*[A-Z])(?=\S*[\d])(?=\S*[*[\.|_|@|&|\+|!|\$|\*])\S*$', $password);
     }
 
+    /**
+     * Se encarga del cambio de contraseña y de la devolución de errores
+     */
     public function cambioCredenciales(){
         // Tenemos permiso para acceder a esta funcion contenida en este método
         $this->comprobar($this->pagina);
@@ -131,10 +144,13 @@ class indexControl extends \clases\sesion {
         $passchangeprima = $this->index->get('POST.passchangeprima');
         $passchangeconfirm = $this->index->get('POST.passchangeconfirm');
         if ($passchangeconfirm == $passchangeprima){
-            $this->credenciales($rol, $usuario, $passchangeprima);
+            if ($this->complejidad($passchangeprima)) {
+                print $this->credenciales($rol, $usuario, $passchangeprima);
+            } else {
+                print("Las contraseña no tiene la complejidad necesaria");
+            }
         }else{
-            $this->parametros['mensajeError'] = "Error: Las contraseñas no son iguales";
-            $this->display();
+            print("Las contraseña no coinciden");
         }
     }
     
@@ -142,7 +158,6 @@ class indexControl extends \clases\sesion {
      * Método por defecto
      */
     public function display() {
-//        $mensaje = isset($this->index->get('PARAMS.mensaje'))?$this->index->get('PARAMS.mensaje'):"";
         // Esto es importante en la vista
         $this->parametros['pagina'] = $this->pagina;
         // ¿Tenemos en serio acceso a esta página?

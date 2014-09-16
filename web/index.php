@@ -97,7 +97,7 @@ $index->route('GET|POST @main: /',
         'controladores\indexControl->display');
 $index->route('GET|POST @main_index: /main', 
         'controladores\indexControl->display');
-$index->route('GET|POST @cambiologin: /main/cambio',
+$index->route('POST @cambiologin: /main/cambio [ajax]',
         'controladores\indexControl->cambioCredenciales');
 //Rutas hacia técnico
 $index->route('GET|POST @tecnico: /mostrarpass', 

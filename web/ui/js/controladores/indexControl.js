@@ -38,13 +38,11 @@ $('#passchangeconfirm').focusin(function(){
     $("#msgadvertencia").hide();
 });
 
-
-
 $('#enviar').click(function(e){
     e.stopPropagation(); 
     e.preventDefault();
     if (comprobarPassword()){
-        console.log("Parece que si la lee acá, ahora es True");
+        procesarDatos();
     } else {
         console.log("Parece que si la lee acá, ahora es False");
     }
@@ -61,7 +59,6 @@ var comprobarPassword = function(){
     var password = $("#passchangeprima").val();
     var confirmacion = $("#passchangeconfirm").val();
     if ($.indexControl.validacion){
-        console.log("Ha pasado la primera comprobación");
         if (password === confirmacion){
             return true;
         }else if (password === "" || confirmacion=== ""){
@@ -96,6 +93,31 @@ var confirmar = function(texto, objeto, regex){
         $(objeto).removeClass('valid').addClass('invalid');
         return false;
     }
+};
+
+/**
+ * 
+ * @returns {undefined}
+ */
+var procesarDatos = function () {
+    $.ajax({ 
+        type: 'POST',
+        url: '/main/cambio',
+        data: {
+            passchangeprima: $("#passchangeprima").val(),
+            passchangeconfirm: $("#passchangeconfirm").val(),
+        },
+        success: function(data){
+            $("#msgadvertencia").show();
+            $("#advertencia").text(data);
+            $("#passchangeprima").prop('disabled', true);
+            $("#passchangeconfirm").prop('disabled', true);
+        },
+        error: function(data){
+            $("#msgadvertencia").show();
+            $("#advertencia").text("El procedimiento ha fallado por alguna razón");
+        }
+    });
 };
 
 /**

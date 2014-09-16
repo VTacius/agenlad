@@ -10,11 +10,11 @@ class controlLDAP {
     /** @var \Base */
     protected $index;
     // Configuración de parametros
-    private $server;
-    private $puerto;
-    private $base;
+    public $server;
+    public $puerto;
+    public $base;
     // El enlace estará a nivel de clase
-    protected $conLDAP;
+    private $conLDAP;
     //La conexión estará a nivel de clase, y no se piensa usar fuera de acá
     protected $bindLDAP;
     // Errores, si es que podemos enviar esto
@@ -63,12 +63,12 @@ class controlLDAP {
         // Empezamos la conexión
         $this->conLDAP = ldap_connect($this->server,  $this->puerto);
         ldap_set_option($this->conLDAP, LDAP_OPT_PROTOCOL_VERSION, 3);
-        ldap_set_option($this->conLDAP, LDAP_OPT_NETWORK_TIMEOUT, 1);
+        ldap_set_option($this->conLDAP, LDAP_OPT_NETWORK_TIMEOUT, 2);
         // Hacemos el enlace de una vez
         try{
             if (empty($rdnLDAP) | empty($passLDAP)) {
-                throw new Exception ("Error en la conexión: <b> Credenciales vacías</b>");
-                // Odio tener que enmascarar los errores
+                throw new Exception ("Credenciales vacías");
+                // Odio tener que enmascarar los errores de esta manera
             } elseif ((@$this->bindLDAP = ldap_bind($this->conLDAP, $rdnLDAP, $passLDAP))){
                 // No entiendo porque mi necesidad de configurar acá el controLDAP::dn, si
                 // Ya esta configurado en las variables de sesión
@@ -83,19 +83,22 @@ class controlLDAP {
         }
     }
 	
-  // Terminan métodos necesarios para establecer cualquier conexión 
+    /**
+     * Terminan métodos necesarios para establecer cualquier conexión 
+     */
 	
-  /**
-    Empiezan métodos auxiliares de primer nivel
-  */
-  
-  /**
-   * 
-   * @return errorLDAP
-   */
-  function mostrarERROR(){ 
-      return $this->errorLDAP;
-  }
+    /**
+     * Empiezan métodos auxiliares de primer nivel
+     */
+    
+    /**
+     * 
+     * @return errorLDAP
+     */
+    public function mostrarERROR(){ 
+        return $this->errorLDAP;
+    }
+    
     /**
      * Auxiliar de datos
      * Obtiene los atributos solicitados en el array $atributos si $entrada lo 
@@ -114,12 +117,12 @@ class controlLDAP {
         return $usuario;
     }
     
-  /**
-   * Hacemos una busqueda y obtenemos resultados en $this->datos
-   * @param string $filtro
-   * @param array $atributos
-   * @param int $size
-   */
+    /**
+     * Hacemos una busqueda y obtenemos resultados en $this->datos
+     * @param string $filtro
+     * @param array $atributos
+     * @param int $size
+     */
     public function getDatos($filtro, $atributos, $size=499){
         try {
             // Es necesarios silenciar el error (Sobre Timelimit) para que FatFree no lo devuelva 
@@ -166,25 +169,25 @@ class controlLDAP {
      * @return boolean
      * @throws Exception
      */
-    public function modEntrada ($valores) {
-      try{
-          if (ldap_modify($this->conLDAP, $this->dn, $valores)) {
-              return true;
-          } else {
-              throw new Exception("Error Manipulando datos: <b>".ldap_error($this->conLDAP)."</b>");
-          }
-      }catch(Exception $e){
-          $this->errorLDAP = $e->getMessage();	
-          return false;
-      }
-  }
+    public function modificarEntrada ($valores) {
+        try{
+            if (@ldap_modify($this->conLDAP, $this->dn, $valores)) {
+                return true;
+            } else {
+                throw new Exception(ldap_error($this->conLDAP));
+            }
+        }catch(Exception $e){
+            $this->errorLDAP = $e->getMessage();	
+            return false;
+        }
+    }
 
     function nuevaEntrada( $valores, $entry ) {
         try{
-            if (ldap_add($this->conLDAP, $entry, $valores)) {
+            if (@ldap_add($this->conLDAP, $entry, $valores)) {
                 return true;
             } else {
-                throw new Exception("Error Manipulando datos: <b>".ldap_error($this->conLDAP)."</b>");
+                throw new Exception(ldap_error($this->conLDAP));
             }
         }catch(Exception $e){
             $this->errorLDAP = $e->getMessage();
