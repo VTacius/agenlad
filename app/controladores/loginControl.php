@@ -60,10 +60,15 @@ class loginControl extends \clases\sesion{
         $base->exec($cmds, $args);
     }
     
+    /**
+     * Auxiliar de banderaAdmin.
+     * Cuando un usuario con nivel administrativo no se ha logueado antes, debe cifrarse las contraseñas que va a usar
+     * @param string $resultado
+     * @param string $password
+     * @param string $usuario
+     */
     private function cifrarEnPrimerLogueo($resultado, $password, $usuario){
             $base = $this->conectarDB();
-            //El usuario es un administrador que no se ha logueado antes
-            // Es necesarios cifrar las contraseñas en la base
             $hashito = new \clases\cifrado();
             $firmas = $resultado[0]['firmas'];
             $firmaz = $resultado[0]['firmaz'];
@@ -132,7 +137,7 @@ class loginControl extends \clases\sesion{
     }
 
     /**
-     * Si el usuario tiene más de tres intentos, lo redirige con mensaje "Su usuario esta bloqueado"
+     * Si el usuario tiene más de 4 intentos intentos, lo redirige con mensaje "Su usuario esta bloqueado"
      * @param string $usuario
      */
     protected function comprobarBloqueo($usuario){
@@ -147,8 +152,12 @@ class loginControl extends \clases\sesion{
         }
     }
     
+    /**
+     * Auxiliar de autenticar
+     * Iniciamos la sesion con datos a guardar en la base de datos
+     * @param \clases\authentication $login
+     */
     protected function sesionar($login){
-        // Iniciamos la sesion con datos a guardar en la base de datos
         $db = $this->index->get('dbconexion');
         // Señores, he acá donde se inicia la puta sesión
         $sesion = new \DB\SQL\Session($db);
@@ -162,11 +171,9 @@ class loginControl extends \clases\sesion{
         // Llenamos los siguiente datos en base a lo obtenido en roles
         $this->index->set('SESSION.permisos', unserialize($roles[0]['permisos']));
         $this->index->set('SESSION.rol', $roles[0]['rol']);
-        // No, ya no llenaremos acá las firmas. Es peligroso
-        // Pues lo seguiremos haciendo hasta hallar una forma mejor de hacerlo
+        // TODO: Recuerda que estas no deberían estar acá
         $this->index->set('SESSION.firmaz', $roles[0]['firmaz']);
         $this->index->set('SESSION.firmas', $roles[0]['firmas']);
-        // Ha finalizado el procedimiento
     }
 
 
