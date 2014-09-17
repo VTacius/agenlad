@@ -144,8 +144,6 @@ class loginControl extends \clases\sesion{
         $resultado = $base->exec($cmds, $pams)[0]['intentos'];
         if ($resultado == 4 ){
             $this->index->reroute('@login_mensaje(@mensaje=Su usuario esta bloqueado)');
-        }else{
-            $this->intentoUsuario($usuario);
         }
     }
     
