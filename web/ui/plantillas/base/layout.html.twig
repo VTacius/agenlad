@@ -14,26 +14,26 @@
   </head>
   <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Directorio MINSAL</a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            {% block menu %} 
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Directorio MINSAL</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                {% block menu %} 
                 {% include 'base/menu.html.twig' with {'menu': menu, 'pagina': pagina } %}
-            {% endblock %}
-          </ul>
-          <ul class="nav navbar-right">
-            <li><a href="/login/final">Cerrar Sesión</a></li>
-          </ul>
-        </div><!--/.navbar-collapse -->
-      </div>
+                {% endblock %}
+                </ul>
+                <ul class="nav navbar-right">
+                <li><a href="/login/final">Cerrar Sesión</a></li>
+                </ul>
+            </div><!--/.navbar-collapse -->
+        </div>
     </div>
     <div class="container">
         <div class="row">
@@ -48,10 +48,8 @@
                     <center><h3>{{ errorLDAP.titulo }}: <b>{{ errorLDAP.mensaje }}</b></h3></center>
                 {% endif %}
             </div>
-{#        </div>
-        <div class="row">#}
-            <hr>
             <footer class="span12">
+            <hr>
                 <p class="text-center text-info">DTIC - Unidad de Redes y Seguridad Informática 2014  </p>
             </footer>
         </div>

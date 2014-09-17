@@ -9,38 +9,35 @@
 {% set pagina = pagina %}
 
 {% block lateral %}
+    <h3>Creación de usuarios</h3>
+    <p>Directorio Institucional<br>
+    Bienvenido <b>{{titulo}} {{usuario}}</b></p>
 
-  <div class="span12">
-    <h3>Directorio Minsal</h3>
-    <p>El siguiente es un directorio de contactos con todos los usuarios del MINSAL<br>
-    Se espera que haga un uso correcto del mismo, usuario <b>{{usuario}}</b></p>
-</div>
-
-<div class="span12">
-    <form class="form-horizontal" role="form" method="POST" id="formbusqueda">
-        <div class="form-group">
-            <div class="col-lg-12">
-                <label for="uid" class="col-md-12 text-left">Búsqueda por Nombre o usuario</label>
-                <input type="text" class="form-control input-x" id="uid" name="uid" placeholder="Nombre o usuario a buscar" autofocus autocomplete="off">
+    <div class="span12">
+        <form class="form-horizontal" role="form" method="POST" id="formbusqueda">
+            <div class="form-group">
+                <div class="col-lg-12">
+                    <label for="uid" class="col-md-12 text-left">Búsqueda por Nombre o usuario</label>
+                    <input type="text" class="form-control input-x" id="uid" name="uid" placeholder="Nombre o usuario a buscar" autofocus autocomplete="off">
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="o" class="col-md-12 text-left">Establecimiento</label>
-            <div class="col-lg-12">
-                <input type="text" class="form-control input-x" id="o" name="o" placeholder="Establecimiento" autocomplete="off">
+            <div class="form-group">
+                <label for="o" class="col-md-12 text-left">Establecimiento</label>
+                <div class="col-lg-12">
+                    <input type="text" class="form-control input-x" id="o" name="o" placeholder="Establecimiento" autocomplete="off">
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label for="ou" class="col-lg-12 text-left">Oficina</label>
-            <div class="col-lg-12">
-                <input type="text" class="form-control input-x" id="ou" name="ou" placeholder="Oficina" autocomplete="off">
+            <div class="form-group">
+                <label for="ou" class="col-lg-12 text-left">Oficina</label>
+                <div class="col-lg-12">
+                    <input type="text" class="form-control input-x" id="ou" name="ou" placeholder="Oficina" autocomplete="off">
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label id="resultado" class="col-lg-12 text-left"></label>
-        </div>
-    </form>
-</div>
+            <div class="form-group">
+                <label id="resultado" class="col-lg-12 text-left"></label>
+            </div>
+        </form>
+    </div>
 {% endblock %}
 
 {% block contenido -%}

@@ -88,16 +88,12 @@ class loginControl extends \clases\sesion{
     private function banderaAdmin($usuario, $password){
         $base = $this->conectarDB();
 //        // Operamos
-        $cmds = 'select bandera, firmas, firmaz from user where user=:user and bandera=1';
+        $cmds = 'select titulo, user.rol, bandera, permisos, firmas, firmaz from user join rol on user.rol=rol.rol where user=:user;';
         $args = array('user'=>$usuario);
         $resultado = $base->exec($cmds, $args);
-        if ($base->count()>0){
+        if ($resultado[0]['bandera']=="1"){
             $this->cifrarEnPrimerLogueo($resultado, $password, $usuario);
         }
-        // Al final, siempre hemos de retornar esto
-        $cmds = 'select titulo as rol, permisos, firmas, firmaz from user join rol on user.rol=rol.rol where user=:user';
-        $args = array('user'=>$usuario);
-        $resultado = $base->exec($cmds, $args);
         return $resultado;
     }
     
@@ -171,6 +167,7 @@ class loginControl extends \clases\sesion{
         // Llenamos los siguiente datos en base a lo obtenido en roles
         $this->index->set('SESSION.permisos', unserialize($roles[0]['permisos']));
         $this->index->set('SESSION.rol', $roles[0]['rol']);
+        $this->index->set('SESSION.titulo', $roles[0]['titulo']);
         // TODO: Recuerda que estas no deberían estar acá
         $this->index->set('SESSION.firmaz', $roles[0]['firmaz']);
         $this->index->set('SESSION.firmas', $roles[0]['firmas']);

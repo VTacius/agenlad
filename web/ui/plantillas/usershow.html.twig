@@ -12,11 +12,9 @@
 {% set pagina = pagina %}
 
 {% block lateral %}
-<div class="span12">
-    <h2>Directorio Minsal</h2>
+    <h3>Revisión de usuarios</h3>
     <p>Utilidades para primera linea de apoyo<br>
-    Bienvenido <b>{{rol}} {{usuario}}</b></p>
-</div>
+    Bienvenido <b>{{titulo}} {{usuario}}</b></p>
 {% endblock %}
 
 {% block contenido -%}
@@ -35,7 +33,7 @@
         <dl class="dl-horizontal" id="respuesta">
             <h1><dt>Contraseña:</dt>
                 <dd><b class="contraseniaTecnico" id="psswduser">{{datos.psswduser}}</b>
-                    {% if rol=="administrador"%}
+                    {% if rol=="admon"%}
                         <b class="enlaceTecnico"><a id="accionTecnico" href="/">Modificar Usuario</a></b>
                     {% endif %}
                 </dd></h1>

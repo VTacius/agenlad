@@ -34,12 +34,14 @@ abstract class sesion {
         $this->pswd = $this->index->get('SESSION.pswd');
         // Solo los necesitamos para crear inicializar el array parametros
         $rol = $this->index->get('SESSION.rol');
+        $titulo = $this->index->get('SESSION.titulo');
         $user = $this->index->get('SESSION.user');
         $permiso = $this->index->get('SESSION.permisos');
         $this->parametros = array(
             'rol' => $rol,
             'menu' => $permiso,
-            'usuario' =>  $user,
+            'titulo'=> $titulo,
+            'usuario' =>  $user
         );
     }
     
