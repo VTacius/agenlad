@@ -102,7 +102,7 @@ $index->route('POST @cambiologin: /main/cambio [ajax]',
 //Rutas hacia técnico
 $index->route('GET|POST @tecnico: /mostrarpass', 
         'controladores\tecnicoControl->display');
-$index->route('GET|POST @tecnicoDatos: /mostrarpass/datos', 
+$index->route('GET|POST @tecnicoDatos: /mostrarpass/datos [ajax]', 
         'controladores\tecnicoControl->datos');
 // Estas son algunas rutas de pruebas, que espero que no sean muchas
 $index->route('GET|POST @prueba_user: /pruebas', 

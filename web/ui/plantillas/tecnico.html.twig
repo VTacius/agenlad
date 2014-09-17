@@ -3,13 +3,15 @@
 {% block css -%} 
     <link href="{{ activos('css/jumbotron.css') }} " rel="stylesheet">
 {% endblock %}
+{% block javascript %} 
+  <script src="{{ activos('js/controladores/tecnicoControl.js') }}" type="text/javascript"></script>
+{% endblock %}
 {# Configuramos las variables que la plantilla padre usa para formar el menu #}
 {% set menu = menu %}
 {% set pagina = pagina %}
 
 {% block lateral %}
-
-  <div class="span12">
+<div class="span12">
     <h2>Directorio Minsal</h2>
     <p>Utilidades para primera linea de apoyo<br>
     Bienvenido <b>{{rol}} {{usuario}}</b></p>
@@ -28,15 +30,14 @@
             <button class="btn btn-lg btn-primary" id="enviar" tabindex="1" role="button">Contraseña!</button> 
         </div>
     </form>
-    {% if datos %}
-        
-        <dl class="dl-horizontal">
+{#    {% if datos %}#}
+        <dl class="dl-horizontal" id="respuesta">
             <h1><dt>Contraseña</dt>
                 <dd id="psswduser">{{datos.psswduser}}</dd></h1>
             <h4><dt>Nombre de usuario</dt>
             <dd id="nameuser">{{datos.nameuser}}</dd>
             <dt>Localidad</dt>
-            <dd><b>{{datos.oficina}}</b> en <b>{{datos.localidad}}</b></dd>
+            <dd><b id="oficina">{{datos.oficina}}</b> en <b id="localidad">{{datos.localidad}}</b></dd>
             <dt>Estado de la Cuenta</dt>
             <dd id="cuentastatus">{{datos.cuentastatus}}</dd>
             <dt>Estado del Buzón</dt>
@@ -44,7 +45,7 @@
             <dt>Grupo Principal </dt>
             <dd id="grupouser">{{datos.grupouser}}</dd></h4>
         </dl>
-    {% endif %}
+{#    {% endif %}#}
     {% if mensajeError %}
     <div class="col-lg-8 alert alert-error" id="advertencia">
         <ul class="list-unstyled">

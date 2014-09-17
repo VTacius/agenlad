@@ -48,9 +48,10 @@ class tecnicoControl extends \clases\sesion {
             'cuentastatus'=> $mailbox->getZimbraAccountStatus(),
             'buzonstatus'=> $mailbox->getZimbraMailStatus()
         );
-        $this->parametros['datos'] = $datos;
-        
-        echo $this->twig->render('tecnico.html.twig', $this->parametros);
+        print json_encode($datos);
+//        $this->parametros['datos'] = $datos;
+//        
+//        echo $this->twig->render('tecnico.html.twig', $this->parametros);
     }
     
     /**

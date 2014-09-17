@@ -113,8 +113,7 @@ var procesarDatos = function () {
             $("#passchangeprima").prop('disabled', true);
             $("#passchangeconfirm").prop('disabled', true);
             setTimeout(
-                function() 
-                {
+                function() {
                     document.location.reload(true);
                 }, 4000);
         },
