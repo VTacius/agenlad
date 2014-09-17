@@ -5,12 +5,12 @@ namespace controladores;
  *
  * @author alortiz
  */
-class tecnicoControl extends \clases\sesion {
+class usershowControl extends \clases\sesion {
   
     public function __construct() {
         parent::__construct();
         // Nombramos la página que hemos de producir
-        $this->pagina = "mostrarpass";
+        $this->pagina = "usershow";
     }
     
     
@@ -64,6 +64,6 @@ class tecnicoControl extends \clases\sesion {
         $this->comprobar($this->pagina); 
         
         // Obtenemos los datos que hemos de enviar a la vista
-        echo $this->twig->render('tecnico.html.twig', $this->parametros); 
+        echo $this->twig->render('usershow.html.twig', $this->parametros); 
     }
 }

@@ -6,7 +6,7 @@ namespace controladores;
  * @author alortiz
  */
 
-class indexControl extends \clases\sesion {
+class mainControl extends \clases\sesion {
     private $hashes;
     private $ldap;
     private $db;
@@ -168,7 +168,7 @@ class indexControl extends \clases\sesion {
         $this->comprobar($this->pagina); 
         
 //        $this->parametros['datos'] = $mensaje;
-        echo $this->twig->render('index.html.twig', $this->parametros);       
+        echo $this->twig->render('main.html.twig', $this->parametros);       
     }
 }
 

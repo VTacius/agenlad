@@ -2,10 +2,10 @@
 {% block titulo -%}Listado de usuarios{% endblock %}
 {% block css -%} 
     <link href="{{ activos('css/jumbotron.css') }} " rel="stylesheet">
-    <link href="{{ activos('css/tecnico.css') }} " rel="stylesheet">
+    <link href="{{ activos('css/usershow.css') }} " rel="stylesheet">
 {% endblock %}
 {% block javascript %} 
-  <script src="{{ activos('js/controladores/tecnicoControl.js') }}" type="text/javascript"></script>
+  <script src="{{ activos('js/controladores/usershowControl.js') }}" type="text/javascript"></script>
 {% endblock %}
 {# Configuramos las variables que la plantilla padre usa para formar el menu #}
 {% set menu = menu %}
@@ -36,8 +36,8 @@
             <h1><dt>Contraseña:</dt>
                 <dd><b class="contraseniaTecnico" id="psswduser">{{datos.psswduser}}</b>
                     {% if rol=="administrador"%}
-                    <b class="enlaceTecnico"><a id="accionTecnico" href="/">Modificar Usuario</a></b>
-                    
+                        <b class="enlaceTecnico"><a id="accionTecnico" href="/">Modificar Usuario</a></b>
+                    {% endif %}
                 </dd></h1>
             <h4><dt>Nombre de usuario:</dt>
             <dd id="nameuser">{{datos.nameuser}}</dd>

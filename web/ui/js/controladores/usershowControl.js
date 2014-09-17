@@ -41,7 +41,7 @@ var mostrarDatos = function(data){
 var datos = function(){
     $.ajax({
         type: 'POST',
-        url: '/mostrarpass/datos',
+        url: '/usershow/datos',
         dataType: 'json',
         data: {
             usuarioCliente: $("#usuarioCliente").val()

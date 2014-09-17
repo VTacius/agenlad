@@ -1,0 +1,22 @@
+{% extends "layout.html.twig" %}
+{% block titulo -%}Listado de usuarios{% endblock %}
+{% block javascript -%}
+    <script src="{{ activos('js/controladores/directorioControl.js') }}" type="text/javascript"></script>
+{% endblock %}
+
+{# Configuramos las variables que la plantilla padre usa para formar el menu #}
+{% set menu = menu %}
+{% set pagina = pagina %}
+
+{% block lateral %}
+    <div class="span12">
+        <h3>Modificación de Usuarios</h3>
+        <p>El siguiente es un directorio de contactos con todos los usuarios del MINSAL<br>
+        Se espera que haga un uso correcto del mismo, usuario <b>{{usuario}}</b></p>
+    </div>
+{% endblock %}
+
+{% block contenido -%}
+    {{ parent() }}
+    <h1>Aquí modificamos usuarios</h1>
+{% endblock %}

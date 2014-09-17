@@ -94,16 +94,16 @@ $index->route('GET|POST @login_mensaje: /login/@mensaje',
         'controladores\loginControl->display');
 //Rutas hacia main
 $index->route('GET|POST @main: /', 
-        'controladores\indexControl->display');
+        'controladores\mainControl->display');
 $index->route('GET|POST @main_index: /main', 
-        'controladores\indexControl->display');
+        'controladores\mainControl->display');
 $index->route('POST @cambiologin: /main/cambio [ajax]',
-        'controladores\indexControl->cambioCredenciales');
+        'controladores\mainControl->cambioCredenciales');
 //Rutas hacia técnico
-$index->route('GET|POST @tecnico: /mostrarpass', 
-        'controladores\tecnicoControl->display');
-$index->route('GET|POST @tecnicoDatos: /mostrarpass/datos [ajax]', 
-        'controladores\tecnicoControl->datos');
+$index->route('GET|POST @tecnico: /usershow', 
+        'controladores\usershowControl->display');
+$index->route('GET|POST @tecnicoDatos: /usershow/datos [ajax]', 
+        'controladores\usershowControl->datos');
 // Estas son algunas rutas de pruebas, que espero que no sean muchas
 $index->route('GET|POST @prueba_user: /pruebas', 
         'controladores\pruebaControl->display');
