@@ -2,6 +2,7 @@
 {% block titulo -%}Listado de usuarios{% endblock %}
 {% block css -%} 
     <link href="{{ activos('css/jumbotron.css') }} " rel="stylesheet">
+    <link href="{{ activos('css/tecnico.css') }} " rel="stylesheet">
 {% endblock %}
 {% block javascript %} 
   <script src="{{ activos('js/controladores/tecnicoControl.js') }}" type="text/javascript"></script>
@@ -32,17 +33,21 @@
     </form>
 {#    {% if datos %}#}
         <dl class="dl-horizontal" id="respuesta">
-            <h1><dt>Contraseña</dt>
-                <dd id="psswduser">{{datos.psswduser}}</dd></h1>
-            <h4><dt>Nombre de usuario</dt>
+            <h1><dt>Contraseña:</dt>
+                <dd><b class="contraseniaTecnico" id="psswduser">{{datos.psswduser}}</b>
+                    {% if rol=="administrador"%}
+                    <b class="enlaceTecnico"><a id="accionTecnico" href="/">Modificar Usuario</a></b>
+                    
+                </dd></h1>
+            <h4><dt>Nombre de usuario:</dt>
             <dd id="nameuser">{{datos.nameuser}}</dd>
-            <dt>Localidad</dt>
+            <dt>Localidad:</dt>
             <dd><b id="oficina">{{datos.oficina}}</b> en <b id="localidad">{{datos.localidad}}</b></dd>
-            <dt>Estado de la Cuenta</dt>
+            <dt>Estado de la Cuenta:</dt>
             <dd id="cuentastatus">{{datos.cuentastatus}}</dd>
-            <dt>Estado del Buzón</dt>
+            <dt>Estado del Buzón:</dt>
             <dd id="buzonstatus">{{datos.buzonstatus}}</dd>
-            <dt>Grupo Principal </dt>
+            <dt>Grupo Principal:</dt>
             <dd id="grupouser">{{datos.grupouser}}</dd></h4>
         </dl>
 {#    {% endif %}#}
