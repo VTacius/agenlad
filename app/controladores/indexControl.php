@@ -27,7 +27,7 @@ class indexControl extends \clases\sesion {
      * Cambiar las contraseñas en el directorio LDAP
      * @param string $password
      */
-    private function cifrado($password){
+    private function changeLdap($password){
         $credenciales = array();
         $credenciales['userPassword'] = $this->hashes->slappasswd($password);
         $credenciales['sambaNTPassword'] = $this->hashes->NTLMHash($password);
@@ -41,7 +41,7 @@ class indexControl extends \clases\sesion {
      * @param string $password
      */
     private function cambioPassword($password){
-        if ($this->cifrado($password)) {
+        if ($this->changeLdap($password)) {
             return "Contraseña cambiada con exito";
         }else{
             return ($this->ldap->mostrarERROR());
@@ -55,7 +55,7 @@ class indexControl extends \clases\sesion {
      * @return array
      */
     private function obtenerFirma($usuario){
-        $cmds = 'select firmas, firmaz from roles where user=:user';
+        $cmds = 'select firmas, firmaz from user where user=:user';
         $args = array('user'=>$usuario);
         $resultado = $this->db->exec($cmds, $args);
         return $resultado;
@@ -69,7 +69,7 @@ class indexControl extends \clases\sesion {
      * @param string $clavez
      */
     private function configurarFirma($usuario, $claves, $clavez){
-        $cmds = "UPDATE roles SET firmas=:firmas, firmaz=:firmaz where user=:user";
+        $cmds = "UPDATE user SET firmas=:firmas, firmaz=:firmaz where user=:user";
         $args = array('firmas'=>$claves,'firmaz'=>$clavez, 'user'=>$usuario);
         $this->db->exec($cmds, $args);
     }
@@ -83,7 +83,7 @@ class indexControl extends \clases\sesion {
      * @param type $password
      */
     private function cambioPasswordAdmin($usuario, $password){
-        if(($this->cifrado($password))){
+        if(($this->changeLdap($password))){
             $input = $this->obtenerFirma($usuario);
             // Desciframos las firmas con la contraseña actual
             $firmas = $this->hashes->descifrada($input[0]['firmas'], $this->pswd);
@@ -139,14 +139,15 @@ class indexControl extends \clases\sesion {
     public function cambioCredenciales(){
         // Tenemos permiso para acceder a esta funcion contenida en este método
         $this->comprobar($this->pagina);
+        // ¿Que es lo que tenemos que hacer?
         $rol = $this->index->get('SESSION.rol');
         $usuario = $this->index->get('SESSION.user');
         $passchangeprima = $this->index->get('POST.passchangeprima');
         $passchangeconfirm = $this->index->get('POST.passchangeconfirm');
         if ($passchangeconfirm == $passchangeprima){
             if ($this->complejidad($passchangeprima)) {
-                //
                 print $this->credenciales($rol, $usuario, $passchangeprima);
+                //Me encanta rehusar código de esta forma. Recuerda no hacer la redirección desde acá
                 $cierre = new \controladores\loginControl();
                 $cierre->cerrarSesion();
             } else {
