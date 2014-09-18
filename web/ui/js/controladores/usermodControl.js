@@ -1,26 +1,13 @@
 $('.btn-toggle').click(function() {
-    $(this).find('.btn').toggleClass('active');  
-    
-    if ($(this).find('.btn-primary').size()>0) {
-    	$(this).find('.btn').toggleClass('btn-primary');
-    }
-    if ($(this).find('.btn-danger').size()>0) {
-    	$(this).find('.btn').toggleClass('btn-danger');
-    }
-    if ($(this).find('.btn-success').size()>0) {
-    	$(this).find('.btn').toggleClass('btn-success');
-    }
-    if ($(this).find('.btn-info').size()>0) {
-    	$(this).find('.btn').toggleClass('btn-info');
-    }
-    
-    $(this).find('.btn').toggleClass('btn-default');
-       
+    $(this).children('.btn').toggleClass('active');  
+    $(this).children('.btn').toggleClass('btn-primary');
 });
 
-$('form').submit(function(){
-	alert($(this["options"]).val());
-    return false;
+$("#enviar").click(function(e){
+    console.log($("#buzonstatusBtn").children(".active").text());
+    console.log($("#cuentastatusBtn").children(".active").text());
+//    e.stopPropagation(); 
+//    e.preventDefault();
 });
 
 

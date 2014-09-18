@@ -57,7 +57,7 @@ $function = new Twig_SimpleFunction('activos', function ($activos) {
     return '/ui/' . $activos;
 });
 $twig->addFunction($function);
-
+$twig->addExtension(new Twig_Extension_Debug());
 
 /**
  * Veamos que tal le va con una conexión a nivel de aplicación
@@ -107,8 +107,10 @@ $index->route('GET|POST @tecnicoDatos: /usershow/datos [ajax]',
 //Rutas hacia usermod
 $index->route('GET|POST @usermod: /usermod', 
         'controladores\usermodControl->display');
-$index->route('GET|POST @usermod: /usermod/@usuario', 
-        'controladores\usermodControl->usuario');
+$index->route('GET|POST @usermod_modificar: /usermod/envio', 
+        'controladores\usermodControl->modificar');
+$index->route('GET|POST @usermod_modificar: /usermod/envio/@usuarioModificar', 
+        'controladores\usermodControl->modificar');
 //Rutas hacia useradd
 $index->route('GET|POST @useradd: /useradd', 
         'controladores\useraddControl->display');

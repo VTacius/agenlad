@@ -65,9 +65,34 @@ class objectosLdap extends \Modelos\controlLDAP{
         }
     }
     
+    /**
+     * Obtiene todas las entradas del árbol LDAP disponibles
+     * Es posible pasar un array con los attributos que se necesitan 
+     * Recuerde que dn no se considera atributo
+     * @param array $attr
+     * @return array
+     */
     public function getAll( $attr = false ){
+        $this->datos = array();
         $atributes = $attr === false ? $this->atributos : $attr;
         $filtro = "(objectClass=$this->objeto)";
         return $this->entrada = $this->getDatos($filtro, $atributes);
+    }
+    
+    /**
+     * Realiza la búsqueda en base a un arreglo hash pasado como parametro
+     * @param array $search
+     * @return array
+     */
+    public function search( $search){
+        $this->datos = array();
+        $atributes = array_keys($search);
+        $filtro = "(&(objectClass=$this->objeto)";
+        foreach($search as $indice => $valor){
+            $filtro .= "($indice=$valor)";
+        }
+        $filtro .= ")";
+        return $this->entrada = $this->getDatos($filtro, $atributes);
+        
     }
 }

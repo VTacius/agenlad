@@ -7,6 +7,7 @@ namespace controladores;
  * @author alortiz
  */
 class pruebaControl extends \clases\sesion{
+    
     protected function mostrarHtml($mensaje){
         if (is_array($mensaje)) {
             print_r($mensaje);
@@ -44,14 +45,32 @@ class pruebaControl extends \clases\sesion{
 //    }
     
     public function display() {
-        $cambio = new \Modelos\controlLDAP('uid=cpena,ou=Users,dc=hacienda,dc=gob,dc=sv','cpena');
-        print "<br><br><br><br>";
-        print $cambio->mostrarERROR();
-        print "<br><br><br><br>";
-        $valores = array('displayName'=>'Carolina Pena de Guevara');
-        $cambio->modificarEntrada($valores);
-        print "<br><br><br><br>";
-        print $cambio->mostrarERROR();
-        print "<br><br><br><br>";
+        $grupo = new \Modelos\userPosix('uid=alortiz,ou=Users,dc=hacienda,dc=gob,dc=sv','Figaro.12');
+        
+        $grupos = $grupo->getAll(array('cn','gidNumber'));
+        foreach ($grupos as $value) {
+            print_r($value);
+            print "<br>";
+                
+        }
+        
+        $filtro = Array ( 'cn'=>'Alexander Ortiz', 'gidNumber' => 1009 );
+        print "<br>" ;
+        $busqueda = $grupo->search($filtro);
+        foreach ($busqueda as $value) {
+            print_r($value);
+            print "<br><br>";        
+        }
+        
+        $filtro = Array ( 'cn'=>'*', 'gidNumber' => 1009 );
+        print "<br>" ;
+        $busqueda = $grupo->search($filtro);
+        foreach ($busqueda as $value) {
+            print_r($value);
+            print "<br><br>";        
+        }
+        
+        
+        
     }
 }
