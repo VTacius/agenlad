@@ -29,26 +29,31 @@
             <button class="btn btn-lg btn-primary" id="enviar" tabindex="1" role="button">Contraseña!</button> 
         </div>
     </form>
-{#    {% if datos %}#}
-        <dl class="dl-horizontal" id="respuesta">
-            <h1><dt>Contraseña:</dt>
-                <dd><b class="contraseniaTecnico" id="psswduser">{{datos.psswduser}}</b>
-                    {% if rol=="admon"%}
-                        <b class="enlaceTecnico"><a id="accionTecnico" href="/">Modificar Usuario</a></b>
-                    {% endif %}
-                </dd></h1>
-            <h4><dt>Nombre de usuario:</dt>
-            <dd id="nameuser">{{datos.nameuser}}</dd>
-            <dt>Localidad:</dt>
-            <dd><b id="oficina">{{datos.oficina}}</b> en <b id="localidad">{{datos.localidad}}</b></dd>
-            <dt>Estado de la Cuenta:</dt>
-            <dd id="cuentastatus">{{datos.cuentastatus}}</dd>
-            <dt>Estado del Buzón:</dt>
-            <dd id="buzonstatus">{{datos.buzonstatus}}</dd>
-            <dt>Grupo Principal:</dt>
-            <dd id="grupouser">{{datos.grupouser}}</dd></h4>
-        </dl>
-{#    {% endif %}#}
+
+    <dl class="dl-horizontal" id="respuesta">
+        <h2><dt>Contraseña:</dt>
+            <dd><b class="contraseniaTecnico" id="psswduser">{{datos.psswduser}}</b>
+                {% if rol=="admon"%}
+                    <a class="enlaceTecnico" id="usermodTecnico" href="/usermod">Modificar Usuario</a>
+                {% endif %}
+            </dd></h2>
+        <h4><dt>Nombre de usuario:</dt>
+        <dd id="nameuser">{{datos.nameuser}}</dd>
+        <dt>Localidad:</dt>
+        <dd><b id="oficina">{{datos.oficina}}</b> en <b id="localidad">{{datos.localidad}}</b></dd>
+        <dt>Estado de la Cuenta:</dt>
+        <dd id="cuentastatus">{{datos.cuentastatus}}</dd>
+        <dt>Estado del Buzón:</dt>
+        <dd id="buzonstatus">{{datos.buzonstatus}}</dd>
+        <dt>Grupo Principal:</dt>
+        <dd id="grupouser">{{datos.grupouser}}</dd></h4>
+    </dl>
+    {% if rol=="admon"%}
+        <div class="form-group text-center">
+            <a class="useraddTecnico" id="useraddTecnico" href="/useradd">¿Desea agregar al usuario?</a>
+        </div>
+    {% endif %}
+    
     {% if mensajeError %}
     <div class="col-lg-8 alert alert-error" id="advertencia">
         <ul class="list-unstyled">

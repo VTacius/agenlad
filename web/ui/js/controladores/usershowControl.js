@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    toggleUseradd(false);
     $("#respuesta").hide();
 });
 
@@ -15,7 +16,23 @@ function isEmpty(obj) {
     if (obj instanceof Date && isNaN(Number(obj))) return true;
     return false;
 }
-        
+
+/**
+ * Cambia #respuesta si que existe, es decir, si fue creada desde Twig 
+ * en respuesta al rol del usuario
+ * @param {boolean} cambio
+ * @returns {undefined}
+ */
+function toggleUseradd(cambio){
+    if ( $("#useraddTecnico").length > 0 ){
+        if (cambio){
+            $("#useraddTecnico").show();
+        } else {
+            $("#useraddTecnico").hide();
+        }
+    }
+}
+
 /**
  * Llena la pantalla del usuario con los datos obtenidos del servidor
  * @param {json} data
@@ -26,14 +43,19 @@ var mostrarDatos = function(data){
     if (!(data.nameuser==="{empty}" && data.buzonstatus==="{empty}")){
         $("#cuentastatus").text(data.cuentastatus);
         $("#buzonstatus").text(data.buzonstatus);
-        $("#localidad").text(data.grupouser);
+        $("#localidad").text(data.localidad);
         $("#psswduser").text(data.psswduser);
         $("#grupouser").text(data.grupouser);
         $("#nameuser").text(data.nameuser);
         $("#oficina").text(data.oficina);
-        // Una vez todo configurado, mostramos
+        // Modificamos el enlace
+        $("#usermodTecnico").attr( 'href', "/usermod/" + $("#usuarioCliente").val() );
+        // Una vez todo configurado, mostramos y ocultamos
+        toggleUseradd(false);
         $("#respuesta").show();
     }else{
+        $("#useraddTecnico").attr( 'href', "/useradd/" + $("#usuarioCliente").val() );
+        toggleUseradd(true);
         $("#respuesta").hide();
     }
 };

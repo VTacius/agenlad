@@ -7,12 +7,17 @@ class usermodControl extends \clases\sesion {
         $this->pagina = "usermod";
     }
     
+    public function modificar(){
+        $this->parametros['pagina'] = $this->pagina;
+        $this->comprobar($this->pagina);     
+        
+    }
+    
     public function display(){
         // Esto es importante en la vista
         $this->parametros['pagina'] = $this->pagina;
         // ¿Tenemos en serio acceso a esta página?
         $this->comprobar($this->pagina);     
         echo $this->twig->render('usermod.html.twig', $this->parametros);       
-    
     }
 }
