@@ -10,10 +10,14 @@ class controlLDAP {
     /** @var \Base */
     protected $index;
     // Configuración de parametros
-    public $server;
-    public $puerto;
-    public $base;
+    protected $server;
+    protected $puerto;
+    protected $base;
     // El enlace estará a nivel de clase
+    /**
+     *
+     * @var $link_identifier
+     */
     private $conLDAP;
     //La conexión estará a nivel de clase, y no se piensa usar fuera de acá
     protected $bindLDAP;
@@ -102,12 +106,12 @@ class controlLDAP {
     /**
      * Auxiliar de datos
      * Obtiene los atributos solicitados en el array $atributos si $entrada lo 
-     * contiene
+     * contiene, sino lo configura vacío
      * @param array $atributos
-     * @param resource ldap::result_entry_identifier $entrada
+     * @param $result_entry_identifier $entrada
      */
     protected function mapa($atributos, $entrada){
-        $usuario = array();
+        $usuario = array('dn'=>@ldap_get_dn($this->conLDAP, $entrada));
         foreach ($atributos as $attr) {
             if (($valor = @ldap_get_values($this->conLDAP, $entrada, $attr))){
                 array_pop($valor);
@@ -127,10 +131,12 @@ class controlLDAP {
         try {
             // Es necesarios silenciar el error (Sobre Timelimit) para que FatFree no lo devuelva 
             $this->searchLDAP = @ldap_search ($this->conLDAP, $this->base, $filtro, $atributos, 0, $size, $size);
+            
             // probaremos a agregar ldap_sort sin romper compatibilidad
             ldap_sort($this->conLDAP, $this->searchLDAP, $atributos[0]);
-
+            //Creamos la primera entrada 
             $entrada = ldap_first_entry($this->conLDAP, $this->searchLDAP);
+            // Al menos una vez, metemos en $this->datos mediante push los valores que $this->mapa nos devuelva
             do {
                 array_push($this->datos, $this->mapa($atributos, $entrada));
             } while ($entrada = @ldap_next_entry($this->conLDAP, $entrada));
@@ -202,7 +208,7 @@ class controlLDAP {
             if (ldap_mod_add($this->conLDAP, $entry, $valores)) {
                 return true;
             } else {
-                throw new Exception("Error Manipulando datos: <b>".ldap_error($this->conLDAP)."</b>");
+                throw new Exception(ldap_error($this->conLDAP));
             }
         }catch(Exception $e){
             $this->errorLDAP = $e->getMessage();

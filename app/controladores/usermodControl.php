@@ -7,10 +7,10 @@ class usermodControl extends \clases\sesion {
         $this->pagina = "usermod";
     }
     
-    private function listar_Grupos($gidnumber){
+    private function listar_Grupos($base){
         $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
         $search = array('cn'=>'*', 'gidNumber'=>'*');
-        return $grupo->search($search);
+        return $grupo->search($search, $base);
     }
     
     public function modificar(){
@@ -51,7 +51,7 @@ class usermodControl extends \clases\sesion {
             'localidad' => $usuario->getO(),
             'buzonstatus'=> $mailbox->getZimbraMailStatus(),
             'cuentastatus'=> $mailbox->getZimbraAccountStatus(),
-            'grupos' => $this->listar_Grupos($usuario->getGidNumber())
+            'grupos' => $this->listar_Grupos($usuario->getDNBase())
         );        
         
         $this->parametros['datos'] = $datos;

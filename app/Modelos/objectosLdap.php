@@ -72,8 +72,10 @@ class objectosLdap extends \Modelos\controlLDAP{
      * @param array $attr
      * @return array
      */
-    public function getAll( $attr = false ){
-        $this->datos = array();
+    public function getAll( $attr = false, $base = false){
+        if ($base) {
+            $this->base =  $base;
+        }
         $atributes = $attr === false ? $this->atributos : $attr;
         $filtro = "(objectClass=$this->objeto)";
         return $this->entrada = $this->getDatos($filtro, $atributes);
@@ -82,9 +84,14 @@ class objectosLdap extends \Modelos\controlLDAP{
     /**
      * Realiza la búsqueda en base a un arreglo hash pasado como parametro
      * @param array $search
+     * @param boolean|string $base
      * @return array
      */
-    public function search( $search){
+    
+    public function search( $search, $base = false){
+        if ($base) {
+            $this->base =  $base;
+        }
         $this->datos = array();
         $atributes = array_keys($search);
         $filtro = "(&(objectClass=$this->objeto)";
@@ -94,5 +101,30 @@ class objectosLdap extends \Modelos\controlLDAP{
         $filtro .= ")";
         return $this->entrada = $this->getDatos($filtro, $atributes);
         
+    }
+    
+    /**
+     * Devulve la primera base que es posible configurar en un servidor normal
+     * @return string
+     */
+    public function getDNBase(){
+        $re = "/((ou=\\w+),((dc=\\w+,*){3}))/";
+        $str = $this->entrada['dn'];
+        preg_match($re, $str, $matches);
+        $resultado = array_key_exists(3, $matches) ? $matches[3]: "dc=sv";
+        
+        return $resultado;
+    }
+    
+    /**
+     * Devuelve la primera rama a la cual pertenece
+     * @return string
+     */
+    public function getDNRama(){
+        $re = "/((ou=\\w+),((dc=\\w+,*){3}))/";
+        $str = $this->entrada['dn'];
+        preg_match($re, $str, $matches);
+        $resultado = array_key_exists(1, $matches) ? $matches[1]: "dc=sv";
+        return $resultado;
     }
 }

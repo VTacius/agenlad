@@ -12,10 +12,6 @@ $("#enviar").click(function(e){
     e.preventDefault();
 });
 
-//$(".btn-sm").click(function(e){
-//    e.stopPropagation(); 
-//    e.preventDefault();    
-//});
 
 
 
