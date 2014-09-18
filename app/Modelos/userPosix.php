@@ -7,7 +7,7 @@
 
 namespace Modelos;
 
-class userPosix extends \Modelos\entrada{
+class userPosix extends \Modelos\objectosLdap{
     /**
      * Caracteres permitidos para la contraseña
      * @var array 

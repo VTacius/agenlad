@@ -7,7 +7,7 @@
 
 namespace Modelos;
 
-class mailbox extends \Modelos\entrada {
+class mailbox extends \Modelos\objectosLdap {
     public function __construct($passLDAP) {
         // Configuramos para usar \Modelos\entrada
         $this->objeto='*';

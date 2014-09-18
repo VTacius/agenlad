@@ -7,7 +7,7 @@
 
 namespace Modelos;
 
-class grupoSamba extends \Modelos\entrada{
+class grupoSamba extends \Modelos\objectosLdap{
     
     public function __construct($rdnLDAP, $passLDAP) {
         parent::__construct($rdnLDAP, $passLDAP);
@@ -38,7 +38,8 @@ class grupoSamba extends \Modelos\entrada{
     public function setGidNumber($gidNumber) {
         $this->configurarDatos('gidNumber', $gidNumber);
     }
-
+    
+    
 
     
 }
