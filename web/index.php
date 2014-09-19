@@ -108,9 +108,11 @@ $index->route('GET|POST @tecnicoDatos: /usershow/datos [ajax]',
 $index->route('GET|POST @usermod: /usermod', 
         'controladores\usermodControl->display');
 $index->route('GET|POST @usermod_modificar: /usermod/envio', 
-        'controladores\usermodControl->modificar');
+        'controladores\usermodControl->mostrarUsuario');
 $index->route('GET|POST @usermod_modificar: /usermod/envio/@usuarioModificar', 
-        'controladores\usermodControl->modificar');
+        'controladores\usermodControl->mostrarUsuario');
+$index->route('GET|POST @usermod_modificar: /usermod/cambio', 
+        'controladores\usermodControl->modificarUsuario');
 //Rutas hacia useradd
 $index->route('GET|POST @useradd: /useradd', 
         'controladores\useraddControl->display');

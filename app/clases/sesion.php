@@ -34,8 +34,8 @@ abstract class sesion {
         $this->pswd = $this->index->get('SESSION.pswd');
         // Solo los necesitamos para crear inicializar el array parametros
         $rol = $this->index->get('SESSION.rol');
-        $titulo = $this->index->get('SESSION.titulo');
         $user = $this->index->get('SESSION.user');
+        $titulo = $this->index->get('SESSION.titulo');
         $permiso = $this->index->get('SESSION.permisos');
         $this->parametros = array(
             'rol' => $rol,
@@ -69,6 +69,20 @@ abstract class sesion {
         
     }
 
+    protected function getClavez(){
+        
+    }
+
+    protected function getClaves(){
+        // Recuperamos firmaz desde sesion
+        $firmas = $this->index->get('SESSION.firmas');
+        // Desciframos
+        $hashito = new \clases\cifrado();
+        $claves = $hashito->descifrada($firmas, $this->pswd);
+        $adminDN = $this->index->get('adminldap');
+        $resultado = array('dn'=>$adminDN, 'pswd'=>$claves);
+        return $resultado;
+    }
 
     /**
      * Auxiliar de comprobar

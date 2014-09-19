@@ -40,13 +40,13 @@ class usershowControl extends \clases\sesion {
         
         // Configuramos los datos
         $datos = array(
+            'oficina' => $usuario->getOu(),
+            'nameuser' => $usuario->getCn(),
             'psswduser' => $usuario->getuserPassword(),
             'grupouser' => $grupo->getCn(),
-            'nameuser' => $usuario->getCn(),
             'localidad' => $usuario->getO(),
-            'oficina' => $usuario->getOu(),
-            'cuentastatus'=> $mailbox->getZimbraAccountStatus(),
-            'buzonstatus'=> $mailbox->getZimbraMailStatus()
+            'buzonstatus'=> $mailbox->getZimbraMailStatus(),
+            'cuentastatus'=> $mailbox->getZimbraAccountStatus()
         );
         print json_encode($datos);
 //        $this->parametros['datos'] = $datos;

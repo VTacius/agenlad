@@ -5,7 +5,7 @@ $('.btn-toggle').click(function(e) {
     e.preventDefault();
 });
 
-$("#enviar").click(function(e){
+$("#userModForm").children("#enviar").click(function(e){
     console.log($("#buzonstatusBtn").children(".active").text());
     console.log($("#cuentastatusBtn").children(".active").text());
     e.stopPropagation(); 

@@ -30,11 +30,15 @@ sbase="dc=dominio,dc=com"
 zserver=mail.dominio.com
 zpuerto=389
 zbase="dc=dominio,dc=com"
-[credenciales-samba]
 ; No usar un usuario administrador
+; Pero sus limites, tal como el administrador, debe ser infinito
 ; No olvidar por ningún motivo las comillas
-lectorldap="cn=lector,dc=dominio,dc=com"
-passwdldap=
+lectorldap="cn=admin,dc=dominio,dc=com"
+passwdldap="lector_ldap_hacienda"
+; Este si debe ser un usuario administrador
+; No olvidar por ningún motivo las comillas
+; La contraseña esta en la base de datos, cifrada, para cada usuario que tenga rol admon
+adminldap="cn=admin,dc=dominio,dc=com"
 [credenciales-zimbra]
 ; No usar un usuario administrador, pero darle permisos de lectura a este usuario para los atributos zimbraAccountStatus y zimbraMailStatus
 lectorzimbra="uid=zmlectura,cn=appaccts,cn=zimbra"

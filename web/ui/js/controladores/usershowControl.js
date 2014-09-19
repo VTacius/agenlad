@@ -49,7 +49,7 @@ var mostrarDatos = function(data){
         $("#nameuser").text(data.nameuser);
         $("#oficina").text(data.oficina);
         // Modificamos el enlace
-        $("#usermodTecnico").attr( 'href', "/usermod/envio/ " + $("#usuarioCliente").val() );
+        $("#usermodTecnico").attr( 'href', "/usermod/envio/" + $("#usuarioCliente").val() );
         // Una vez todo configurado, mostramos y ocultamos
         toggleUseradd(false);
         $("#respuesta").show();
