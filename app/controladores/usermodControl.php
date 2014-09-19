@@ -14,6 +14,7 @@ class usermodControl extends \clases\sesion {
     }
     
     public function modificarUsuario(){
+        $this->comprobar($this->pagina); 
         $usuarioGrupo = $this->index->get('POST.grupouser');
         $usuarioGrupos = $this->index->get('POST.grupos');
         $usuarioNombre = $this->index->get('POST.nameuser');
@@ -49,26 +50,26 @@ class usermodControl extends \clases\sesion {
         if ($usuarioCliente == ""){
             $usuarioCliente = $this->index->get('POST.usuarioModificar');
         }
+        
         // Recuperamos firmaz desde sesion
-        $firmaz = $this->index->get('SESSION.firmaz');
-        // Desciframos
-        $hashito = new \clases\cifrado();
-        $clavez = $hashito->descifrada($firmaz, $this->pswd);
+        
+        $clavez = $this->getClavez();
         
         // Empezamos con un objeto usuario
         $usuario = new \Modelos\userSamba($this->dn, $this->pswd);
         $usuario->setUid($usuarioCliente);
-        
+       
         // Seguimos con el objeto Grupo
         $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
         $grupo->setGidNumber($usuario->getGidNumber());
         
         // Por último, el objeto mailbox
-        $mailbox = new \Modelos\mailbox($clavez);
+        $mailbox = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
         $mailbox->setUid($usuarioCliente);
         
         // Configuramos los datos
         $datos = array(
+            'grupos' => $this->listar_Grupos($usuario->getDNBase()),
             'usermod' => $usuarioCliente,
             'oficina' => $usuario->getOu(),
             'nameuser' => $usuario->getGivenName(),
@@ -76,8 +77,7 @@ class usermodControl extends \clases\sesion {
             'apelluser' => $usuario->getSn(),
             'localidad' => $usuario->getO(),
             'buzonstatus'=> $mailbox->getZimbraMailStatus(),
-            'cuentastatus'=> $mailbox->getZimbraAccountStatus(),
-            'grupos' => $this->listar_Grupos($usuario->getDNBase())
+            'cuentastatus'=> $mailbox->getZimbraAccountStatus()
         );        
         
         $this->parametros['datos'] = $datos;

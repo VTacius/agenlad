@@ -91,7 +91,8 @@ class loginControl extends \clases\sesion{
         $cmds = 'select titulo, user.rol, bandera, permisos, firmas, firmaz from user join rol on user.rol=rol.rol where user=:user;';
         $args = array('user'=>$usuario);
         $resultado = $base->exec($cmds, $args);
-        if ($resultado[0]['bandera']=="1"){
+        if ($resultado[0]['bandera']==1){
+            print "Vamos a cifrar nuestra primera vez<br>";
             $this->cifrarEnPrimerLogueo($resultado, $password, $usuario);
         }
         return $resultado;

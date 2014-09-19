@@ -70,7 +70,14 @@ abstract class sesion {
     }
 
     protected function getClavez(){
-        
+        // Recuperamos firmaz desde sesion
+        $firmaz = $this->index->get('SESSION.firmaz');
+        // Desciframos
+        $hashito = new \clases\cifrado();
+        $clavez = $hashito->descifrada($firmaz, $this->pswd);
+        $rdnLDAP = $this->index->get('lectorzimbra');
+        $resultado = array('dn'=>$rdnLDAP, 'pswd'=>$clavez);
+        return $resultado;
     }
 
     protected function getClaves(){

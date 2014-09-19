@@ -8,7 +8,7 @@
 namespace Modelos;
 
 class mailbox extends \Modelos\objectosLdap {
-    public function __construct($passLDAP) {
+    public function __construct($rdnLDAP, $passLDAP) {
         // Configuramos para usar \Modelos\entrada
         $this->objeto='*';
         $this->atributos = array('zimbraaccountstatus', 'zimbramailstatus');
@@ -17,8 +17,6 @@ class mailbox extends \Modelos\objectosLdap {
         $server = "zserver";
         $puerto = "zpuerto";
         $base = "zbase";
-        $index = \Base::instance();
-        $rdnLDAP = $index->get('lectorzimbra');
         parent::__construct($rdnLDAP, $passLDAP, $server, $puerto, $base);
     }
     

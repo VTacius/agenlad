@@ -21,10 +21,8 @@ class usershowControl extends \clases\sesion {
         $this->comprobar($this->pagina); 
         // Recuperamos los parametros que le son enviados
         $usuarioCliente = $this->input('usuarioCliente','Favor, escriba un username');
-        // Recuperamos firmaz desde sesion
-        $firmaz = $this->index->get('SESSION.firmaz');
-        $hashito = new \clases\cifrado();
-        $clavez = $hashito->descifrada($firmaz, $this->pswd);
+        // Recuperamos firmaz desde sesion        
+        $clavez = $this->getClavez();
         
         // Empezamos con un objeto usuario
         $usuario = new \Modelos\userSamba($this->dn, $this->pswd);
@@ -35,7 +33,7 @@ class usershowControl extends \clases\sesion {
         $grupo->setGidNumber($usuario->getGidNumber());
         
         // Por último, el objeto mailbox
-        $mailbox = new \Modelos\mailbox($clavez);
+        $mailbox = new \Modelos\mailbox($clavez['dn'],$clavez['pswd']);
         $mailbox->setUid($usuarioCliente);
         
         // Configuramos los datos

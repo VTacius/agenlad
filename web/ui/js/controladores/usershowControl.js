@@ -68,6 +68,9 @@ var datos = function(){
         data: {
             usuarioCliente: $("#usuarioCliente").val()
         },
-        success: mostrarDatos
+        success: mostrarDatos,
+        error: function(){
+            console.log("Algo malo ha sucedido");
+        }
     });
 };
