@@ -42,10 +42,6 @@ class userPosix extends \Modelos\objectosLdap{
         $this->mailDomain = $this->index->get('maildomain');
     }
     
-    public function getEntrada(){
-        print_r($this->entrada);
-    }
-    
     public function getGidNumber() {
         return $this->entrada['gidNumber'];
     }

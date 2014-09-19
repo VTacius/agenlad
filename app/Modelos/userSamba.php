@@ -139,5 +139,5 @@ class userSamba extends \Modelos\userPosix {
 
     protected function setSambaNTPassword($sambaNTPassword) {
         $this->configurarValor('sambaNTPassword', $this->hashito->NTLMHash($sambaNTPassword));
-    }
+    }    
 }

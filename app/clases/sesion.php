@@ -69,6 +69,11 @@ abstract class sesion {
         
     }
 
+    /**
+     * Retorna el RDN y contraseña del usuario para manipular datos 
+     * en zimbra
+     * @return array('dn','pswd')
+     */
     protected function getClavez(){
         // Recuperamos firmaz desde sesion
         $firmaz = $this->index->get('SESSION.firmaz');
@@ -80,6 +85,11 @@ abstract class sesion {
         return $resultado;
     }
 
+    /**
+     * Retorna el RDN y contraseña del usuario para manipular datos 
+     * en samba
+     * @return array('dn','pswd')
+     */
     protected function getClaves(){
         // Recuperamos firmaz desde sesion
         $firmas = $this->index->get('SESSION.firmas');
@@ -104,8 +114,8 @@ abstract class sesion {
       }
     }
     /**
-     * Comprueba que la sesión este iniciada, 
-     * y que tenga permisos para ingresar en ella
+     * Comprueba que la sesión este iniciada, y que tenga permisos para ingresar en ella
+     * Caso contrario, que sigue con el flujo de la aplicación
      * @param string $pagina Página a comprobar
      */
     protected function comprobar($pagina){

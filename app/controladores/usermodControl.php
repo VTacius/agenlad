@@ -5,6 +5,7 @@ class usermodControl extends \clases\sesion {
     public function __construct() {
         parent::__construct();
         $this->pagina = "usermod";
+        $this->parametros['pagina'] = $this->pagina;
     }
     
     private function listar_Grupos($base){
@@ -35,13 +36,12 @@ class usermodControl extends \clases\sesion {
         $usuario->configuraNombre($usuarioNombre, $usuarioApellido);
         $usuario->setGidNumber($usuarioGrupo);
         print "Esto es despues de un par de set<br><br>";
-        $usuario->getEntrada();
-        print "<br>";
+        $resultado = $usuario->actualizarEntrada();
+        print "<br>$resultado";
     }
 
 
     public function mostrarUsuario(){
-        $this->parametros['pagina'] = $this->pagina;
         $this->comprobar($this->pagina);     
         
         // Recuperamos los parametros que le son enviados mediante POST o GET

@@ -127,4 +127,39 @@ class objectosLdap extends \Modelos\controlLDAP{
         $resultado = array_key_exists(1, $matches) ? $matches[1]: "dc=sv";
         return $resultado;
     }
+    
+    /**
+     * Para debug, pero algo me dice que podrìamos sacarle un provecho real
+     */
+    public function getEntrada(){
+        print_r($this->entrada);
+    }
+    
+    /**
+     * Auxiliar de actualizarEntrada, se ejecuta por cada elemento del array 
+     * y retorna True si su valor no es {empty}
+     * @param type $elemento
+     * @return type
+     */
+    private static function elementosVacios($elemento){
+        return !($elemento ==="{empty}");
+    }
+    
+    /**
+     * Actualiza la actual entrada en LDAP
+     * 
+     * @return string
+     */
+    public function actualizarEntrada(){
+        // Elimina los elementos vacíos (Asignados {empyt} por defecto) mediante self::elementosVacios
+        $valores = array_filter($this->entrada, 'self::elementosVacios');
+        // El primer índice es dn, pero ya no lo usaremos màs
+        $dn = array_shift($valores);
+        if($this->modificarEntrada($valores, $dn)){
+            $mensaje = "Se ha cambiado el valor con exito";
+        }else{
+            $mensaje = $this->mostrarERROR();
+        }
+        return $mensaje;
+    }
 }

@@ -13,13 +13,9 @@ class controlLDAP {
     protected $server;
     protected $puerto;
     protected $base;
-    // El enlace estará a nivel de clase
-    /**
-     *
-     * @var $link_identifier
-     */
+    /** @var $link_identifier La conexión estará a nivel de clase, y no se piensa usar fuera de acá */
     private $conLDAP;
-    //La conexión estará a nivel de clase, y no se piensa usar fuera de acá
+    /** @var  bool El enlace estará a nivel de clases */
     protected $bindLDAP;
     // Errores, si es que podemos enviar esto
     protected $errorLDAP = "";
@@ -175,9 +171,12 @@ class controlLDAP {
      * @return boolean
      * @throws Exception
      */
-    public function modificarEntrada ($valores) {
+    public function modificarEntrada ($valores, $dn = false) {
+        if (!$dn) {
+            $dn = $this->dn;
+        }
         try{
-            if (@ldap_modify($this->conLDAP, $this->dn, $valores)) {
+            if (@ldap_modify($this->conLDAP, $dn, $valores)) {
                 return true;
             } else {
                 throw new Exception(ldap_error($this->conLDAP));
