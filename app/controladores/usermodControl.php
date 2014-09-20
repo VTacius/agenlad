@@ -16,31 +16,35 @@ class usermodControl extends \clases\sesion {
     
     private function listarGruposUsuarios($base, $memberUid){
         $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
-        $search = array('memberUid'=>$memberUid, 'cn'=> '*');
+        $search = array('memberUid'=>$memberUid, 'cn'=> '*');	
         $resultado = $grupo->search($search, $base);
         $grupos = array();
         foreach ($resultado as $value) {
-            array_push($grupos, $value['cn']);
+            if 	(array_key_exists('cn', $value)){
+                array_push($grupos, $value['cn']);
+            }
         }
         return $grupos;
     }
     
     private function modificarGruposAdicionales($usuarioGrupos, $usuario, $claves){
-        $dnUser = $usuario->getDNEntrada();
-        $grupo = new \Modelos\grupoSamba($claves['dn'], $claves['pswd']);
-        $grupo->setGidNumber($usuario->getGidNumber());
+        $dnUser = $usuario->getUid();
         
         $gruposActuales = $this->listarGruposUsuarios($usuario->getDNBase(), $usuario->getUid());
         foreach ($usuarioGrupos as $value) {
             if(!in_array($value, $gruposActuales)){
                 $valores['memberuid'] = $dnUser;
-                $grupo->agregarAtributos($dnUser, $valores);
+        	$grupu = new \Modelos\grupoSamba($claves['dn'], $claves['pswd']);
+        	$grupu->setCn($value);
+                $grupu->agregarAtributos($grupu->getDNEntrada(), $valores);
             }
         }
         foreach ($gruposActuales as $value) {
             if(!in_array($value, $usuarioGrupos)){
                 $valores['memberuid'] = $dnUser;
-                $grupo->removerAtributos($dnUser, $valores);
+        	$grupu = new \Modelos\grupoSamba($claves['dn'], $claves['pswd']);
+        	$grupu->setCn($value);
+                $grupu->removerAtributos($grupu->getDNEntrada(), $valores);
             }
         }
     }
@@ -63,7 +67,7 @@ class usermodControl extends \clases\sesion {
         $usuario->setO($usuarioLocalidad);
         $usuario->configuraNombre($usuarioNombre, $usuarioApellido);
         $usuario->setGidNumber($usuarioGrupo);
-//        $resultado = $usuario->actualizarEntrada();
+        $resultado = $usuario->actualizarEntrada();
         $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
     }
 

@@ -23,7 +23,7 @@ class grupoSamba extends \Modelos\objectosLdap{
         $this->configurarDatos('sambaSID', $sambaSID);
     }
         
-    public function setcn($cn){
+    public function setCn($cn){
         $this->configurarDatos('cn', $cn);
     }
     
