@@ -166,17 +166,18 @@ class controlLDAP {
      */
     
     /**
-     * Modifica los valores del controlLDAP::$dn que ha hecho la conexión
+     * Modifica los valores de una entrada ldap para el dn dado
      * @param array $valores
      * @return boolean
      * @throws Exception
      */
     public function modificarEntrada ($valores, $dn = false) {
+        // Mantenemos la compatibilidad con la forma en que se usa para cambiar contraseña
         if (!$dn) {
             $dn = $this->dn;
         }
         try{
-            if (@ldap_modify($this->conLDAP, $dn, $valores)) {
+            if (ldap_modify($this->conLDAP, $dn, $valores)) {
                 return true;
             } else {
                 throw new Exception(ldap_error($this->conLDAP));
@@ -189,7 +190,7 @@ class controlLDAP {
 
     function nuevaEntrada( $valores, $entry ) {
         try{
-            if (@ldap_add($this->conLDAP, $entry, $valores)) {
+            if (ldap_add($this->conLDAP, $entry, $valores)) {
                 return true;
             } else {
                 throw new Exception(ldap_error($this->conLDAP));
@@ -200,11 +201,26 @@ class controlLDAP {
         }
     }
 
-    function agregarAtributosGrupo( $valores, $entry ) {
+    function agregarAtributos( $dn, $valores) {
         // En realidad, parece que esta función agrega un atributo del tipo 
         // "permito varios y no me ahuevo"
         try{
-            if (ldap_mod_add($this->conLDAP, $entry, $valores)) {
+            if (@ldap_mod_add($this->conLDAP, $dn, $valores)) {
+                return true;
+            } else {
+                throw new Exception(ldap_error($this->conLDAP));
+            }
+        }catch(Exception $e){
+            $this->errorLDAP = $e->getMessage();
+            return false;
+        }
+    }
+    
+    function removerAtributos( $dn, $valores) {
+        // En realidad, parece que esta función agrega un atributo del tipo 
+        // "permito varios y no me ahuevo"
+        try{
+            if (@ldap_mod_del($this->conLDAP, $dn, $valores)) {
                 return true;
             } else {
                 throw new Exception(ldap_error($this->conLDAP));

@@ -8,10 +8,41 @@ class usermodControl extends \clases\sesion {
         $this->parametros['pagina'] = $this->pagina;
     }
     
-    private function listar_Grupos($base){
+    private function listarGrupos($base){
         $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
         $search = array('cn'=>'*', 'gidNumber'=>'*');
         return $grupo->search($search, $base);
+    }
+    
+    private function listarGruposUsuarios($base, $memberUid){
+        $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
+        $search = array('memberUid'=>$memberUid, 'cn'=> '*');
+        $resultado = $grupo->search($search, $base);
+        $grupos = array();
+        foreach ($resultado as $value) {
+            array_push($grupos, $value['cn']);
+        }
+        return $grupos;
+    }
+    
+    private function modificarGruposAdicionales($usuarioGrupos, $usuario, $claves){
+        $dnUser = $usuario->getDNEntrada();
+        $grupo = new \Modelos\grupoSamba($claves['dn'], $claves['pswd']);
+        $grupo->setGidNumber($usuario->getGidNumber());
+        
+        $gruposActuales = $this->listarGruposUsuarios($usuario->getDNBase(), $usuario->getUid());
+        foreach ($usuarioGrupos as $value) {
+            if(!in_array($value, $gruposActuales)){
+                $valores['memberuid'] = $dnUser;
+                $grupo->agregarAtributos($dnUser, $valores);
+            }
+        }
+        foreach ($gruposActuales as $value) {
+            if(!in_array($value, $usuarioGrupos)){
+                $valores['memberuid'] = $dnUser;
+                $grupo->removerAtributos($dnUser, $valores);
+            }
+        }
     }
     
     public function modificarUsuario(){
@@ -25,19 +56,15 @@ class usermodControl extends \clases\sesion {
         $usuarioLocalidad = $this->index->get('POST.localidad');
         
         $claves = $this->getClaves();
-        print_r($claves);
         $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
         $usuario->setUid($usuarioModificar);
-        print "Esta es la entrada tal como la obtenemos<br>";
-        $usuario->getEntrada();
-        print "<br>";
+        
         $usuario->setOu($usuarioOficina);
         $usuario->setO($usuarioLocalidad);
         $usuario->configuraNombre($usuarioNombre, $usuarioApellido);
         $usuario->setGidNumber($usuarioGrupo);
-        print "Esto es despues de un par de set<br><br>";
-        $resultado = $usuario->actualizarEntrada();
-        print "<br>$resultado";
+//        $resultado = $usuario->actualizarEntrada();
+        $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
     }
 
 
@@ -69,13 +96,14 @@ class usermodControl extends \clases\sesion {
         
         // Configuramos los datos
         $datos = array(
-            'grupos' => $this->listar_Grupos($usuario->getDNBase()),
+            'grupos' => $this->listarGrupos($usuario->getDNBase()),
             'usermod' => $usuarioCliente,
             'oficina' => $usuario->getOu(),
             'nameuser' => $usuario->getGivenName(),
             'grupouser' => $grupo->getCn(),
             'apelluser' => $usuario->getSn(),
             'localidad' => $usuario->getO(),
+            'gruposuser' => $this->listarGruposUsuarios($usuario->getDNBase(), $usuario->getUid()),
             'buzonstatus'=> $mailbox->getZimbraMailStatus(),
             'cuentastatus'=> $mailbox->getZimbraAccountStatus()
         );        

@@ -116,6 +116,10 @@ class objectosLdap extends \Modelos\controlLDAP{
         return $resultado;
     }
     
+    public function getDNEntrada(){
+        return $this->entrada['dn'];
+    }
+    
     /**
      * Devuelve la primera rama a la cual pertenece
      * @return string
