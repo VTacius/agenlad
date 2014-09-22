@@ -77,48 +77,32 @@ class loginControl extends \clases\sesion{
             $cmds = "UPDATE user SET firmas=:firmas, firmaz=:firmaz, bandera=:bandera where user=:user";
             $args = array('firmas'=>$pwds,'firmaz'=>$pwdz, 'bandera'=> '2', 'user'=>$usuario);
             $base->exec($cmds, $args);
-    }
-    
-    /**
-     * Si el usuario es administrador, comprueba si ya se logueado antes (bandera=2) 
-     * o nunca (bandera=1)
-     * @param string $usuario
-     * @return string|array
-     */
-    private function banderaAdmin($usuario, $password){
-        $base = $this->conectarDB();
-//        // Operamos
-        $cmds = 'select titulo, user.rol, bandera, permisos, firmas, firmaz from user join rol on user.rol=rol.rol where user=:user;';
-        $args = array('user'=>$usuario);
-        $resultado = $base->exec($cmds, $args);
-        if ($resultado[0]['bandera']==1){
-            print "Vamos a cifrar nuestra primera vez<br>";
-            $this->cifrarEnPrimerLogueo($resultado, $password, $usuario);
-        }
-        return $resultado;
+            return array('firmas'=>$pwds, 'firmaz' => $pwdz);
     }
     
     /**
      * El usuario es administrador o no
+     * Si el usuario es administrador, comprueba si ya se logueado antes (bandera=2) 
+     * o nunca (bandera=1)
      * @param string $usuario
      * @return string|array
      */
     protected function obtenerBandera($usuario, $password){
         $base = $this->conectarDB();
         // Operamos
-        $cmds = 'select permisos, firmas, firmaz from user join rol on user.rol=rol.rol where user=:user';
+//        $cmds = 'select permisos, firmas, firmaz from user join rol on user.rol=rol.rol where user=:user';
+        $cmds = "select titulo, user.rol, permisos, firmas, firmaz, dominio, bandera from user join rol on user.rol=rol.rol where user=:user;";
         $args = array('user'=>$usuario);
         $resultado = $base->exec($cmds, $args);
-        if ($base->count()>0){
-            // El usuario tiene un rol de administrador
-            return $this->banderaAdmin($usuario, $password);
-        }else{
-            // Vaya, no tiene un rol administrativos, pero siempre obtendremos los permisos por defecto para 'usuario'
-            $cmds = 'select rol, permisos from rol where rol=:user';
-            $args = array('user'=>'usuario');
-            $resultado = $base->exec($cmds, $args);
-            return $resultado;
-        }
+        if ($base->count() == 0){
+            $cmds = "select titulo, user.rol, permisos, dominio, firmas, firmaz from user join rol on user.rol=rol.rol where user='usuario';";
+            return $base->exec($cmds, $args);
+        } elseif ($resultado[0]['bandera']==1) {
+            $claves = $this->cifrarEnPrimerLogueo($resultado, $password, $usuario);
+            $resultado[0]['firmas'] = $claves['firmas'];
+            $resultado[0]['firmaz'] = $claves['firmaz'];
+        } 
+        return $resultado;
     }
 
     /**
@@ -169,6 +153,7 @@ class loginControl extends \clases\sesion{
         $this->index->set('SESSION.permisos', unserialize($roles[0]['permisos']));
         $this->index->set('SESSION.rol', $roles[0]['rol']);
         $this->index->set('SESSION.titulo', $roles[0]['titulo']);
+        $this->index->set('SESSION.dominio', $roles[0]['dominio']);
         // TODO: Recuerda que estas no deberían estar acá
         $this->index->set('SESSION.firmaz', $roles[0]['firmaz']);
         $this->index->set('SESSION.firmas', $roles[0]['firmas']);
