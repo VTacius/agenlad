@@ -72,11 +72,17 @@ class loginControl extends \clases\sesion{
             $hashito = new \clases\cifrado();
             $firmas = $resultado[0]['firmas'];
             $firmaz = $resultado[0]['firmaz'];
+//            print "Original - firmas: $firmas<br>firmas: $firmaz<br>";
             $pwds = $hashito->encrypt($firmas, $password);
             $pwdz = $hashito->encrypt($firmaz, $password);
+//            print "Cifrado - firmas: $pwds<br>firmas: $pwdz<br>";
+            $claros = $hashito->descifrada ( $pwds, $password );
+            $claroz = $hashito->descifrada ( $pwdz, $password );
+//            print "Descifrado - firmas: $claros<br>firmas: $claroz<br>";
             $cmds = "UPDATE user SET firmas=:firmas, firmaz=:firmaz, bandera=:bandera where user=:user";
             $args = array('firmas'=>$pwds,'firmaz'=>$pwdz, 'bandera'=> '2', 'user'=>$usuario);
             $base->exec($cmds, $args);
+//            exit();
             return array('firmas'=>$pwds, 'firmaz' => $pwdz);
     }
     

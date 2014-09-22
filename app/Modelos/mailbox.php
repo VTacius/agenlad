@@ -14,6 +14,7 @@ class mailbox extends \Modelos\objectosLdap {
         $this->atributos = array('zimbraaccountstatus', 'zimbramailstatus');
         
         // Demás valores
+        // TODO: Esto ya no tiene más sentido que enviar desde acá los datos verdaderos de la conexion
         $server = "zserver";
         $puerto = "zpuerto";
         $base = "zbase";

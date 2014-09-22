@@ -40,7 +40,7 @@ class usermodControl extends \clases\sesion {
                 if (($retorno = $grupu->agregarAtributos($grupu->getDNEntrada(), $valores))) {
                     array_push($resultado, "Agregado $uid a ".  $grupu->getDNEntrada());
                 }else{
-                    array_push($resultado, "Error agregando $uid a ".  $grupu->getDNEntrada() . ": " . $retorno );
+                    array_push($resultado, "Error agregando $uid a ".  $grupu->getDNEntrada() . ": " . $grupu->mostrarERROR() );
                 }
             }
         }
@@ -96,7 +96,7 @@ class usermodControl extends \clases\sesion {
         if ($this->configuracion['grupos_ou']) {
             $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
             $usuario->setUid($usuarioModificar);
-            $resultado['mover_ou'] = $resultadoMover = $this->moverEnGrupo($usuario, $usuarioGrupo);
+            $resultado['move_ou'] = $resultadoMover = $this->moverEnGrupo($usuario, $usuarioGrupo);
         }
         
         $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);

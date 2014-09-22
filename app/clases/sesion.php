@@ -91,12 +91,15 @@ abstract class sesion {
      * @return array('dn','pswd')
      */
     protected function getClaves(){
-        // Recuperamos firmaz desde sesion
-        $firmas = $this->index->get('SESSION.firmas');
-        // Desciframos
+        // Recuperamos firmaz desde sesion y desciframos
         $hashito = new \clases\cifrado();
+        $firmas = $this->index->get('SESSION.firmas');
         $claves = $hashito->descifrada($firmas, $this->pswd);
-        $adminDN = $this->index->get('adminldap');
+
+        // Obtenemos el DN del administrador desde la base de datos
+        $config = $this->getConfiguracionDominio();
+        $adminDN = $config['dn_administrador'];
+        
         $resultado = array('dn'=>$adminDN, 'pswd'=>$claves);
         return $resultado;
     }

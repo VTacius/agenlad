@@ -9,7 +9,7 @@ use Exception;
 class controlLDAP {
     /** @var \Base */
     protected $index;
-    // Configuración de parametros
+     /** Configuracion de los parametros de conexión  */
     protected $server;
     protected $puerto;
     protected $base;
@@ -17,9 +17,9 @@ class controlLDAP {
     private $conLDAP;
     /** @var  bool El enlace estará a nivel de clases */
     protected $bindLDAP;
-    // Errores, si es que podemos enviar esto
+    /** @var  string Errores ocurridos durante las operaciones LDAP */
     protected $errorLDAP = "";
-    // Tendremos a la mano la busqueda lista para ordenarla después
+    /** @var  bool Tendremos a la mano la busqueda lista para ordenarla después */
     protected $searchLDAP; 
     /** @var array El contenido de todos los datos estará a nivel de clase */
     protected $datos = array();
@@ -43,6 +43,22 @@ class controlLDAP {
     }
     
     /**
+     * TODO: Estamos duplicados con \clases\sesion
+     * Retorna un array con la configuración para el dominio para el cual tiene
+     * permisos el usuarios que ha abierto la sesion
+     * @return array
+     */
+    protected function getConfiguracionDominio(){
+        $base = $this->index->get('dbconexion');
+        $dominio = $this->index->get('SESSION.dominio');
+        
+        $cmds = "select attr from configuracion where dominio=:dominio";;
+        $args = array('dominio'=>$dominio);
+        $resultado = $base->exec($cmds, $args);
+        return unserialize($resultado[0]['attr']);
+    }
+    
+    /**
      * Empiezan métodos necesarios para establecer cualquier conexión
      */
     
@@ -53,23 +69,26 @@ class controlLDAP {
    * @return boolean
    * @throws Exception
    */
-    function __construct($rdnLDAP, $passLDAP, $server = "sserver", $puerto = "spuerto", $base = "sbase"){
+    function __construct($rdnLDAP, $passLDAP, $server = false, $puerto = false, $base = false){
         $this->index = \Base::instance();
-        // Traemos los parametros que necesitamos desde el archivo de configuración que 
-        // leímos en index.php
-        $this->server = $this->index->get($server);
-        $this->puerto = $this->index->get($puerto);
-        $this->base = $this->index->get($base);
+        // Configuramos según la base de datos
+        $config = $this->getConfiguracionDominio();
+        if (($server === false && $puerto === false)){
+            $this->server = $config['servidor'];
+            $this->puerto = $config['puerto'];
+            $this->base = $config['base'];
+        }else{
+            $this->server = $this->index->get($server);
+            $this->puerto = $this->index->get($puerto);
+            $this->base = $this->index->get($base);
+        }
         // Empezamos la conexión
         $this->conLDAP = ldap_connect($this->server,  $this->puerto);
         ldap_set_option($this->conLDAP, LDAP_OPT_PROTOCOL_VERSION, 3);
         ldap_set_option($this->conLDAP, LDAP_OPT_NETWORK_TIMEOUT, 2);
         // Hacemos el enlace de una vez
         try{
-            if (empty($rdnLDAP) | empty($passLDAP)) {
-                throw new Exception ("Credenciales vacías");
-                // Odio tener que enmascarar los errores de esta manera
-            } elseif ((@$this->bindLDAP = ldap_bind($this->conLDAP, $rdnLDAP, $passLDAP))){
+            if ((@$this->bindLDAP = ldap_bind($this->conLDAP, $rdnLDAP, $passLDAP))){
                 // No entiendo porque mi necesidad de configurar acá el controLDAP::dn, si
                 // Ya esta configurado en las variables de sesión
                 $this->dn = $rdnLDAP;
