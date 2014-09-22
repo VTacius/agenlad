@@ -113,7 +113,7 @@ class objectosLdap extends \Modelos\controlLDAP{
         $re = "/((ou=\\w+),((dc=\\w+,*){3}))/";
         $str = $this->entrada['dn'];
         preg_match($re, $str, $matches);
-        $resultado = array_key_exists(3, $matches) ? $matches[3]: "dc=sv";
+        $resultado = array_key_exists(3, $matches) ? $matches[3]: $this->config['base'];
         
         return $resultado;
     }
@@ -130,7 +130,7 @@ class objectosLdap extends \Modelos\controlLDAP{
         $re = "/((ou=\\w+),((dc=\\w+,*){3}))/";
         $str = $this->entrada['dn'];
         preg_match($re, $str, $matches);
-        $resultado = array_key_exists(1, $matches) ? $matches[1]: "dc=sv";
+        $resultado = array_key_exists(1, $matches) ? $matches[1]: $this->config['base'];
         return $resultado;
     }
     

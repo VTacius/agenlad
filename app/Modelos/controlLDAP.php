@@ -25,6 +25,8 @@ class controlLDAP {
     protected $datos = array();
     /** @var El dn se encuentra disponible a nivel de clase*/
     protected $dn;
+    /** @var array La configuración que trajimos desde la base de datos*/
+    protected $config;
   
   /**
     * Get auth::dn
@@ -72,11 +74,11 @@ class controlLDAP {
     function __construct($rdnLDAP, $passLDAP, $server = false, $puerto = false, $base = false){
         $this->index = \Base::instance();
         // Configuramos según la base de datos
-        $config = $this->getConfiguracionDominio();
+        $this->config = $this->getConfiguracionDominio();
         if (($server === false && $puerto === false)){
-            $this->server = $config['servidor'];
-            $this->puerto = $config['puerto'];
-            $this->base = $config['base'];
+            $this->server = $this->config['servidor'];
+            $this->puerto = $this->config['puerto'];
+            $this->base = $this->config['base'];
         }else{
             $this->server = $this->index->get($server);
             $this->puerto = $this->index->get($puerto);

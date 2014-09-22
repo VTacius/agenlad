@@ -110,6 +110,7 @@ class usermodControl extends \clases\sesion {
         $resultado['actualizar_entrada'] = $usuario->actualizarEntrada();
         $resultado['modificar_grupos_adicionales'] = $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
         
+        //TODO: Empezar a crear la plantilla para esta, ya es hora y pasada de hecho
         foreach ($resultado as $value) {
             print_r($value);
             print "<br>";
