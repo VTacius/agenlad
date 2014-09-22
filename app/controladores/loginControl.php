@@ -184,6 +184,8 @@ class loginControl extends \clases\sesion{
         }
     }
     
+    // TODO: Si alguna vez cambiamos a Silex o cualquier otro framework con 
+    // soporte de mensajes Flash, por favor, unifica estas vergonzosas funciones
     /**
      * Auxiliar para cerrar y cerrarMensaje
      * Acciones para el cierre de sesión

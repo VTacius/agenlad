@@ -88,17 +88,19 @@ class objectosLdap extends \Modelos\controlLDAP{
      * @return array
      */
     
-    public function search( $search, $base = false){
+    public function search( $search, $base = false, $filtro = false){
         if ($base) {
             $this->base =  $base;
         }
         $this->datos = array();
         $atributes = array_keys($search);
-        $filtro = "(&(objectClass=$this->objeto)";
-        foreach($search as $indice => $valor){
-            $filtro .= "($indice=$valor)";
+        if (!$filtro){
+            $filtro = "(&(objectClass=$this->objeto)";
+            foreach($search as $indice => $valor){
+                $filtro .= "($indice=$valor)";
+            }
+            $filtro .= ")";
         }
-        $filtro .= ")";
         return $this->entrada = $this->getDatos($filtro, $atributes);
         
     }
@@ -160,7 +162,7 @@ class objectosLdap extends \Modelos\controlLDAP{
         // El primer índice es dn, pero ya no lo usaremos màs
         $dn = array_shift($valores);
         if($this->modificarEntrada($valores, $dn)){
-            $mensaje = "Se ha cambiado el valor con exito";
+            $mensaje = "La actualización de $dn ha ocurrido sin contratiempos";
         }else{
             $mensaje = $this->mostrarERROR();
         }

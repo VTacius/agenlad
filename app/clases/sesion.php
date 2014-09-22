@@ -102,6 +102,21 @@ abstract class sesion {
     }
 
     /**
+     * Retorna un array con la configuración para el dominio para el cual tiene
+     * permisos el usuarios que ha abierto la sesion
+     * @return array
+     */
+    protected function getConfiguracionDominio(){
+        $base = $this->index->get('dbconexion');
+        $dominio = $this->index->get('SESSION.dominio');
+        
+        $cmds = "select attr from configuracion where dominio=:dominio";;
+        $args = array('dominio'=>$dominio);
+        $resultado = $base->exec($cmds, $args);
+        return unserialize($resultado[0]['attr']);
+    }
+    
+    /**
      * Auxiliar de comprobar
      * Verifica que se tenga permisos para ingresar al controlador dado según los permisos asignados
      * @param type $pagina

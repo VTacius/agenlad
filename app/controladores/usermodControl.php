@@ -6,6 +6,7 @@ class usermodControl extends \clases\sesion {
         parent::__construct();
         $this->pagina = "usermod";
         $this->parametros['pagina'] = $this->pagina;
+        $this->configuracion = $this->getConfiguracionDominio();
     }
     
     private function listarGrupos($base){
@@ -28,29 +29,58 @@ class usermodControl extends \clases\sesion {
     }
     
     private function modificarGruposAdicionales($usuarioGrupos, $usuario, $claves){
-        $dnUser = $usuario->getUid();
-        
+        $resultado = array();
+        $uid = $usuario->getUid();
         $gruposActuales = $this->listarGruposUsuarios($usuario->getDNBase(), $usuario->getUid());
         foreach ($usuarioGrupos as $value) {
             if(!in_array($value, $gruposActuales)){
-                $valores['memberuid'] = $dnUser;
+                $valores['memberuid'] = $uid;
         	$grupu = new \Modelos\grupoSamba($claves['dn'], $claves['pswd']);
         	$grupu->setCn($value);
-                $grupu->agregarAtributos($grupu->getDNEntrada(), $valores);
+                if (($retorno = $grupu->agregarAtributos($grupu->getDNEntrada(), $valores))) {
+                    array_push($resultado, "Agregado $uid a ".  $grupu->getDNEntrada());
+                }else{
+                    array_push($resultado, "Error agregando $uid a ".  $grupu->getDNEntrada() . ": " . $retorno );
+                }
             }
         }
         foreach ($gruposActuales as $value) {
             if(!in_array($value, $usuarioGrupos)){
-                $valores['memberuid'] = $dnUser;
+                $valores['memberuid'] = $uid;
         	$grupu = new \Modelos\grupoSamba($claves['dn'], $claves['pswd']);
         	$grupu->setCn($value);
-                $grupu->removerAtributos($grupu->getDNEntrada(), $valores);
+                
+                if (($retorno = $grupu->removerAtributos($grupu->getDNEntrada(), $valores))) {
+                    array_push($resultado, "Eliminado $uid de ". $grupu->getDNEntrada());
+                }else{
+                    array_push($resultado, "Error eliminando $uid en ".  $grupu->getDNEntrada() . ": " . $grupu->mostrarERROR() );
+                }
+                
             }
         }
+        return $resultado;
+    }
+    
+    private function moverEnGrupo($usuario, $usuarioGrupo){
+//        $grupo = new \Modelos\grupoSamba($claves['dn'], $claves['pswd']);
+        
+        $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
+        $grupo->setGidNumber($usuarioGrupo);
+        
+        $ou = new \Modelos\organizationUnit($this->dn, $this->pswd);
+        $ou->setOu($grupo->getCn());
+        $ou->getEntrada();
+        if($usuario->moverEntrada($usuario->getDNEntrada(), $ou->getDNEntrada())){
+            $mensaje = "El usuario $usuario ahora esta bajo  " . $ou->getDNEntrada();
+        }else{
+            $mensaje = $this->mostrarERROR();
+        }
+        return $mensaje;
     }
     
     public function modificarUsuario(){
         $this->comprobar($this->pagina); 
+        
         $usuarioGrupo = $this->index->get('POST.grupouser');
         $usuarioGrupos = $this->index->get('POST.grupos');
         $usuarioNombre = $this->index->get('POST.nameuser');
@@ -60,6 +90,15 @@ class usermodControl extends \clases\sesion {
         $usuarioLocalidad = $this->index->get('POST.localidad');
         
         $claves = $this->getClaves();
+        
+        $resultado = array();
+        
+        if ($this->configuracion['grupos_ou']) {
+            $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
+            $usuario->setUid($usuarioModificar);
+            $resultado['mover_ou'] = $resultadoMover = $this->moverEnGrupo($usuario, $usuarioGrupo);
+        }
+        
         $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
         $usuario->setUid($usuarioModificar);
         
@@ -67,8 +106,14 @@ class usermodControl extends \clases\sesion {
         $usuario->setO($usuarioLocalidad);
         $usuario->configuraNombre($usuarioNombre, $usuarioApellido);
         $usuario->setGidNumber($usuarioGrupo);
-        $resultado = $usuario->actualizarEntrada();
-        $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
+        
+        $resultado['actualizar_entrada'] = $usuario->actualizarEntrada();
+        $resultado['modificar_grupos_adicionales'] = $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
+        
+        foreach ($resultado as $value) {
+            print_r($value);
+            print "<br>";
+        }
     }
 
 

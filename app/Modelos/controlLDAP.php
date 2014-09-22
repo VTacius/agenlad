@@ -231,6 +231,24 @@ class controlLDAP {
         }
     }
     
+    public function moverEntrada ($oldDn, $newParent, $newRdn = NULL){
+        if (!$newRdn) {
+            $re = "/(\\w+=\\w+)/";
+            preg_match($re, $oldDn, $matches);
+            $newRdn = $matches[1];
+        }
+        try {
+            if (ldap_rename($this->conLDAP, $oldDn, $newRdn, $newParent, true)) {
+                return true;
+            } else {
+                throw new Exception(ldap_error($this->conLDAP));
+            }
+        } catch (Exception $e) {
+            $this->errorLDAP = $e->getMessage();
+            return false;
+        }
+    }
+    
     /**
      * Terminan métodos para manipulación de datos	
      */
