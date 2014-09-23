@@ -109,7 +109,7 @@ $index->route('GET|POST @usermod: /usermod',
         'controladores\usermodControl->display');
 $index->route('GET|POST @usermod_modificar: /usermod/envio', 
         'controladores\usermodControl->mostrarUsuario');
-$index->route('GET|POST @usermod_modificar: /usermod/envio/@usuarioModificar', 
+$index->route('GET|POST @usermod_modificar: /usermod/@usuarioModificar', 
         'controladores\usermodControl->mostrarUsuario');
 $index->route('GET|POST @usermod_modificar: /usermod/cambio', 
         'controladores\usermodControl->modificarUsuario');

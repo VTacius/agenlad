@@ -167,9 +167,10 @@ class usermodControl extends \clases\sesion {
             'cuentastatus'=> $mailbox->getZimbraAccountStatus(),
         );        
         
-        $this->parametros['datos'] = $datos;
-        
-        echo $this->twig->render('usermod.form.twig', $this->parametros);       
+        print json_encode($datos);
+//        $this->parametros['datos'] = $datos;
+//        
+//        echo $this->twig->render('usermod.form.twig', $this->parametros);       
     }
     
     public function display(){
