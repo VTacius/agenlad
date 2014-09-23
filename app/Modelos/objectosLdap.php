@@ -35,11 +35,14 @@ class objectosLdap extends \Modelos\controlLDAP{
     /**
      * Configura el valor de un elemento cualquiera dentro del árbol LDAP
      * Use para los atributos que no son de búsqueda
+     * Se verifica que el valor no esté vacío o que tenga el valor por defecto {empty}
      * @param string $atributo
      * @param string $especificacion
      */
     protected function configurarValor($atributo, $especificacion){
-        $this->entrada[$atributo] = $especificacion;
+        if (!($especificacion === "" || $especificacion === "{empty}")) {
+            $this->entrada[$atributo] = $especificacion;
+        }
     }
     
     /**

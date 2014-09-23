@@ -78,11 +78,15 @@ class usermodControl extends \clases\sesion {
         return $mensaje;
     }
     
-    public function modificarUsuario(){
-        $this->comprobar($this->pagina); 
-        
+
+        public function modificarUsuario(){
+        $this->comprobar($this->pagina);         
+        // Modificaciones de los grupos de usuario
         $usuarioGrupo = $this->index->get('POST.grupouser');
         $usuarioGrupos = $this->index->get('POST.grupos');
+        // Modificaciones de los datos de usuario
+        $usuarioCargo = $this->index->get('POST.cargo');
+        $usuarioPhone = $this->index->get('POST.phone');
         $usuarioNombre = $this->index->get('POST.nameuser');
         $usuarioOficina = $this->index->get('POST.oficina');
         $usuarioApellido = $this->index->get('POST.apelluser');
@@ -93,6 +97,7 @@ class usermodControl extends \clases\sesion {
         
         $resultado = array();
         
+        // ¿Debe moverse el usuario a un objeto ou de grupo bajo la rama ou=Users?
         if ($this->configuracion['grupos_ou']) {
             $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
             $usuario->setUid($usuarioModificar);
@@ -102,10 +107,12 @@ class usermodControl extends \clases\sesion {
         $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
         $usuario->setUid($usuarioModificar);
         
-        $usuario->setOu($usuarioOficina);
         $usuario->setO($usuarioLocalidad);
-        $usuario->configuraNombre($usuarioNombre, $usuarioApellido);
+        $usuario->setOu($usuarioOficina);
+        $usuario->setTitle($usuarioCargo);
         $usuario->setGidNumber($usuarioGrupo);
+        $usuario->configuraNombre($usuarioNombre, $usuarioApellido);
+        $usuario->setTelephoneNumber($usuarioPhone);
         
         $resultado['actualizar_entrada'] = $usuario->actualizarEntrada();
         $resultado['modificar_grupos_adicionales'] = $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
@@ -146,16 +153,18 @@ class usermodControl extends \clases\sesion {
         
         // Configuramos los datos
         $datos = array(
+            'cargo' => $usuario->getTitle(),
             'grupos' => $this->listarGrupos($usuario->getDNBase()),
             'usermod' => $usuarioCliente,
             'oficina' => $usuario->getOu(),
             'nameuser' => $usuario->getGivenName(),
+            'telefono' => $usuario->getTelephoneNumber(),
             'grupouser' => $grupo->getCn(),
             'apelluser' => $usuario->getSn(),
             'localidad' => $usuario->getO(),
             'gruposuser' => $this->listarGruposUsuarios($usuario->getDNBase(), $usuario->getUid()),
             'buzonstatus'=> $mailbox->getZimbraMailStatus(),
-            'cuentastatus'=> $mailbox->getZimbraAccountStatus()
+            'cuentastatus'=> $mailbox->getZimbraAccountStatus(),
         );        
         
         $this->parametros['datos'] = $datos;

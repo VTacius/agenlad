@@ -17,68 +17,84 @@
 {% block contenido -%}
     {{ parent() }}
     <form class="form-horizontal" role="form" action="/usermod/cambio" method="POST" id="formcambio">
-        <legend>Modificación para usuario <b id="usermod">{{datos.usermod}}</b></legend>
+        <legend>Estado del Buzón para <b id="usermod">{{datos.usermod}}</b></legend>
         <div class="form-group">
-            <label for="uid" class="col-md-3 text-left">Nombres</label>
-            <div class="col-lg-9">
-                <input type="text" class="form-control input-x" id="nameuser" name="nameuser" required placeholder="Nombres" autofocus autocomplete="off" value="{{datos.nameuser}}">
-            </div>
-                <input type="hidden" name="usermod" value="{{datos.usermod}}">
-        </div>
-        <div class="form-group">
-            <label for="o" class="col-md-3 text-left">Apellidos</label>
-            <div class="col-lg-9">
-                <input type="text" class="form-control input-x" id="apelluser" name="apelluser" required placeholder="Apellidos" autocomplete="off" value="{{datos.apelluser}}">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="ou" class="col-lg-3 text-left">Oficina</label>
-            <div class="col-lg-9">
-                <input type="text" class="form-control input-x" id="oficina" name="oficina" required placeholder="Oficina" autocomplete="off" value="{{datos.oficina}}">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="ou" class="col-lg-3 text-left">Establecimiento</label>
-            <div class="col-lg-9">
-                <input type="text" class="form-control input-x" id="localidad" name="localidad" required placeholder="Establecimiento" autocomplete="off" value="{{datos.localidad}}">
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-lg-6">
-                <label for="ou" class="col-lg-5 text-left">Estado de la Cuenta de Correo</label>
-                <div class="col-lg-7">
+            <div class="col-xs-6">
+                <label for="ou" class="col-xs-7 text-left">Estado de Cuenta de Correo</label>
+                <div class="col-xs-5">
                     <div class="btn-group btn-toggle" id="cuentastatusBtn"> 
                     {% if datos.cuentastatus == "active" %}
-                        <button class="btn btn-sm btn-primary active">Active</button>
-                        <button class="btn btn-sm btn-default">Inactive</button>
+                        <button class="btn btn-xs btn-primary active">Active</button>
+                        <button class="btn btn-xs btn-default">Inactive</button>
                     {% else %}
-                        <button class="btn btn-sm btn-default">Active</button>
-                        <button class="btn btn-sm btn-primary active">{{ datos.cuentastatus | capitalize }}</button>
+                        <button class="btn btn-xs btn-default">Active</button>
+                        <button class="btn btn-xs btn-primary active">{{ datos.cuentastatus | capitalize }}</button>
                     {% endif %}
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
-                <label for="ou" class="col-lg-5 text-left">Estado del Buzón de Correo</label>
-                <div class="col-lg-7">
+            <div class="col-xs-6">
+                <label for="ou" class="col-xs-7 text-left">Estado del Buzón de Correo</label>
+                <div class="col-xs-5">
                     <div class="btn-group btn-toggle" id="buzonstatusBtn">
                     {% if datos.buzonstatus == "enabled" %}
-                        <button class="btn btn-sm btn-primary active">Enabled</button>
-                        <button class="btn btn-sm btn-default">Disabled</button>
+                        <button class="btn btn-xs btn-primary active">Enabled</button>
+                        <button class="btn btn-xs btn-default">Disabled</button>
                     {% else %}
-                        <button class="btn btn-sm btn-default">Enabled</button>
-                        <button class="btn btn-sm btn-primary active">{{ datos.cuentastatus | capitalize }}</button>
+                        <button class="btn btn-xs btn-default">Enabled</button>
+                        <button class="btn btn-xs btn-primary active">{{ datos.cuentastatus | capitalize }}</button>
                     {% endif %}
                     </div>
                     
                 </div>
             </div>
         </div>
+    </form>
+                    
+    <form class="form-horizontal" role="form" action="/usermod/cambio" method="POST" id="formcambio">
+        <legend>Modificación para usuario <b id="usermod">{{datos.usermod}}</b></legend>
         <div class="form-group">
-            <label for="ou" class="col-lg-12 text-left">Pertenencia a Grupos</label>
-            <div class="col-lg-6">
-                <label for="ou" class="col-lg-12 text-left">Grupo Principal</label>
-                <select class="form-control col-lg-12" id="grupouser" name="grupouser">
+            <label for="uid" class="col-md-3 text-left">Nombres</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="nameuser" name="nameuser" required placeholder="Nombres" autofocus autocomplete="off" value="{{datos.nameuser}}">
+            </div>
+                <input type="hidden" name="usermod" value="{{datos.usermod}}">
+        </div>
+        <div class="form-group">
+            <label for="apelluser" class="col-md-3 text-left">Apellidos</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="apelluser" name="apelluser" required placeholder="Apellidos" autocomplete="off" value="{{datos.apelluser}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ou" class="col-xs-3 text-left">Oficina</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="oficina" name="oficina" required placeholder="Oficina" autocomplete="off" value="{{datos.oficina}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="o" class="col-xs-3 text-left">Establecimiento</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="localidad" name="localidad" required placeholder="Establecimiento" autocomplete="off" value="{{datos.localidad}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="cargo" class="col-xs-3 text-left">Cargo</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="cargo" name="cargo" placeholder="Cargo" autocomplete="off" value="{{datos.cargo}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="phone" class="col-xs-3 text-left">Teléfono</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="phone" name="phone" placeholder="Telefono" autocomplete="off" value="{{datos.telefono}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ou" class="col-xs-12 text-left">Pertenencia a Grupos</label>
+            <div class="col-xs-6">
+                <label for="ou" class="col-xs-12 text-left">Grupo Principal</label>
+                <select class="form-control col-xs-12" id="grupouser" name="grupouser">
                     {% for elemento in datos.grupos %}
                         {% if elemento.cn == datos.grupouser %}
                             <option selected value="{{elemento.gidNumber}}">{{elemento.cn}}</option>
@@ -88,9 +104,9 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-lg-6">
-                <label for="ou" class="col-lg-12 text-left">Grupos Adicionales</label>
-                <select multiple class="form-control col-lg-12" size="10" id="grupos" name="grupos[]">
+            <div class="col-xs-6">
+                <label for="ou" class="col-xs-12 text-left">Grupos Adicionales</label>
+                <select multiple class="form-control col-xs-12" size="10" id="grupos" name="grupos[]">
                     {% for elemento in datos.grupos %}
                         {% if elemento.cn in datos.gruposuser %}
                             <option selected value="{{elemento.cn}}">{{elemento.cn}}</option>
@@ -102,7 +118,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label id="resultado" class="col-lg-12 text-left"></label>
+            <label id="resultado" class="col-xs-12 text-left"></label>
         </div>
         <div class="form-group text-center">
             <button class="btn btn-lg btn-primary" id="enviar" tabindex="1" role="button">Modificar Usuario</button> 
