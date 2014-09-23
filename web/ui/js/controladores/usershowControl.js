@@ -48,6 +48,7 @@ var mostrarDatos = function(data){
         $("#grupouser").text(data.grupouser);
         $("#nameuser").text(data.nameuser);
         $("#oficina").text(data.oficina);
+        $("#usermod").text(data.usermod);
         // Modificamos el enlace
         $("#usermodTecnico").attr( 'href', "/usermod/envio/" + $("#usuarioCliente").val() );
         // Una vez todo configurado, mostramos y ocultamos

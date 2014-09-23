@@ -93,6 +93,7 @@ class usermodControl extends \clases\sesion {
         $usuarioModificar = $this->index->get('POST.usermod');
         $usuarioLocalidad = $this->index->get('POST.localidad');
         
+        
         $claves = $this->getClaves();
         
         $resultado = array();
@@ -118,10 +119,7 @@ class usermodControl extends \clases\sesion {
         $resultado['modificar_grupos_adicionales'] = $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
         
         //TODO: Empezar a crear la plantilla para esta, ya es hora y pasada de hecho
-        foreach ($resultado as $value) {
-            print_r($value);
-            print "<br>";
-        }
+        print json_encode($resultado);
     }
 
 

@@ -111,7 +111,7 @@ $index->route('GET|POST @usermod_modificar: /usermod/envio',
         'controladores\usermodControl->mostrarUsuario');
 $index->route('GET|POST @usermod_modificar: /usermod/@usuarioModificar', 
         'controladores\usermodControl->mostrarUsuario');
-$index->route('GET|POST @usermod_modificar: /usermod/cambio', 
+$index->route('POST @usermod_modificar: /usermod/cambio [ajax]', 
         'controladores\usermodControl->modificarUsuario');
 //Rutas hacia useradd
 $index->route('GET|POST @useradd: /useradd', 
