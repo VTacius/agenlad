@@ -25,9 +25,14 @@ class directorioControl extends \clases\sesion {
      * @return array
      */
     private function usuarios_sync($filtro = array()) {
+//        $atributos = array('uid','cn','title','o', 'ou','mail');
+//        $filtrador = $this->ldap->createFiltro($filtro);
+//        return $this->ldap->getDatos($filtrador, $atributos, 1000);
+        $usuarios = new \Modelos\userPosix($this->dn, $this->pswd);
         $atributos = array('uid','cn','title','o', 'ou','mail');
-        $filtrador = $this->ldap->createFiltro($filtro);
-        return $this->ldap->getDatos($filtrador, $atributos, 1000);
+        $filtro = array('uid'=>"*");
+        return $usuarios->search($filtro, $atributos, "dc=sv");
+        
     }
     
     /**

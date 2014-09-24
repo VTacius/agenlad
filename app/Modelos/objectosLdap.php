@@ -87,16 +87,21 @@ class objectosLdap extends \Modelos\controlLDAP{
     /**
      * Realiza la búsqueda en base a un arreglo hash pasado como parametro
      * @param array $search
+     * @param array $atributes
      * @param boolean|string $base
      * @return array
      */
     
-    public function search( $search, $base = false, $filtro = false){
-        if ($base) {
+    public function search( $search, $atributes = false, $base = false, $filtro = false){
+        if ($base == false) {
             $this->base =  $base;
         }
         $this->datos = array();
-        $atributes = array_keys($search);
+        if ($atributes == false){
+            $attr = array_keys($search);
+        }else{
+            $attr = array_merge(array_keys($search), $atributes);
+        }
         if (!$filtro){
             $filtro = "(&(objectClass=$this->objeto)";
             foreach($search as $indice => $valor){
@@ -104,7 +109,7 @@ class objectosLdap extends \Modelos\controlLDAP{
             }
             $filtro .= ")";
         }
-        return $this->entrada = $this->getDatos($filtro, $atributes);
+        return $this->entrada = $this->getDatos($filtro, $attr);
         
     }
     

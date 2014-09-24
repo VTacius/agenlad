@@ -105,6 +105,7 @@ abstract class sesion {
     }
 
     /**
+     * TODO: Estamos duplicados con \Modelos\controlLDAP
      * Retorna un array con la configuración para el dominio para el cual tiene
      * permisos el usuarios que ha abierto la sesion
      * @return array

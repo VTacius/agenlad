@@ -7,12 +7,18 @@
 namespace Modelos;
 use Exception;
 class controlLDAP {
+    /** @var El dn se encuentra disponible a nivel de clase*/
+    protected $dn;
     /** @var \Base */
     protected $index;
+    /** @var array El contenido de todos los datos estará a nivel de clase */
+    protected $datos = array();
      /** Configuracion de los parametros de conexión  */
+    protected $base;
     protected $server;
     protected $puerto;
-    protected $base;
+    /** @var array La configuración que trajimos desde la base de datos*/
+    protected $config;
     /** @var $link_identifier La conexión estará a nivel de clase, y no se piensa usar fuera de acá */
     private $conLDAP;
     /** @var  bool El enlace estará a nivel de clases */
@@ -21,12 +27,6 @@ class controlLDAP {
     protected $errorLDAP = "";
     /** @var  bool Tendremos a la mano la busqueda lista para ordenarla después */
     protected $searchLDAP; 
-    /** @var array El contenido de todos los datos estará a nivel de clase */
-    protected $datos = array();
-    /** @var El dn se encuentra disponible a nivel de clase*/
-    protected $dn;
-    /** @var array La configuración que trajimos desde la base de datos*/
-    protected $config;
   
   /**
     * Get auth::dn
@@ -171,6 +171,10 @@ class controlLDAP {
     /**
      * Crea un filtro con los índices=>valor del array pasado como parametros
      * Por ahora, usar sólo con un único filtro, por favor
+     * 
+     * OBSOLETO Y SIN USO REAL
+     * Parece ser que la forma en que search forma el filtro es suficiente
+     * 
      * @param array $filtro Use array('uid','cn','title','o', 'ou','mail')
      * @return string Valores por defecto
      */

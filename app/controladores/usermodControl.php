@@ -11,14 +11,14 @@ class usermodControl extends \clases\sesion {
     
     private function listarGrupos($base){
         $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
-        $search = array('cn'=>'*', 'gidNumber'=>'*');
-        return $grupo->search($search, $base);
+        $search = array('cn'=>'*');
+        return $grupo->search($search, array('gidNumber'), $base);
     }
     
     private function listarGruposUsuarios($base, $memberUid){
         $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
-        $search = array('memberUid'=>$memberUid, 'cn'=> '*');	
-        $resultado = $grupo->search($search, $base);
+        $search = array('memberUid'=>$memberUid);	
+        $resultado = $grupo->search($search, array('cn'), $base);
         $grupos = array();
         foreach ($resultado as $value) {
             if 	(array_key_exists('cn', $value)){
