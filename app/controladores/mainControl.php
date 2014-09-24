@@ -146,7 +146,8 @@ class mainControl extends \clases\sesion {
         $passchangeconfirm = $this->index->get('POST.passchangeconfirm');
         if ($passchangeconfirm == $passchangeprima){
             if ($this->complejidad($passchangeprima)) {
-                print $this->credenciales($rol, $usuario, $passchangeprima);
+                $retorno = $this->credenciales($rol, $usuario, $passchangeprima);
+                print $retorno; 
                 //Me encanta rehusar código de esta forma. Recuerda no hacer la redirección desde acá
                 $cierre = new \controladores\loginControl();
                 $cierre->cerrarSesion();

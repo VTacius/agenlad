@@ -173,7 +173,6 @@ class loginControl extends \clases\sesion{
 
         // Obtenemos los procedimientos de roles de la base de datos
         $roles = $this->obtenerBandera($this->usuario, $this->password);
-        print_r($roles);
 
         // Llenamos los siguiente datos en base a lo obtenido en roles
         $this->index->set('SESSION.rol', $roles[0]['rol']);
@@ -236,6 +235,11 @@ class loginControl extends \clases\sesion{
     public function cerrarMensaje(){
         $this->cerrarSesion();
         $mensaje = $this->index->get('PARAMS.mensaje');
+        $this->index->reroute('@login_mensaje(@mensaje='. $mensaje .')');
+    }
+    
+    public function cerrarMensajeExterno($mensaje){
+        $this->cerrarSesion();
         $this->index->reroute('@login_mensaje(@mensaje='. $mensaje .')');
     }
 }

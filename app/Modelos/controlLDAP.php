@@ -79,7 +79,6 @@ class controlLDAP {
         $this->index = \Base::instance();
         // Configuramos según la base de datos
         $this->config = $this->getConfiguracionDominio();
-        print_r($this->config);
         if (($server === false && $puerto === false)){
             $this->server = $this->config['servidor'];
             $this->puerto = $this->config['puerto'];
