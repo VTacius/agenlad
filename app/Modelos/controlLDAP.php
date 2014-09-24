@@ -54,10 +54,14 @@ class controlLDAP {
         $base = $this->index->get('dbconexion');
         $dominio = $this->index->get('SESSION.dominio');
         
-        $cmds = "select attr from configuracion where dominio=:dominio";;
+        $cmds = "select attr from configuracion where dominio=:dominio";
         $args = array('dominio'=>$dominio);
         $resultado = $base->exec($cmds, $args);
-        return unserialize($resultado[0]['attr']);
+        // El mensaje que retorna si las variables de sesiòn no estàn es increìble
+        // No importa como pase despuès, los demàs errores estàn silenciados en el contructor
+        if ($base->count() > 0) {
+            return unserialize($resultado[0]['attr']);
+        }
     }
     
     /**
@@ -75,6 +79,7 @@ class controlLDAP {
         $this->index = \Base::instance();
         // Configuramos según la base de datos
         $this->config = $this->getConfiguracionDominio();
+        print_r($this->config);
         if (($server === false && $puerto === false)){
             $this->server = $this->config['servidor'];
             $this->puerto = $this->config['puerto'];

@@ -96,7 +96,6 @@ class loginControl extends \clases\sesion{
     protected function obtenerBandera($usuario, $password){
         $base = $this->conectarDB();
         // Operamos
-//        $cmds = 'select permisos, firmas, firmaz from user join rol on user.rol=rol.rol where user=:user';
         $cmds = "select titulo, user.rol, permisos, firmas, firmaz, dominio, bandera from user join rol on user.rol=rol.rol where user=:user;";
         $args = array('user'=>$usuario);
         $resultado = $base->exec($cmds, $args);
@@ -140,6 +139,26 @@ class loginControl extends \clases\sesion{
     }
     
     /**
+     * Crea el dominio a asignar para los usuarios normales
+     * @param string $dn
+     * @param string $dominio
+     * @return string
+     */
+    protected function dominioUser($dn, $dominio){
+        $pattern = "(dc=(?P<componentes>[A-Za-z]+))";
+        $matches = array();
+        if (empty($dominio)) {
+            preg_match_all($pattern, $dn, $matches );
+            foreach ($matches['componentes'] as $componentes){
+                    $dominio .= $componentes . ".";
+            }
+        }
+        return rtrim($dominio, ".");
+    }
+
+
+            
+    /**
      * Auxiliar de autenticar
      * Iniciamos la sesion con datos a guardar en la base de datos
      * @param \clases\authentication $login
@@ -154,12 +173,13 @@ class loginControl extends \clases\sesion{
 
         // Obtenemos los procedimientos de roles de la base de datos
         $roles = $this->obtenerBandera($this->usuario, $this->password);
+        print_r($roles);
 
         // Llenamos los siguiente datos en base a lo obtenido en roles
-        $this->index->set('SESSION.permisos', unserialize($roles[0]['permisos']));
         $this->index->set('SESSION.rol', $roles[0]['rol']);
         $this->index->set('SESSION.titulo', $roles[0]['titulo']);
-        $this->index->set('SESSION.dominio', $roles[0]['dominio']);
+        $this->index->set('SESSION.dominio', $this->dominioUser($login->getDN(), $roles[0]['dominio']));
+        $this->index->set('SESSION.permisos', unserialize($roles[0]['permisos']));
         // TODO: Recuerda que estas no deberían estar acá
         $this->index->set('SESSION.firmaz', $roles[0]['firmaz']);
         $this->index->set('SESSION.firmas', $roles[0]['firmas']);
@@ -175,9 +195,9 @@ class loginControl extends \clases\sesion{
         $this->comprobarBloqueo($this->usuario);
         $login = new \clases\authentication('ldap', array(
             'dc' => $this->server,
+            'pw' => $this->index->get('passwdldap'),
             'rdn' => $this->index->get('lectorldap'),
-            'base_dn'=> $this->index->get('sbase'),
-            'pw' => $this->index->get('passwdldap')
+            'base_dn'=> $this->index->get('sbase')
                 )
         );
         if (@$login->login($this->usuario, $this->password)){

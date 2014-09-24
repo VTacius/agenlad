@@ -115,7 +115,7 @@ var procesarDatos = function () {
             setTimeout(
                 function() {
                     document.location.reload(true);
-                }, 4000);
+                }, 3500);
         },
         error: function(){
             $("#msgadvertencia").show();
