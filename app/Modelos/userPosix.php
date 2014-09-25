@@ -24,8 +24,8 @@ class userPosix extends \Modelos\objectosLdap{
     
     private $mailDomain;
     
-    public function __construct($rdnLDAP, $passLDAP) {
-        parent::__construct($rdnLDAP, $passLDAP);
+    public function __construct($rdnLDAP, $passLDAP, $destino="", $parametros = array()) {
+        parent::__construct($rdnLDAP, $passLDAP, $destino, $parametros);
         // Usamos desde acá la clase cifrado. 
         $this->hashito = new \clases\cifrado();
         $this->objeto='shadowAccount';

@@ -6,8 +6,10 @@
  */
 namespace Modelos;
 use Exception;
-class controlLDAP {
-    /** @var El dn se encuentra disponible a nivel de clase*/
+use ErrorException;
+
+class ldapAccess {
+    /** @var El dn de quién esta realizando la conexion*/
     protected $dn;
     /** @var \Base */
     protected $index;
@@ -20,15 +22,15 @@ class controlLDAP {
     /** @var array La configuración que trajimos desde la base de datos*/
     protected $config;
     /** @var $link_identifier La conexión estará a nivel de clase, y no se piensa usar fuera de acá */
-    private $conLDAP;
+    private $conexionLdap;
     /** @var  bool El enlace estará a nivel de clases */
     protected $bindLDAP;
-    /** @var  string Errores ocurridos durante las operaciones LDAP */
-    protected $errorLDAP = "";
+    /** @var  array Errores ocurridos durante las operaciones LDAP */
+    protected $errorLdap = array();
     /** @var  bool Tendremos a la mano la busqueda lista para ordenarla después */
     protected $searchLDAP; 
-  
-  /**
+ 
+    /**
     * Get auth::dn
     * @return string
     */
@@ -36,12 +38,17 @@ class controlLDAP {
         return $this->dn;
     }
     
-  /**
-   * Set auth::dn
-   * @param string $dn
-   */
-    public function setDN($dn){
-        $this->dn = $dn;
+    public function setErrorLdap($titulo, $mensaje){
+        $this->errorLdap[] = array( 'titulo' => $titulo, 'mensaje' => $mensaje);
+    }
+    /**
+     * 
+     * @return errorLdap
+     */
+    public function getErrorLdap(){ 
+        if (sizeof($this->errorLdap)>0) {
+            return $this->errorLdap;
+        }
     }
     
     /**
@@ -68,46 +75,70 @@ class controlLDAP {
      * Empiezan métodos necesarios para establecer cualquier conexión
      */
     
-  /**
+    /**
+     * 
+     * @param string $destino central|personalizado
+     * @param array $parametros array ([0]=>servidor, [1]=>puerto, [2]=>base)
+     */
+    private function conexion ($destino, $parametros){
+        // Configuramos según la base de datos
+        if (sizeof($parametros) == 0) {
+            $parametros = array('sserver', 'spuerto', 'sbase');
+        }
+        switch ($destino) {
+            case 'central':
+            case 'personalizado':
+                $this->server = $this->index->get($parametros[0]);
+                $this->puerto = $this->index->get($parametros[1]);
+                $this->base = $this->index->get($parametros[2]);
+                break;
+            default :
+                $this->config = $this->getConfiguracionDominio();      
+                $this->server = $this->config['servidor'];
+                $this->puerto = $this->config['puerto'];
+                $this->base = $this->config['base'];
+                break;
+        }
+        // Empezamos la conexión
+        $this->conexionLdap = ldap_connect($this->server,  $this->puerto);
+        ldap_set_option($this->conexionLdap, LDAP_OPT_PROTOCOL_VERSION, 3);
+        ldap_set_option($this->conexionLdap, LDAP_OPT_NETWORK_TIMEOUT, 2);
+    }
+    /**
    * El constructor inicia la conexión hacia el servidor LDAP leyendo algunos datos desde el fichero de configuración
    * @param string $rdnLDAP
    * @param strin $passLDAP
    * @return boolean
    * @throws Exception
    */
-    function __construct($rdnLDAP, $passLDAP, $server = false, $puerto = false, $base = false){
+    
+    /**
+     * 
+     * @param string $rdnLDAP DN del usuario con el cual conectar
+     * @param string $passLDAP Contraseña del usuario con el cual conectar
+     * @param string  $destino central|personalizado
+     * @param array $parametros array ([0]=>servidor, [1]=>puerto, [2]=>base)
+     * @return boolean
+     * @throws Exception
+     */
+    function __construct($rdnLDAP, $passLDAP, $destino="", $parametros = array()){
         $this->index = \Base::instance();
-        // Configuramos según la base de datos
-        $this->config = $this->getConfiguracionDominio();
-        if (($server === false && $puerto === false)){
-            $this->server = $this->config['servidor'];
-            $this->puerto = $this->config['puerto'];
-            $this->base = $this->config['base'];
-        }else{
-            $this->server = $this->index->get($server);
-            $this->puerto = $this->index->get($puerto);
-            $this->base = $this->index->get($base);
-        }
-        // Empezamos la conexión
-        $this->conLDAP = ldap_connect($this->server,  $this->puerto);
-        ldap_set_option($this->conLDAP, LDAP_OPT_PROTOCOL_VERSION, 3);
-        ldap_set_option($this->conLDAP, LDAP_OPT_NETWORK_TIMEOUT, 2);
-        // Hacemos el enlace de una vez
+        $this->conexion($destino, $parametros);
         try{
-            if ((@$this->bindLDAP = ldap_bind($this->conLDAP, $rdnLDAP, $passLDAP))){
+            if ((@$this->enlaceLdap = ldap_bind($this->conexionLdap, $rdnLDAP, $passLDAP))){
                 // No entiendo porque mi necesidad de configurar acá el controLDAP::dn, si
                 // Ya esta configurado en las variables de sesión
                 $this->dn = $rdnLDAP;
                 return true;
             } else {
-                throw new Exception ("Error en la conexión: <b>".ldap_error($this->conLDAP)."</b>");
+                throw new Exception (ldap_error($this->conexionLdap));
             }
         }catch (Exception $e) {
-                $this->errorLDAP = $e->getMessage();	
-                return false;
+            $this->setErrorLdap("Error en la conexion", $e->getMessage());
+            return false;
         }
     }
-	
+
     /**
      * Terminan métodos necesarios para establecer cualquier conexión 
      */
@@ -116,13 +147,6 @@ class controlLDAP {
      * Empiezan métodos auxiliares de primer nivel
      */
     
-    /**
-     * 
-     * @return errorLDAP
-     */
-    public function mostrarERROR(){ 
-        return $this->errorLDAP;
-    }
     
     /**
      * Auxiliar de datos
@@ -132,9 +156,9 @@ class controlLDAP {
      * @param $result_entry_identifier $entrada
      */
     protected function mapa($atributos, $entrada){
-        $usuario = array('dn'=>@ldap_get_dn($this->conLDAP, $entrada));
+        $usuario = array('dn'=>@ldap_get_dn($this->conexionLdap, $entrada));
         foreach ($atributos as $attr) {
-            if (($valor = @ldap_get_values($this->conLDAP, $entrada, $attr))){
+            if (($valor = @ldap_get_values($this->conexionLdap, $entrada, $attr))){
                 array_pop($valor);
                 $usuario[$attr] = count($valor)==1? $valor[0]:  $valor;
             }
@@ -151,19 +175,23 @@ class controlLDAP {
     public function getDatos($filtro, $atributos, $size=499){
         try {
             // Es necesarios silenciar el error (Sobre Timelimit) para que FatFree no lo devuelva 
-            $this->searchLDAP = @ldap_search ($this->conLDAP, $this->base, $filtro, $atributos, 0, $size, $size);
-            
+            if (!($this->searchLDAP = @ldap_search($this->conexionLdap, $this->base, $filtro, $atributos, 0, $size, $size))) {
+                throw new ErrorException (ldap_error($this->conexionLdap));
+            }
             // probaremos a agregar ldap_sort sin romper compatibilidad
-            ldap_sort($this->conLDAP, $this->searchLDAP, $atributos[0]);
+            if(!(@ldap_sort($this->conexionLdap, $this->searchLDAP, $atributos[0]))){
+                throw new ErrorException (ldap_error($this->conexionLdap));
+            }            
             //Creamos la primera entrada 
-            $entrada = ldap_first_entry($this->conLDAP, $this->searchLDAP);
+            $entrada = @ldap_first_entry($this->conexionLdap, $this->searchLDAP);
             // Al menos una vez, metemos en $this->datos mediante push los valores que $this->mapa nos devuelva
             do {
                 array_push($this->datos, $this->mapa($atributos, $entrada));
-            } while ($entrada = @ldap_next_entry($this->conLDAP, $entrada));
+            } while ($entrada = @ldap_next_entry($this->conexionLdap, $entrada));
             
-        } catch (Exception $e) {
-            $this->errorLDAP = $e->getMessage();
+        } catch (ErrorException  $e) {
+            $this->setErrorLdap("Error obteniendo datos", $e->getMessage());
+            return false;
         }
         return $this->datos;
     }
@@ -206,26 +234,26 @@ class controlLDAP {
             $dn = $this->dn;
         }
         try{
-            if (ldap_modify($this->conLDAP, $dn, $valores)) {
+            if (ldap_modify($this->conexionLdap, $dn, $valores)) {
                 return true;
             } else {
-                throw new Exception(ldap_error($this->conLDAP));
+                throw new Exception(ldap_error($this->conexionLdap));
             }
         }catch(Exception $e){
-            $this->errorLDAP = $e->getMessage();	
+            $this->setErrorLdap("Error en modificación", $e->getMessage());	
             return false;
         }
     }
 
     function nuevaEntrada( $valores, $entry ) {
         try{
-            if (ldap_add($this->conLDAP, $entry, $valores)) {
+            if (ldap_add($this->conexionLdap, $entry, $valores)) {
                 return true;
             } else {
-                throw new Exception(ldap_error($this->conLDAP));
+                throw new Exception(ldap_error($this->conexionLdap));
             }
         }catch(Exception $e){
-            $this->errorLDAP = $e->getMessage();
+            $this->setErrorLdap("Error agregando entrada", $e->getMessage());
             return false;
         }
     }
@@ -234,13 +262,13 @@ class controlLDAP {
         // En realidad, parece que esta función agrega un atributo del tipo 
         // "permito varios y no me ahuevo"
         try{
-            if (@ldap_mod_add($this->conLDAP, $dn, $valores)) {
+            if (@ldap_mod_add($this->conexionLdap, $dn, $valores)) {
                 return true;
             } else {
-                throw new Exception(ldap_error($this->conLDAP));
+                throw new Exception(ldap_error($this->conexionLdap));
             }
         }catch(Exception $e){
-            $this->errorLDAP = $e->getMessage();
+            $this->setErrorLdap("Error en modificación", $e->getMessage());	
             return false;
         }
     }
@@ -249,13 +277,13 @@ class controlLDAP {
         // En realidad, parece que esta función agrega un atributo del tipo 
         // "permito varios y no me ahuevo"
         try{
-            if (@ldap_mod_del($this->conLDAP, $dn, $valores)) {
+            if (@ldap_mod_del($this->conexionLdap, $dn, $valores)) {
                 return true;
             } else {
-                throw new Exception(ldap_error($this->conLDAP));
+                throw new Exception(ldap_error($this->conexionLdap));
             }
         }catch(Exception $e){
-            $this->errorLDAP = $e->getMessage();
+            $this->setErrorLdap("Error en modificación", $e->getMessage());
             return false;
         }
     }
@@ -267,13 +295,13 @@ class controlLDAP {
             $newRdn = $matches[1];
         }
         try {
-            if (ldap_rename($this->conLDAP, $oldDn, $newRdn, $newParent, true)) {
+            if (ldap_rename($this->conexionLdap, $oldDn, $newRdn, $newParent, true)) {
                 return true;
             } else {
-                throw new Exception(ldap_error($this->conLDAP));
+                throw new Exception(ldap_error($this->conexionLdap));
             }
         } catch (Exception $e) {
-            $this->errorLDAP = $e->getMessage();
+            $this->setErrorLdap("Error en modificación", $e->getMessage());
             return false;
         }
     }

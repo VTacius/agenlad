@@ -114,7 +114,7 @@ abstract class sesion {
         $base = $this->index->get('dbconexion');
         $dominio = $this->index->get('SESSION.dominio');
         
-        $cmds = "select attr from configuracion where dominio=:dominio";;
+        $cmds = "select attr from configuracion where dominio=:dominio";
         $args = array('dominio'=>$dominio);
         $resultado = $base->exec($cmds, $args);
         return unserialize($resultado[0]['attr']);

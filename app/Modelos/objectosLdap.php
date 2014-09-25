@@ -7,7 +7,7 @@
 
 namespace Modelos;
 
-class objectosLdap extends \Modelos\controlLDAP{
+class objectosLdap extends \Modelos\ldapAccess{
     /** 
      * Arreglo de los atributos del usuario. Recuerde que DN no se considera atributo
      * @var array 
@@ -31,6 +31,7 @@ class objectosLdap extends \Modelos\controlLDAP{
      * @var string (ObjectClass) 
      */
     protected $objeto;
+    
     
     /**
      * Configura el valor de un elemento cualquiera dentro del árbol LDAP
@@ -84,6 +85,31 @@ class objectosLdap extends \Modelos\controlLDAP{
         return $this->entrada = $this->getDatos($filtro, $atributes);
     }
     
+    private function parserFiltro($attr, $valor){
+        $matches = array();
+        $filtro = "";
+        if (preg_match_all("/(NOT|OR)\s{1,2}\(*(?<valores>[a-z]+)/", $valor, $matches)){
+                $pre_attr = "(&";
+                foreach($matches['valores'] as $value){
+                        $pre_attr .= "(!($attr=$value))";
+                }
+                $pre_attr .= ")";
+                $filtro .= $pre_attr;
+        }else{
+                $filtro .= "($attr=$valor)";
+        }
+        return $filtro;
+    }
+    
+    protected function filtro($search){
+        $filtro = "(&(objectClass=$this->objeto)";
+        foreach ($search as $attr => $valor){
+            $filtro .= $this->parserFiltro($attr, $valor);
+        }
+        $filtro .= ")";
+        return $filtro;
+    }
+    
     /**
      * Realiza la búsqueda en base a un arreglo hash pasado como parametro
      * @param array $search
@@ -92,7 +118,7 @@ class objectosLdap extends \Modelos\controlLDAP{
      * @return array
      */
     
-    public function search( $search, $atributes = false, $base = false, $filtro = false){
+    public function search( $search, $atributes = false, $base = false){
         if ($base == false) {
             $this->base =  $base;
         }
@@ -102,14 +128,10 @@ class objectosLdap extends \Modelos\controlLDAP{
         }else{
             $attr = array_merge(array_keys($search), $atributes);
         }
-        if (!$filtro){
-            $filtro = "(&(objectClass=$this->objeto)";
-            foreach($search as $indice => $valor){
-                $filtro .= "($indice=$valor)";
-            }
-            $filtro .= ")";
-        }
-        return $this->entrada = $this->getDatos($filtro, $attr);
+        $filtro = $this->filtro($search);
+//        $filtro = "(&(objectClass=$this->objeto))";
+        $this->entrada = $this->getDatos($filtro, $attr);
+        return $this->entrada;
         
     }
     

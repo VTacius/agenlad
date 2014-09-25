@@ -7,7 +7,6 @@ namespace controladores;
  */
 
 class directorioControl extends \clases\sesion {
-    private $ldap;
     
     function __construct(){
         // Consigue el objeto F3 en uso mediante el constructor de la clase padre
@@ -15,7 +14,6 @@ class directorioControl extends \clases\sesion {
         // Nombramos la página que hemos de producir
         $this->pagina = "directorio";
         // Objetos que hemos de usar
-        $this->ldap = new \Modelos\controlLDAP($this->dn, $this->pswd);
     }
     
     
@@ -24,15 +22,16 @@ class directorioControl extends \clases\sesion {
      * @param array $filtro Use los siguiente valores: ('cn','title','o', 'ou','mail')
      * @return array
      */
-    private function usuarios_sync($filtro = array()) {
+    private function usuarios_sync() {
 //        $atributos = array('uid','cn','title','o', 'ou','mail');
 //        $filtrador = $this->ldap->createFiltro($filtro);
 //        return $this->ldap->getDatos($filtrador, $atributos, 1000);
         $usuarios = new \Modelos\userPosix($this->dn, $this->pswd);
         $atributos = array('uid','cn','title','o', 'ou','mail');
-        $filtro = array('uid'=>"*");
-        return $usuarios->search($filtro, $atributos, "dc=sv");
-        
+        $filtro = array('uid'=>"*", "uid"=>"NOT (root OR nobody)");
+        $datos = $usuarios->search($filtro, $atributos, "dc=sv");
+        $this->parametros['errorLdap'] = $usuarios->getErrorLdap();
+        return $datos;   
     }
     
     /**
@@ -54,7 +53,7 @@ class directorioControl extends \clases\sesion {
         // Usamos los valores enviados por POST para construir el filtro
         $filtro = $this->index->get('POST');
         // Obtenemos los datos que hemos de enviar a la vista
-        $this->parametros['datos'] = $this->usuarios_sync($filtro);
+        $this->parametros['datos'] = $this->usuarios_sync();
         echo $this->twig->render('directorio.html.twig', $this->parametros);       
         
     }

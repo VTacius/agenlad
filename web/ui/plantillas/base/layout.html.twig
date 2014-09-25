@@ -44,10 +44,14 @@
             <div class="col-lg-9">
                 {% block contenido %} 
                 {%endblock %} 
-                {% if errorLDAP %}
-                    <center><h3>{{ errorLDAP.titulo }}: <b>{{ errorLDAP.mensaje }}</b></h3></center>
+                {% if errorLdap %}
+                    {% for error in errorLdap %}
+                        <div class="alert alert-danger" role="alert">{{ error.titulo }}: <b>{{ error.mensaje }}</b></div>
+                    {% endfor %}
                 {% endif %}
             </div>
+        </div>
+        <div class="row">
             <footer class="span12">
             <hr>
                 <p class="text-center text-info">DTIC - Unidad de Redes y Seguridad Informática 2014  </p>
