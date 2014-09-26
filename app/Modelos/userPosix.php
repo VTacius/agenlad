@@ -193,8 +193,10 @@ class userPosix extends \Modelos\objectosLdap{
         $this->setHomeDirectory($homeDirectory);
         $mail = $uid . "@" . $this->mailDomain;
         $this->setMail($mail);
-        $sambaHomePath = "\\\\" .$this->netbiosName . "\\" . $uid;
-        $this->setSambaHomePath($sambaHomePath);
+        //TODO: Repara esto por el amor de Satán.
+        //Estos no son atributos Posix, sino samba
+//        $sambaHomePath = "\\\\" .$this->netbiosName . "\\" . $uid;
+//        $this->setSambaHomePath($sambaHomePath);
         
     }
 

@@ -108,14 +108,17 @@ var procesarDatos = function () {
             passchangeconfirm: $("#passchangeconfirm").val()
         },
         success: function(data){
+            console.log(data);
             $("#msgadvertencia").show();
             $("#advertencia").text(data);
-            $("#passchangeprima").prop('disabled', true);
-            $("#passchangeconfirm").prop('disabled', true);
-            setTimeout(
-                function() {
-                    document.location.reload(true);
-                }, 3500);
+//            $("#passchangeprima").prop('disabled', true);
+//            $("#passchangeconfirm").prop('disabled', true);
+//            if (!data.errorLdap==NULL){
+//                setTimeout(
+//                    function() {
+//                        document.location.reload(true);
+//                    }, 3500);
+//            }
         },
         error: function(){
             $("#msgadvertencia").show();

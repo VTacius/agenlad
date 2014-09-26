@@ -8,8 +8,7 @@ namespace controladores;
 
 class mainControl extends \clases\sesion {
     private $hashes;
-    private $ldap;
-    private $db;
+    private $usuario;
     
     function __construct(){
         // Consigue el objeto F3 en uso mediante el constructor de la clase padre
@@ -18,8 +17,7 @@ class mainControl extends \clases\sesion {
         $this->pagina = "main";
         // Objetos que hemos de usar
         $this->db = $this->index->get('dbconexion');
-        $this->hashes = new \clases\cifrado();
-        $this->ldap = new \Modelos\controlLDAP($this->dn, $this->pswd);   
+        $this->hashes = new \clases\cifrado();  
   }
     
     /**
@@ -27,29 +25,20 @@ class mainControl extends \clases\sesion {
      * Cambiar las contraseñas en el directorio LDAP
      * @param string $password
      */
-    private function changeLdap($password){
-        $credenciales = array();
-        $credenciales['userPassword'] = $this->hashes->slappasswd($password);
-        $credenciales['sambaNTPassword'] = $this->hashes->NTLMHash($password);
-        $credenciales['sambaLMPassword'] = $this->hashes->LMhash($password);
-        return $this->ldap->modificarEntrada($credenciales);
-    }
-    
-    /**
-     * Bifurcación de credenciales para usuarios normales
-     * Cambia la contraseña en LDAP
-     * @param string $password
-     */
-    private function cambioPassword($password){
-        if ($this->changeLdap($password)) {
-            return "Contraseña cambiada con exito";
+    private function changeLdapPassword($usuario, $password){
+        $this->usuario = new \Modelos\userPosix($this->dn, $this->pswd);
+        $this->usuario->setUid($usuario);
+        $this->usuario->configuraPassword($password);
+        if ($this->usuario->actualizarEntrada()) {
+            return "Contraseñas cambiada exitosamente";
         }else{
-            return ($this->ldap->mostrarERROR());
+            return "Ha ocurrido un error al cambiar las contraseñas";
         }
+        
     }
     
     /**
-     * Auxiliar de cambioPasswordAdmin
+     * Auxiliar de cambiosFirmas
      * Obtiene las firmas actuales de la base de datos para el usuario dado
      * @param string $usuario
      * @return array
@@ -62,7 +51,7 @@ class mainControl extends \clases\sesion {
     }
     
     /**
-     * Auxiliar de cambioPasswordAdmin
+     * Auxiliar de cambiosFirmas
      * Configura las firmas nuevas en la base de datos para el usuario dado
      * @param string $usuario
      * @param string $claves
@@ -74,16 +63,12 @@ class mainControl extends \clases\sesion {
         $this->db->exec($cmds, $args);
     }
 
-
     /**
-     * Bifurcación de credenciales para usuarios con nivel administrativo
-     * No sólo cambia la contraseña en LDAP, sino que configura sus firmas en 
-     * la base de datos
-     * @param type $usuario
-     * @param type $password
+     * TODO: Hacer una comprobación de este proceso
+     * @param string $usuario
+     * @param string $password
      */
-    private function cambioPasswordAdmin($usuario, $password){
-        if(($this->changeLdap($password))){
+    private function cambiosFirmas($usuario, $password){
             $input = $this->obtenerFirma($usuario);
             // Desciframos las firmas con la contraseña actual
             $firmas = $this->hashes->descifrada($input[0]['firmas'], $this->pswd);
@@ -93,11 +78,20 @@ class mainControl extends \clases\sesion {
             $clavez = $this->hashes->encrypt($firmaz, $password);
             // Ahora, que actualice la firma en la base de datos con la nueva contraseña
             $this->configurarFirma($usuario, $claves, $clavez);
-            // Devuelvo un mensaje para la vista
-            return "Contraseña cambiada con exito";
-        }else{
-            return ($this->ldap->mostrarERROR());
-        }
+            return "Cambio de Firmas exitoso";
+    }
+    
+    /**
+     * Bifurcación de credenciales para usuarios con nivel administrativo
+     * No sólo cambia la contraseña en LDAP, sino que configura sus firmas en 
+     * la base de datos
+     * @param type $usuario
+     * @param type $password
+     */
+    private function cambioPasswordAdmin($usuario, $password){
+        $cambioPassword = $this->changeLdapPassword($password);
+        $cambioFirma = $this->cambiosFirmas($usuario, $password);
+        return array("password"=>$cambioPassword, "Firmas"=>$cambioFirma);
     }
 
 
@@ -111,9 +105,9 @@ class mainControl extends \clases\sesion {
      */
     protected function credenciales($rol, $usuario, $password){
         if ($rol=='usuario'){
-            return $this->cambioPassword($password);
+            return array("password"=>$this->changeLdapPassword($usuario, $password));
         }else{
-            return $this->cambioPasswordAdmin($usuario, $password);
+            return array("password"=> $this->cambioPasswordAdmin($usuario, $password));
         }
     }
 
@@ -146,16 +140,17 @@ class mainControl extends \clases\sesion {
         $passchangeconfirm = $this->index->get('POST.passchangeconfirm');
         if ($passchangeconfirm == $passchangeprima){
             if ($this->complejidad($passchangeprima)) {
-                $retorno = $this->credenciales($rol, $usuario, $passchangeprima);
-                print $retorno; 
+                $resultado = $this->credenciales($rol, $usuario, $passchangeprima);
+                $retorno = array_merge($resultado, array('errorLdap'=> $this->usuario->getErrorLdap()));
+                print json_encode($retorno); 
                 //Me encanta rehusar código de esta forma. Recuerda no hacer la redirección desde acá
                 $cierre = new \controladores\loginControl();
                 $cierre->cerrarSesion();
             } else {
-                print("Las contraseña no tiene la complejidad necesaria");
+                print json_encode(array("password"=>"Las contraseña no tiene la complejidad necesaria"));
             }
         }else{
-            print("Las contraseña no coinciden");
+            print json_encode(array("password"=>"Las contraseñas no coinciden"));
         }
     }
     
@@ -166,9 +161,7 @@ class mainControl extends \clases\sesion {
         // Esto es importante en la vista
         $this->parametros['pagina'] = $this->pagina;
         // ¿Tenemos en serio acceso a esta página?
-        $this->comprobar($this->pagina); 
-        
-//        $this->parametros['datos'] = $mensaje;
+        $this->comprobar($this->pagina);       
         echo $this->twig->render('main.html.twig', $this->parametros);       
     }
 }

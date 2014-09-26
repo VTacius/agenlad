@@ -230,17 +230,17 @@ class ldapAccess {
      */
     public function modificarEntrada ($valores, $dn = false) {
         // Mantenemos la compatibilidad con la forma en que se usa para cambiar contraseña
-        if (!$dn) {
+        if ($dn == false) {
             $dn = $this->dn;
         }
         try{
-            if (ldap_modify($this->conexionLdap, $dn, $valores)) {
+            if (@ldap_modify($this->conexionLdap, $dn, $valores)) {
                 return true;
             } else {
                 throw new Exception(ldap_error($this->conexionLdap));
             }
         }catch(Exception $e){
-            $this->setErrorLdap("Error en modificación", $e->getMessage());	
+            $this->setErrorLdap("Error en modificación", $e->getMessage() . $dn);	
             return false;
         }
     }

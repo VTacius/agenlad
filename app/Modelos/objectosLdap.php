@@ -15,7 +15,7 @@ class objectosLdap extends \Modelos\ldapAccess{
     protected $atributos = array();
     
     /**
-     * El contenido de todo cuanto el usurio puede ser
+     * El contenido de todo cuanto el usuario puede ser
      * @var array
      */
     protected $entrada = array();
@@ -192,10 +192,9 @@ class objectosLdap extends \Modelos\ldapAccess{
         // El primer índice es dn, pero ya no lo usaremos màs
         $dn = array_shift($valores);
         if($this->modificarEntrada($valores, $dn)){
-            $mensaje = "La actualización de $dn ha ocurrido sin contratiempos";
+            return true;
         }else{
-            $mensaje = $this->mostrarERROR();
+            return false;
         }
-        return $mensaje;
     }
 }
