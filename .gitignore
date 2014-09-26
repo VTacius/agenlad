@@ -14,3 +14,5 @@ favicon.ico
 nbproject/
 web/ui/js/vendor
 web/ui/css/vendor
+#
+*.swp

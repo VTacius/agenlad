@@ -11,7 +11,6 @@ class mainControl extends \clases\sesion {
     private $usuario;
     
     function __construct(){
-        // Consigue el objeto F3 en uso mediante el constructor de la clase padre
         parent::__construct();
         // Nombramos la página que hemos de producir
         $this->pagina = "main";
@@ -30,7 +29,7 @@ class mainControl extends \clases\sesion {
         $this->usuario->setUid($usuario);
         $this->usuario->configuraPassword($password);
         if ($this->usuario->actualizarEntrada()) {
-            return "Contraseñas cambiada exitosamente";
+            return "Contraseña cambiada exitosamente";
         }else{
             return "Ha ocurrido un error al cambiar las contraseñas";
         }
