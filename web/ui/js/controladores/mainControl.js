@@ -2,7 +2,7 @@ $(document).ready(function() {
     // Suponemos la mejor forma para variables locales al usar JQuery
     $.indexControl = new Object();
     $.indexControl.validacion = false;
-    // Asegurarnos que las instrucciones estén ocultas
+    // Asegurarnos que las instrucciones y alertas estén ocultas
     $("#pswd_info").hide();
     $("#msgadvertencia").hide();
 });
@@ -63,15 +63,18 @@ var comprobarPassword = function(){
             return true;
         }else if (password === "" || confirmacion=== ""){
             $("#msgadvertencia").show();
+            $("#msgadvertencia").addClass("alert-danger");
             $("#advertencia").text("La confirmación esta vacía");
             return false;
         }else{
             $("#msgadvertencia").show();
-            $("#advertencia").text("Las confirmación no coincide");
+            $("#msgadvertencia").addClass("alert-danger");
+            $("#advertencia").text("La confirmación no coincide");
             return false;
         }
     }else{
         $("#msgadvertencia").show();
+        $("#msgadvertencia").addClass("alert-danger");
         $("#advertencia").text("Por favor, introduzca valores válidos");
         return false;
     }
@@ -103,26 +106,33 @@ var procesarDatos = function () {
     $.ajax({ 
         type: 'POST',
         url: '/main/cambio',
+	dataType: "json",
         data: {
             passchangeprima: $("#passchangeprima").val(),
             passchangeconfirm: $("#passchangeconfirm").val()
         },
         success: function(data){
-            console.log(data);
+	    mostrarErrorLdap(data);
             $("#msgadvertencia").show();
-            $("#advertencia").text(data);
-//            $("#passchangeprima").prop('disabled', true);
-//            $("#passchangeconfirm").prop('disabled', true);
-//            if (!data.errorLdap==NULL){
-//                setTimeout(
-//                    function() {
-//                        document.location.reload(true);
-//                    }, 3500);
-//            }
+		if(isEmpty(data.errorLdap)){
+	    		$("#msgadvertencia").addClass("alert-success");
+		        $("#passchangeprima").prop('disabled', true);
+            		$("#passchangeconfirm").prop('disabled', true);
+	                setTimeout(
+				function() {
+                        		document.location.reload(true);
+                    		}, 3500);
+            
+	}else{
+		$("#msgadvertencia").addClass("alert-danger");
+	}
+            $("#advertencia").text(data.password);
+	    $("a").attr('disabled','disabled');
         },
         error: function(){
             $("#msgadvertencia").show();
-            $("#advertencia").text("El procedimiento ha fallado por alguna razón");
+            $("#msgadvertencia").addClass("alert-danger");
+            $("#advertencia").text("El procedimiento ha fallado por razones indeterminadas");
         }
     });
 };

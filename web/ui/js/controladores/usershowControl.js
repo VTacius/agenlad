@@ -10,13 +10,6 @@ $("#enviar").click(function(e){
 });
 
 
-function isEmpty(obj) {
-    if (typeof obj === 'undefined' || obj === null || obj === '') return true;
-    if (typeof obj === 'number' && isNaN(obj)) return true;
-    if (obj instanceof Date && isNaN(Number(obj))) return true;
-    return false;
-}
-
 /**
  * Cambia #respuesta si que existe, es decir, si fue creada desde Twig 
  * en respuesta al rol del usuario
