@@ -15,8 +15,8 @@ function isEmpty(obj) {
 function mostrarErrorLdap(data){
 	if(!isEmpty(data.errorLdap)){
 		var respuesta = "";
+                $("#errorLdap").show();
 		$(data.errorLdap).each(function(index, elemento){
-			$("#errorLdap").show();
 			respuesta += elemento.titulo + ": " + elemento.mensaje + " ";
 			$("#errorLdap").text(respuesta);
 		});

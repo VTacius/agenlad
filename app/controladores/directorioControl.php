@@ -22,24 +22,33 @@ class directorioControl extends \clases\sesion {
      * @param array $filtro Use los siguiente valores: ('cn','title','o', 'ou','mail')
      * @return array
      */
-    private function usuarios_sync() {
-//        $atributos = array('uid','cn','title','o', 'ou','mail');
-//        $filtrador = $this->ldap->createFiltro($filtro);
-//        return $this->ldap->getDatos($filtrador, $atributos, 1000);
-        $usuarios = new \Modelos\userPosix($this->dn, $this->pswd);
-        $atributos = array('uid','cn','title','o', 'ou','mail');
-        $filtro = array('uid'=>"*", "uid"=>"NOT (root OR nobody)");
+    private function busquedaUsuarios($filter = array()) {
+        $usuarios = new \Modelos\userPosix($this->dn, $this->pswd, 'central' );
+        $atributos = array('uid','cn','title','o', 'ou','mail', 'telephoneNumber');
+        $filtro = empty($filter) ? array("cn"=>"NOT (root OR nobody)") : array_merge($filter, array("cn"=>"NOT (root OR nobody)"));
+//        $filtro = array("cn"=>"NOT (root OR nobody)") ;
         $datos = $usuarios->search($filtro, $atributos, "dc=sv");
         $this->parametros['errorLdap'] = $usuarios->getErrorLdap();
         return $datos;   
     }
     
     /**
-     * Devuelve usuarios
-     * @param array $filtro Use los siguiente valores: ('cn','title','o', 'ou','mail')
-     */
-    public function usuarios_ajax() {
-        print(json_encode($this->usuarios_sync($this->index->get('PARAMS'))));
+     * 
+     */    
+    public function mostrarUsuario(){
+        $this->comprobar($this->pagina);
+        // Usamos los valores enviados por POST para construir el filtro
+        $parametros = $this->index->get('POST');
+        $filtro = array();
+        foreach ($parametros as $key => $value) {
+            if (  !(empty($value) || $value == "*") ) {
+                $filtro[$key] = $value;
+            }
+        }
+        $datos['datos'] = $this->busquedaUsuarios($filtro);
+        // TODO: Esta es oficialmente la manera en que debe formarse la respuesta hacia ajax
+        $resultado = array_merge($datos, array('errorLdap'=> $this->parametros['errorLdap']));
+        print json_encode($resultado);
     }
     
     /**
@@ -50,11 +59,8 @@ class directorioControl extends \clases\sesion {
         $this->parametros['pagina'] = $this->pagina;
         // ¿Tenemos en serio acceso a esta página?
         $this->comprobar($this->pagina); 
-        // Usamos los valores enviados por POST para construir el filtro
-        $filtro = $this->index->get('POST');
         // Obtenemos los datos que hemos de enviar a la vista
-        $this->parametros['datos'] = $this->usuarios_sync();
-        echo $this->twig->render('directorio.html.twig', $this->parametros);       
-        
+//        $this->parametros['datos'] = $this->busquedaUsuarios();
+        echo $this->twig->render('directorio.html.twig', $this->parametros);        
     }
 }

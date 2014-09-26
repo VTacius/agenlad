@@ -129,7 +129,6 @@ class objectosLdap extends \Modelos\ldapAccess{
             $attr = array_merge(array_keys($search), $atributes);
         }
         $filtro = $this->filtro($search);
-//        $filtro = "(&(objectClass=$this->objeto))";
         $this->entrada = $this->getDatos($filtro, $attr);
         return $this->entrada;
         

@@ -79,8 +79,8 @@ $index->set('dbconexion',new DB\SQL($dsn, $dbusuario, $dbpassword));
 // Rutas hacia directorio
 $index->route('GET|POST @directorio: /directorio [sync]', 
         'controladores\directorioControl->display');
-$index->route('GET|POST @directorioAjax: /directorio [ajax]', 
-        'controladores\directorioControl->usuarios_ajax');
+$index->route('GET|POST @directorio_busqueda: /directorio/busqueda', 
+        'controladores\directorioControl->mostrarUsuario');
 //Rutas hacia login
 $index->route('GET|POST @login: /login',
         'controladores\loginControl->display');
