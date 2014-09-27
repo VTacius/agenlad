@@ -9,8 +9,10 @@ namespace Modelos;
 
 class grupoSamba extends \Modelos\objectosLdap{
     
-    public function __construct($rdnLDAP, $passLDAP) {
-        parent::__construct($rdnLDAP, $passLDAP);
+    public function __construct($rdnLDAP, $passLDAP, $destino="", $parametros = array()) {
+        parent::__construct($rdnLDAP, $passLDAP, $destino, $parametros);
+    #public function __construct($rdnLDAP, $passLDAP) {
+    #    parent::__construct($rdnLDAP, $passLDAP);
         $this->objeto='posixGroup';
         $this->atributos = array('cn','displayName','gidNumber','memberUid','objectClass','sambaGroupType','sambaSID');
     }

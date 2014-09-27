@@ -5,6 +5,15 @@
 {% endblock %}
 {% block javascript %} 
     <script src="{{ activos('js/controladores/usermodControl.js') }}" type="text/javascript"></script>
+    {% if datos %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("#busqueda").hide();
+            $("#mailModForm").show();
+            $("#userModForm").show();
+        });
+    </script>
+    {% endif %}
 {% endblock %}
 {# Configuramos las variables que la plantilla padre usa para formar el menu #}
 {% set menu = menu %}

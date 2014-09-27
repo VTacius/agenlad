@@ -79,7 +79,7 @@ class usermodControl extends \clases\sesion {
     }
     
 
-        public function modificarUsuario(){
+    public function modificarUsuario(){
         $this->comprobar($this->pagina);         
         // Modificaciones de los grupos de usuario
         $usuarioGrupo = $this->index->get('POST.grupouser');
@@ -118,23 +118,30 @@ class usermodControl extends \clases\sesion {
         $resultado['actualizar_entrada'] = $usuario->actualizarEntrada();
         $resultado['modificar_grupos_adicionales'] = $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
         
-        //TODO: Empezar a crear la plantilla para esta, ya es hora y pasada de hecho
         print json_encode($resultado);
     }
 
-
-    public function mostrarUsuario(){
+    public function mostrarUsuarioPost(){
         $this->comprobar($this->pagina);     
-        
-        // Recuperamos los parametros que le son enviados mediante POST o GET
-        // No vengas de listillo a querer usar un ternario porque va a fallar
+
+        $usuarioCliente = $this->index->get('POST.usuarioModificar');
+	$resultado = $this->mostrarUsuario($usuarioCliente);
+        print json_encode($resultado);
+	
+    }
+    
+    public function mostrarUsuarioGet(){
+        $this->comprobar($this->pagina);
         $usuarioCliente = $this->index->get('PARAMS.usuarioModificar');
-        if ($usuarioCliente == ""){
-            $usuarioCliente = $this->index->get('POST.usuarioModificar');
-        }
+	$resultado = $this->mostrarUsuario($usuarioCliente);
+        $this->parametros['datos'] = $resultado;
         
+        echo $this->twig->render('usermod.html.twig', $this->parametros);       
+	
+    }
+
+    private function mostrarUsuario($usuarioCliente){
         // Recuperamos firmaz desde sesion
-        
         $clavez = $this->getClavez();
         
         // Empezamos con un objeto usuario
@@ -164,11 +171,8 @@ class usermodControl extends \clases\sesion {
             'buzonstatus'=> $mailbox->getZimbraMailStatus(),
             'cuentastatus'=> $mailbox->getZimbraAccountStatus(),
         );        
-        
-        print json_encode($datos);
-//        $this->parametros['datos'] = $datos;
-//        
-//        echo $this->twig->render('usermod.form.twig', $this->parametros);       
+       
+	return array_merge($datos, array("errorLdap"=>$usuario->getErrorLdap()));
     }
     
     public function display(){

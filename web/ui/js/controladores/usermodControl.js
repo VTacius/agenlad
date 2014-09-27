@@ -93,7 +93,8 @@ var obtenerDatos = function(){
  * @returns {undefined}
  */
 var mostrarDatosBusqueda = function(data){
-    $("#usermod").text(data.usermod),
+    mostrarErrorLdap(data);
+    $("#usermod").text(data.usermod);
     $("#cargo").val(data.cargo);
     $("#oficina").val(data.oficina);
     $("#nameuser").val(data.nameuser);

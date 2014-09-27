@@ -81,7 +81,7 @@ var busqueda = function(filtro){
         success: mostrar,
         error: function(data){
             console.log("Algo malo ha sucedido");
-            console.log(data);
+            console.log(data.responseText);
         }
     });
 };

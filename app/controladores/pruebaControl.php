@@ -45,23 +45,31 @@ class pruebaControl extends \clases\sesion{
 //    }
     
     public function display() {
-        $grupo = new \Modelos\userPosix('uid=alortiz,ou=Users,dc=hacienda,dc=gob,dc=sv','Figaro.12');
-        
+        $grupo = new \Modelos\userPosix('uid=alortiz,ou=http_access,ou=Users,dc=hacienda,dc=gob,dc=sv','Figaro.12', "central");
+	print "<br>getAll para userPosix";        
         $grupos = $grupo->getAll(array('cn','gidNumber'));
+        print "<br>" ;
+	print_r($grupo->getErrorLdap());
+        print "<br>" ;
         foreach ($grupos as $value) {
             print_r($value);
             print "<br>";
                 
         }
         
+	print "<br>search para userPosix";        
         $filtro = Array ( 'cn'=>'Alexander Ortiz', 'gidNumber' => 1009 );
         print "<br>" ;
         $busqueda = $grupo->search($filtro);
+	print_r($grupo->getErrorLdap());
+        print "<br>" ;
+	
         foreach ($busqueda as $value) {
             print_r($value);
             print "<br><br>";        
         }
         
+	print "<br>search para userPosix";        
         $filtro = Array ( 'cn'=>'*', 'gidNumber' => 1009 );
         print "<br>" ;
         $busqueda = $grupo->search($filtro);
