@@ -22,30 +22,39 @@ $("input").keypress(function(e){
  */
 $("input").keyup(function(e){
     verificaVacio();
-    if ($.directorioControl.pulsaciones  >= 3) {
-        var filtraje = filtro();
-        busqueda(filtraje);
-        $.directorioControl.pulsaciones = 0;
-    }else{
-        $.directorioControl.pulsaciones++;
+    verificaEspacio($("#uid").val());
+    if (!( e.which === 0)){
+   	 if ($.directorioControl.pulsaciones  >= 2) {
+   	     var filtraje = filtro();
+   	     busqueda(filtraje);
+   	     $.directorioControl.pulsaciones = 0;
+   	 }else{
+   	     $.directorioControl.pulsaciones++;
+   	 }
     }
 });
 
 /**
- * TODO: Algo me dice que esto no puede estar bien
+ * TODO: Algo me dice que esto no puede estar bien, dadas las condiciones de las demás funciones
  * @returns {undefined}
  */
 var verificaVacio = function(){
     if (isEmpty($("#o").val()) && isEmpty($("#ou").val()) && isEmpty($("#uid").val())) {
         var filtraje = filtro();
-    busqueda(filtraje);
+        busqueda(filtraje);
     }
 };
 
+// TODO: Esto debería estar en el keyup del #uid, pero no sé que tal se llevara con dos metodos enlazados al mismo evento
+var verificaEspacio = function(valor){
+    if (valor.indexOf(" ")!==-1){
+        var filtraje = filtro();
+        busqueda(filtraje);
+    }
+}
+
 var preFiltro = function(valor){
-    if (valor.indexOf(" " !== -1)) {
-        return "*";
-    }else if (!isEmpty(valor)) {
+    if (!isEmpty(valor)) {
         return valor + "*";
     }else{
         return "*";
@@ -56,7 +65,6 @@ var filtro = function(){
     var filtro = {
         'o': preFiltro($("#o").val()),
         'ou': preFiltro($("#ou").val()),
-        'cn': preFiltro($("#uid").val()),
         'uid': preFiltro($("#uid").val())
     };
     return filtro;
@@ -89,6 +97,7 @@ var elementoAttr = function(attr){
 
 var mostrar = function(result){
     console.log("Estoy recibiendo datos");
+    console.log(result);
     console.log(result.datos);
     mostrarErrorLdap(result);
     $("#respuesta tr").remove();

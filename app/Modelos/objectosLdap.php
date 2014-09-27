@@ -95,7 +95,9 @@ class objectosLdap extends \Modelos\ldapAccess{
                 }
                 $pre_attr .= ")";
                 $filtro .= $pre_attr;
-        }else{
+        }else if ($attr="personalizado"){
+		$filtro .= $valor;	
+	}else{
                 $filtro .= "($attr=$valor)";
         }
         return $filtro;

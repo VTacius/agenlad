@@ -24,7 +24,7 @@ class ldapAccess {
     /** @var $link_identifier La conexión estará a nivel de clase, y no se piensa usar fuera de acá */
     private $conexionLdap;
     /** @var  bool El enlace estará a nivel de clases */
-    protected $bindLDAP;
+    protected $enlaceLdap;
     /** @var  array Errores ocurridos durante las operaciones LDAP */
     protected $errorLdap = array();
     /** @var  bool Tendremos a la mano la busqueda lista para ordenarla después */
