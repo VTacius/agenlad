@@ -32,6 +32,8 @@ function toggleUseradd(cambio){
  * @returns {undefined}
  */
 var mostrarDatos = function(data){
+	console.log(data);
+	mostrarErrorLdap(data);
     // Llenamos los datos
     if (!(data.nameuser==="{empty}" && data.buzonstatus==="{empty}")){
         $("#cuentastatus").text(data.cuentastatus);
@@ -43,7 +45,7 @@ var mostrarDatos = function(data){
         $("#oficina").text(data.oficina);
         $("#usermod").text(data.usermod);
         // Modificamos el enlace
-        $("#usermodTecnico").attr( 'href', "/usermod/envio/" + $("#usuarioCliente").val() );
+        $("#usermodTecnico").attr( 'href', "/usermod/" + $("#usuarioCliente").val() );
         // Una vez todo configurado, mostramos y ocultamos
         toggleUseradd(false);
         $("#respuesta").show();

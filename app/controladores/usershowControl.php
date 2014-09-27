@@ -46,9 +46,10 @@ class usershowControl extends \clases\sesion {
             'buzonstatus'=> $mailbox->getZimbraMailStatus(),
             'cuentastatus'=> $mailbox->getZimbraAccountStatus()
         );
-        print json_encode($datos);
+	// TODO: ¿Como manejamos el hecho que son varias las conexiones LDAP que pueden mostrar error?
+	$resultado = array_merge($datos, array("errorLdap"=>$mailbox->getErrorLdap()));
+        print json_encode($resultado);
 //        $this->parametros['datos'] = $datos;
-//        
 //        echo $this->twig->render('tecnico.html.twig', $this->parametros);
     }
     

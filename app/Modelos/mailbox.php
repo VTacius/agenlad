@@ -13,12 +13,11 @@ class mailbox extends \Modelos\objectosLdap {
         $this->objeto='*';
         $this->atributos = array('zimbraaccountstatus', 'zimbramailstatus');
         
-        // Demás valores
         // TODO: Esto ya no tiene más sentido que enviar desde acá los datos verdaderos de la conexion
-        $server = "zserver";
-        $puerto = "zpuerto";
-        $base = "zbase";
-        parent::__construct($rdnLDAP, $passLDAP, $server, $puerto, $base);
+	// TODO: Mantengo mi opinión expresada arriba, sobre
+	// FIX: No se porque no pude acceder a $this->index
+	$conexion = array("zserver", "zpuerto", "zbase");
+        parent::__construct($rdnLDAP, $passLDAP, "personalizado", $conexion);
     }
     
     public function getUid() {
@@ -45,13 +44,5 @@ class mailbox extends \Modelos\objectosLdap {
     public function setZimbraMailStatus($zimbraMailStatus) {
         $this->zimbraMailStatus = $zimbraMailStatus;
     }
-
-
-
-
-
-    
-    
-    
     
 }

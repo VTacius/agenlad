@@ -32,22 +32,23 @@
     </form>
 
     <dl class="dl-horizontal" id="respuesta">
-        <h2><dt>Contraseña:</dt>
-            <dd><b class="contraseniaTecnico" id="psswduser">{{datos.psswduser}}</b>
+        <dt>Contraseña:</dt>
+            <dd>
+		<b class="contraseniaTecnico" id="psswduser">{{datos.psswduser}}</b>
                 {% if rol=="admon"%}
                     <a class="enlaceTecnico" id="usermodTecnico" href="/usermod">Modificar Usuario</a>
                 {% endif %}
-            </dd></h2>
-        <h4><dt>Nombre de usuario:</dt>
-        <dd id="nameuser">{{datos.nameuser}}</dd>
+            </dd>
+        <dt>Nombre de usuario:</dt>
+            <dd id="nameuser">{{datos.nameuser}}</dd>
         <dt>Localidad:</dt>
-        <dd><b id="oficina">{{datos.oficina}}</b> en <b id="localidad">{{datos.localidad}}</b></dd>
+            <dd><b id="oficina">{{datos.oficina}}</b> en <b id="localidad">{{datos.localidad}}</b></dd>
         <dt>Estado de la Cuenta:</dt>
-        <dd id="cuentastatus">{{datos.cuentastatus}}</dd>
+            <dd id="cuentastatus">{{datos.cuentastatus}}</dd>
         <dt>Estado del Buzón:</dt>
-        <dd id="buzonstatus">{{datos.buzonstatus}}</dd>
+            <dd id="buzonstatus">{{datos.buzonstatus}}</dd>
         <dt>Grupo Principal:</dt>
-        <dd id="grupouser">{{datos.grupouser}}</dd></h4>
+            <dd id="grupouser">{{datos.grupouser}}</dd>
     </dl>
     {% if rol=="admon"%}
         <div class="form-group text-center">
