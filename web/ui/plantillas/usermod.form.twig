@@ -23,7 +23,10 @@
                 <label for="ou" class="col-xs-7 text-left">Estado de Cuenta de Correo</label>
                 <div class="col-xs-5" id="cuenta">
                     <div class="btn-group btn-toggle" id="cuentastatusBtn"> 
-                    {% if datos.cuentastatus == "active" %}
+                    {% if not datos %}
+                        <button id="encendido" class="btn btn-xs btn-primary active">Active</button>
+                        <button id="apagado" class="btn btn-xs btn-default">Inactive</button>
+                    {% elseif datos.cuentastatus == "active" %}
                         <button id="encendido" class="btn btn-xs btn-primary active">Active</button>
                         <button id="apagado" class="btn btn-xs btn-default">Inactive</button>
                     {% else %}
@@ -37,7 +40,10 @@
                 <label for="ou" class="col-xs-7 text-left">Estado del Buzón de Correo</label>
                 <div class="col-xs-5" id="buzon">
                     <div class="btn-group btn-toggle" id="buzonstatusBtn">
-                    {% if datos.buzonstatus == "enabled" %}
+                    {% if not datos %}
+                        <button id="encendido" class="btn btn-xs btn-primary active">Enabled</button>
+                        <button id="apagado" class="btn btn-xs btn-default">Disabled</button>
+                    {% elseif datos.buzonstatus == "enabled" %}
                         <button id="encendido" class="btn btn-xs btn-primary active">Enabled</button>
                         <button id="apagado" class="btn btn-xs btn-default">Disabled</button>
                     {% else %}
