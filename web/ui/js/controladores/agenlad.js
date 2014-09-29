@@ -12,14 +12,28 @@ function isEmpty(obj) {
     return false;
 }
 
-function mostrarErrorLdap(data){
-	if(!isEmpty(data.errorLdap)){
-		var respuesta = "";
-                $("#errorLdap").show();
-		$(data.errorLdap).each(function(index, elemento){
-			respuesta += elemento.titulo + ": " + elemento.mensaje + " ";
-			$("#errorLdap").text(respuesta);
-		});
-		
-	}
+function errorOnResponse(data){
+    console.log("Un error ha ocurrido");
+    console.log(data.responseText);
+}
+
+function mostrarErrorConexion(data){
+    var errores = ['errorLdap', 'errorGrupo', 'errorZimbra'];
+    var respuesta = "";
+    $(errores).each(function(index, elemento){
+        if (!isEmpty(data[elemento])) {
+            respuesta += mostrarErrorLabel(data[elemento]);
+        }
+    });
+    $("#errorLdap").html(respuesta);
+    
+}
+
+function mostrarErrorLabel(data){
+    $("#errorLdap").show();
+    var respuesta = "";
+    $(data).each(function(index, elemento){
+        respuesta += elemento.titulo + ": " + elemento.mensaje + "<br> ";
+    });
+    return respuesta;
 }

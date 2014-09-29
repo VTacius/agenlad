@@ -33,8 +33,6 @@ class usershowControl extends \clases\sesion {
         $grupo->setGidNumber($usuario->getGidNumber());
         
         // Por último, el objeto mailbox
-//        $mailbox = new \Modelos\mailbox($clavez['dn'],$clavez['pswd']);
-//        $mailbox->setUid($usuarioCliente);
         $mailbox = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
         $mailbox->cuenta($usuarioCliente);
         
@@ -48,8 +46,15 @@ class usershowControl extends \clases\sesion {
             'buzonstatus'=> $mailbox->getZimbraMailStatus(),
             'cuentastatus'=> $mailbox->getZimbraAccountStatus()
         );
+        
+        $errores = array_merge(
+                array("errorLdap" => $usuario->getErrorLdap()),
+                array("errorGrupo" => $grupo->getErrorLdap()),
+                array("errorZimbra" => $mailbox->getErrorSoap())
+        );
+        
 	// TODO: ¿Como manejamos el hecho que son varias las conexiones LDAP que pueden mostrar error?
-	$resultado = array_merge($datos, array("errorLdap"=>$usuario->getErrorLdap()));
+	$resultado = array_merge($datos, $errores);
         print json_encode($resultado);
 //        $this->parametros['datos'] = $datos;
 //        echo $this->twig->render('tecnico.html.twig', $this->parametros);

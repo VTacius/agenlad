@@ -47,12 +47,13 @@ class zimbraSoapAccess {
             'use'          => 'SOAP_LITERAL',
             'connection_timeout' => '2'
             );
-            try { 
-                $this->soapClient = @new SoapClient(null, $conexion);
-            } catch (SoapFault $error) {
-                $this->setErrorSoap($error->faultcode, $error->faultstring);
-            }
-        // Preparemos el mensaje SOAP
+        
+        try { 
+            $this->soapClient = @new SoapClient(null, $conexion);
+        } catch (SoapFault $error) {
+            $this->setErrorSoap($error->faultcode, $error->faultstring);
+        }
+        // Preparemos el mensaje SOAP para autenticarnos
         $soapHeader = new SoapHeader('urn:zimbra', 'context');
         $this->soapClient->__setSoapHeaders($soapHeader);
 
@@ -71,7 +72,7 @@ class zimbraSoapAccess {
     }
     
     public function getErrorSoap(){
-        print_r($this->errorSoap) ;
+        return $this->errorSoap;
     }
     
     public function setLastResponse($titulo, $mensaje){

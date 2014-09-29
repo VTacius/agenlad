@@ -32,8 +32,7 @@ function toggleUseradd(cambio){
  * @returns {undefined}
  */
 var mostrarDatos = function(data){
-	console.log(data);
-	mostrarErrorLdap(data);
+    mostrarErrorConexion(data);
     // Llenamos los datos
     if (!(data.nameuser==="{empty}" && data.buzonstatus==="{empty}")){
         $("#cuentastatus").text(data.cuentastatus);
@@ -65,8 +64,6 @@ var datos = function(){
             usuarioCliente: $("#usuarioCliente").val()
         },
         success: mostrarDatos,
-        error: function(){
-            console.log("Algo malo ha sucedido");
-        }
+        error: errorOnResponse
     });
 };
