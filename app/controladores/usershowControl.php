@@ -56,8 +56,6 @@ class usershowControl extends \clases\sesion {
 	// TODO: ¿Como manejamos el hecho que son varias las conexiones LDAP que pueden mostrar error?
 	$resultado = array_merge($datos, $errores);
         print json_encode($resultado);
-//        $this->parametros['datos'] = $datos;
-//        echo $this->twig->render('tecnico.html.twig', $this->parametros);
     }
     
     /**

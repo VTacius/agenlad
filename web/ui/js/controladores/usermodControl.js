@@ -5,7 +5,6 @@ $(document).ready(function(){
 
 $('.btn-toggle').click(function(e) {
     $(this).children('.btn').toggleClass('active btn-primary btn-default');  
-    //$(this).children('.btn').toggleClass('btn-primary');
     console.log($(this).children(".active").text());
     e.stopPropagation(); 
     e.preventDefault();
@@ -73,13 +72,13 @@ var obtenerDatos = function(){
     var contenido = {
         phone : $("#phone").val(),
         cargo : $("#cargo").val(),
-        "grupos[]" : $("#grupos").val(),
         oficina : $("#oficina").val(),
         usermod : $("#usermod").text(),
         nameuser : $("#nameuser").val(),
         apelluser : $("#apelluser").val(),
         grupouser : $("#grupouser option:selected").val(),
-        localidad : $("#localidad").val()
+        localidad : $("#localidad").val(),
+        "grupos[]" : $("#grupos").val()
     };
     return contenido;
 };
@@ -91,7 +90,7 @@ var obtenerDatos = function(){
  * @returns {undefined}
  */
 var mostrarDatosBusqueda = function(data){
-    mostrarErrorLdap(data);
+    mostrarErrorConexion(data);
     $("b#usermod").text(data.usermod);
     $("#cargo").val(data.cargo);
     $("#oficina").val(data.oficina);
@@ -133,9 +132,7 @@ var buscarUsuario = function(){
             usuarioModificar: $("#usuarioModificar").val()
         },
         success: mostrarDatosBusqueda,
-        error: function(){
-            console.log("Algo malo ha sucedido");
-        }
+        error: errorOnResponse
         
     });
 };
@@ -147,12 +144,12 @@ var buscarUsuario = function(){
  * @returns {undefined}
  */
 var mostrarDatosModificar = (function(data){
-    $("#modAttrUser").text(data.actualizar_entrada);
-    $("#modGroupUser").text(data.modificar_grupos_adicionales.join("<br>"));
-    //Aca va la función empty que no debe costarte mucho trabajo encontrarla por alli
-    if (false){
-        $("#modMovUserGroup").val(data.move_ou.join("<br>"));
-    }
+    mostrarErrorConexion(data);
+    contenido = "";
+    $(data.datos).each(function(index, elemento){
+        contenido += elemento + "<br>";
+    });
+    $("#resultadoDiv").html(contenido);
     $("form").hide();
     $("#resultadoForm").show();
 });
@@ -169,8 +166,6 @@ var modificarUsuario = function(){
         dataType: 'json',
         data: datos,
         success: mostrarDatosModificar,
-        error: function(){
-            console.log("Algo malo ha sucedido");
-        }
+        error: errorOnResponse
     });
 };

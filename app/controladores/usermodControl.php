@@ -2,6 +2,9 @@
 namespace controladores;
 class usermodControl extends \clases\sesion {
     
+    protected $error = array();
+    protected $mensajes = array();
+    
     public function __construct() {
         parent::__construct();
         $this->pagina = "usermod";
@@ -9,12 +12,23 @@ class usermodControl extends \clases\sesion {
         $this->configuracion = $this->getConfiguracionDominio();
     }
     
+    /**
+     * 
+     * @param string $base
+     * @return array
+     */
     private function listarGrupos($base){
         $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
         $search = array('cn'=>'*');
         return $grupo->search($search, array('gidNumber'), $base);
     }
     
+    /**
+     * Lista los grupos a los que pertenece el usuario
+     * @param string $base
+     * @param string $memberUid
+     * @return array
+     */
     private function listarGruposUsuarios($base, $memberUid){
         $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
         $search = array('memberUid'=>$memberUid);	
@@ -28,42 +42,63 @@ class usermodControl extends \clases\sesion {
         return $grupos;
     }
     
-    private function modificarGruposAdicionales($usuarioGrupos, $usuario, $claves){
-        $resultado = array();
-        $uid = $usuario->getUid();
-        $gruposActuales = $this->listarGruposUsuarios($usuario->getDNBase(), $usuario->getUid());
-        foreach ($usuarioGrupos as $value) {
-            if(!in_array($value, $gruposActuales)){
-                $valores['memberuid'] = $uid;
-        	$grupu = new \Modelos\grupoSamba($claves['dn'], $claves['pswd']);
-        	$grupu->setCn($value);
-                if (($retorno = $grupu->agregarAtributos($grupu->getDNEntrada(), $valores))) {
-                    array_push($resultado, "Agregado $uid a ".  $grupu->getDNEntrada());
-                }else{
-                    array_push($resultado, "Error agregando $uid a ".  $grupu->getDNEntrada() . ": " . $grupu->mostrarERROR() );
-                }
+    private function anadirGruposAdicionales($uid, $grupo, $gruposActuales, $claves){
+        if(!in_array($grupo, $gruposActuales)){
+            $valores['memberuid'] = $uid;
+            $grupu = new \Modelos\grupoSamba($claves['dn'], $claves['pswd']);
+            $grupu->setCn($grupo);
+            if (($retorno = $grupu->agregarAtributos($grupu->getDNEntrada(), $valores))) {
+                $this->mensajes[] =  "Agregado $uid a ".  $grupu->getDNEntrada();
+            }else{
+                $this->error[] = $grupu->getErrorLdap();
+                return "Error agregando $uid a ".  $grupu->getDNEntrada() . ". Revise los mensajes asociados ";
             }
         }
-        foreach ($gruposActuales as $value) {
-            if(!in_array($value, $usuarioGrupos)){
-                $valores['memberuid'] = $uid;
-        	$grupu = new \Modelos\grupoSamba($claves['dn'], $claves['pswd']);
-        	$grupu->setCn($value);
-                
-                if (($retorno = $grupu->removerAtributos($grupu->getDNEntrada(), $valores))) {
-                    array_push($resultado, "Eliminado $uid de ". $grupu->getDNEntrada());
-                }else{
-                    array_push($resultado, "Error eliminando $uid en ".  $grupu->getDNEntrada() . ": " . $grupu->mostrarERROR() );
-                }
-                
-            }
-        }
-        return $resultado;
     }
     
+    private function removerGruposAdicionales($uid, $grupo, $usuarioGrupos, $claves){
+        if(!in_array($grupo, $usuarioGrupos)){
+            $valores['memberuid'] = $uid;
+            $grupu = new \Modelos\grupoSamba($claves['dn'], $claves['pswd']);
+            $grupu->setCn($grupo);
+
+            if (($retorno = $grupu->removerAtributos($grupu->getDNEntrada(), $valores))) {
+                $this->mensajes[] = "Eliminado $uid de ". $grupu->getDNEntrada();
+            }else{
+                $this->error[] = $grupu->getErrorLdap();
+                return "Error eliminando $uid en ".  $grupu->getDNEntrada() . ". Revise los mensajes asociados ";
+            }
+                
+        }
+    }
+
+    /**
+     * 
+     * @param array $usuarioGrupos Los grupos que el formulario nos envia para
+     * configurar como los nuevos grupos adicionales del usuario
+     * @param string $usuario
+     * @param array $claves
+     * @return type
+     */
+    protected function modificarGruposAdicionales($usuarioGrupos, $usuario, $claves){
+        $uid = $usuario->getUid();
+        $gruposActuales = $this->listarGruposUsuarios($usuario->getDNBase(), $usuario->getUid());
+        foreach ($usuarioGrupos as $grupo) {
+            $this->anadirGruposAdicionales($usuario->getUid(), $grupo, $gruposActuales, $claves);
+        }
+        foreach ($gruposActuales as $grupo) {
+            $this->removerGruposAdicionales($uid, $grupo, $usuarioGrupos, $claves);
+        }
+    }
+    
+    /**
+     * Si el atributo grupos_ou se encuentra verficado como verdadero, se 
+     * procede a mover al usuario a una nueva rama organizativa
+     * @param \Modelos\userSamba $usuario
+     * @param string $usuarioGrupo
+     * @return string
+     */
     private function moverEnGrupo($usuario, $usuarioGrupo){
-//        $grupo = new \Modelos\grupoSamba($claves['dn'], $claves['pswd']);
-        
         $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
         $grupo->setGidNumber($usuarioGrupo);
         
@@ -71,52 +106,64 @@ class usermodControl extends \clases\sesion {
         $ou->setOu($grupo->getCn());
         $ou->getEntrada();
         if($usuario->moverEntrada($usuario->getDNEntrada(), $ou->getDNEntrada())){
-            $mensaje = "El usuario $usuario ahora esta bajo  " . $ou->getDNEntrada();
+            $this->mensajes[] = "El usuario $usuario ahora esta bajo  " . $ou->getDNEntrada();
         }else{
-            $mensaje = $this->mostrarERROR();
+            $this->error[] = $usuario->getErrorLdap();
+            $this->mensajes[] = "El movimiento de usuario ha sufrido un error. Revise los mensajes asociados";
         }
-        return $mensaje;
     }
     
-
+    /**
+     * Actualizamos los atributos del usuario
+     * @param string $usuario
+     * @param string $usuarioAttr
+     * @return string
+     */
+    private function modificarAttrUsuario($usuario, $usuarioAttr){
+        $usuario->setUid($usuarioAttr['usuarioModificar']);
+        $usuario->setO($usuarioAttr['usuarioLocalidad']);
+        $usuario->setOu($usuarioAttr['usuarioOficina']);
+        $usuario->setTitle($usuarioAttr['usuarioCargo']);
+        $usuario->setGidNumber($usuarioAttr['usuarioGrupo']);
+        $usuario->configuraNombre($usuarioAttr['usuarioNombre'], $usuarioAttr['usuarioApellido']);
+        $usuario->setTelephoneNumber($usuarioAttr['usuarioPhone']);
+        // ¿Debe moverse el usuario a un objeto ou de grupo bajo la rama ou=Users?
+        if ($this->configuracion['grupos_ou']) {
+            $this->moverEnGrupo($usuario, $usuarioAttr['usuarioGrupo']);
+        }
+        
+        if ($usuario->actualizarEntrada()) {
+            $this->mensajes[] = "Usuario {$usuarioAttr['usuarioModificar']} ha sido modificado con éxito";
+        }else{
+            $this->error[] = $usuario->getErrorLdap();
+            $this->mensajes[] = "La modificación de atributos ha sufrido un error. Revise los mensajes asociados";
+        }
+    }
+    
     public function modificarUsuario(){
         $this->comprobar($this->pagina);         
         // Modificaciones de los grupos de usuario
-        $usuarioGrupo = $this->index->get('POST.grupouser');
         $usuarioGrupos = $this->index->get('POST.grupos');
         // Modificaciones de los datos de usuario
-        $usuarioCargo = $this->index->get('POST.cargo');
-        $usuarioPhone = $this->index->get('POST.phone');
-        $usuarioNombre = $this->index->get('POST.nameuser');
-        $usuarioOficina = $this->index->get('POST.oficina');
-        $usuarioApellido = $this->index->get('POST.apelluser');
-        $usuarioModificar = $this->index->get('POST.usermod');
-        $usuarioLocalidad = $this->index->get('POST.localidad');
+        $usuarioAttr = array(
+            'usuarioCargo' => $this->index->get('POST.cargo'),
+            'usuarioPhone' => $this->index->get('POST.phone'),
+            'usuarioGrupo' => $this->index->get('POST.grupouser'),
+            'usuarioNombre' => $this->index->get('POST.nameuser'),
+            'usuarioOficina' => $this->index->get('POST.oficina'),
+            'usuarioApellido' => $this->index->get('POST.apelluser'),
+            'usuarioModificar' => $this->index->get('POST.usermod'),
+            'usuarioLocalidad' => $this->index->get('POST.localidad')
+        );
         
-        
-        $claves = $this->getClaves();
-        
-        $resultado = array();
-        
-        // ¿Debe moverse el usuario a un objeto ou de grupo bajo la rama ou=Users?
-        if ($this->configuracion['grupos_ou']) {
-            $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
-            $usuario->setUid($usuarioModificar);
-            $resultado['move_ou'] = $resultadoMover = $this->moverEnGrupo($usuario, $usuarioGrupo);
-        }
-        
+        $claves = $this->getClaves();       
         $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
-        $usuario->setUid($usuarioModificar);
+        // Modificamos los atributos del usuario
+        $this->modificarAttrUsuario($usuario, $usuarioAttr);       
         
-        $usuario->setO($usuarioLocalidad);
-        $usuario->setOu($usuarioOficina);
-        $usuario->setTitle($usuarioCargo);
-        $usuario->setGidNumber($usuarioGrupo);
-        $usuario->configuraNombre($usuarioNombre, $usuarioApellido);
-        $usuario->setTelephoneNumber($usuarioPhone);
+        $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
         
-        $resultado['actualizar_entrada'] = $usuario->actualizarEntrada();
-        $resultado['modificar_grupos_adicionales'] = $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
+        $resultado = array_merge($this->error, array('datos'=> $this->mensajes) );
         
         print json_encode($resultado);
     }
@@ -154,7 +201,7 @@ class usermodControl extends \clases\sesion {
         
         // Por último, el objeto mailbox
         $mailbox = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
-        $mailbox->setUid($usuarioCliente);
+        $mailbox->cuenta($usuarioCliente);
         
         // Configuramos los datos
         $datos = array(
@@ -170,9 +217,15 @@ class usermodControl extends \clases\sesion {
             'gruposuser' => $this->listarGruposUsuarios($usuario->getDNBase(), $usuario->getUid()),
             'buzonstatus'=> $mailbox->getZimbraMailStatus(),
             'cuentastatus'=> $mailbox->getZimbraAccountStatus(),
-        );        
+        );
+        
+        $errores = array_merge(
+                array("errorLdap" => $usuario->getErrorLdap()),
+                array("errorGrupo" => $grupo->getErrorLdap()),
+                array("errorZimbra" => $mailbox->getErrorSoap())
+        );
        
-	return array_merge($datos, array("errorLdap"=>$usuario->getErrorLdap()));
+	return array_merge($datos, $errores);
     }
     
     public function display(){

@@ -18,7 +18,8 @@ function errorOnResponse(data){
 }
 
 function mostrarErrorConexion(data){
-    var errores = ['errorLdap', 'errorGrupo', 'errorZimbra'];
+    console.log(data);
+    var errores = ['errorLdap', 'errorGrupo', 'errorZimbra', 'mensajes'];
     var respuesta = "";
     $(errores).each(function(index, elemento){
         if (!isEmpty(data[elemento])) {
