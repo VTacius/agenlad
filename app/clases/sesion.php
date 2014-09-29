@@ -75,13 +75,17 @@ abstract class sesion {
      * @return array('dn','pswd')
      */
     protected function getClavez(){
-        // Recuperamos firmaz desde sesion
-        $firmaz = $this->index->get('SESSION.firmaz');
-        // Desciframos
+        // Recuperamos firmaz desde la base de datos
+        $configUser = $this->getConfiguracionUsuario();
+        $firmaz = $configUser['firmaz'];
+        // Desciframos firmaz con password de usuario
         $hashito = new \clases\cifrado();
         $clavez = $hashito->descifrada($firmaz, $this->pswd);
-        $rdnLDAP = $this->index->get('lectorzimbra');
-        $resultado = array('dn'=>$rdnLDAP, 'pswd'=>$clavez);
+         // Obtenemos el DN del administrador desde la base de datos
+        $config = $this->getConfiguracionDominio();
+        $adminDN = $config['admin_zimbra'];
+        
+        $resultado = array('dn'=>$adminDN, 'pswd'=>$clavez);
         return $resultado;
     }
 
@@ -118,6 +122,17 @@ abstract class sesion {
         $args = array('dominio'=>$dominio);
         $resultado = $base->exec($cmds, $args);
         return unserialize($resultado[0]['attr']);
+    }
+    
+    protected function getConfiguracionUsuario(){
+        $base = $this->index->get('dbconexion');
+        $usuario = $this->index->get('SESSION.user');
+        
+        $cmds = "select titulo, user.rol, permisos, firmas, firmaz, dominio, bandera from user join rol on user.rol=rol.rol where user=:user;";
+        $args = array('user'=>$usuario);
+        $resultado = $base->exec($cmds, $args);
+        
+        return $resultado[0];
     }
     
     /**

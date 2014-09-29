@@ -11,12 +11,12 @@ class usershowControl extends \clases\sesion {
         parent::__construct();
         // Nombramos la página que hemos de producir
         $this->pagina = "usershow";
+        // Esto es importante en la vista
+        $this->parametros['pagina'] = $this->pagina;
     }
     
     
     public function datos(){
-        // Esto es importante en la vista
-        $this->parametros['pagina'] = $this->pagina;
         // ¿Tenemos en serio acceso a esta página?
         $this->comprobar($this->pagina); 
         // Recuperamos los parametros que le son enviados
@@ -33,8 +33,10 @@ class usershowControl extends \clases\sesion {
         $grupo->setGidNumber($usuario->getGidNumber());
         
         // Por último, el objeto mailbox
-        $mailbox = new \Modelos\mailbox($clavez['dn'],$clavez['pswd']);
-        $mailbox->setUid($usuarioCliente);
+//        $mailbox = new \Modelos\mailbox($clavez['dn'],$clavez['pswd']);
+//        $mailbox->setUid($usuarioCliente);
+        $mailbox = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
+        $mailbox->cuenta($usuarioCliente);
         
         // Configuramos los datos
         $datos = array(
@@ -47,7 +49,7 @@ class usershowControl extends \clases\sesion {
             'cuentastatus'=> $mailbox->getZimbraAccountStatus()
         );
 	// TODO: ¿Como manejamos el hecho que son varias las conexiones LDAP que pueden mostrar error?
-	$resultado = array_merge($datos, array("errorLdap"=>$mailbox->getErrorLdap()));
+	$resultado = array_merge($datos, array("errorLdap"=>$usuario->getErrorLdap()));
         print json_encode($resultado);
 //        $this->parametros['datos'] = $datos;
 //        echo $this->twig->render('tecnico.html.twig', $this->parametros);

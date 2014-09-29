@@ -44,41 +44,79 @@ class pruebaControl extends \clases\sesion{
 //        echo $this->twig->render('pruebas.html.twig');
 //    }
     
-    public function display() {
-        $grupo = new \Modelos\userPosix('uid=alortiz,ou=http_access,ou=Users,dc=hacienda,dc=gob,dc=sv','Figaro.12', "central");
-	print "<br>getAll para userPosix";        
-        $grupos = $grupo->getAll(array('cn','gidNumber'));
-        print "<br>" ;
-	print_r($grupo->getErrorLdap());
-        print "<br>" ;
-        foreach ($grupos as $value) {
-            print_r($value);
-            print "<br>";
-                
-        }
-        
-	print "<br>search para userPosix";        
-        $filtro = Array ( 'cn'=>'Alexander Ortiz', 'gidNumber' => 1009 );
-        print "<br>" ;
-        $busqueda = $grupo->search($filtro);
-	print_r($grupo->getErrorLdap());
-        print "<br>" ;
-	
-        foreach ($busqueda as $value) {
-            print_r($value);
-            print "<br><br>";        
-        }
-        
-	print "<br>search para userPosix";        
-        $filtro = Array ( 'cn'=>'*', 'gidNumber' => 1009 );
-        print "<br>" ;
-        $busqueda = $grupo->search($filtro);
-        foreach ($busqueda as $value) {
-            print_r($value);
-            print "<br><br>";        
-        }
-        
-        
-        
+//   # public function display() {
+//   #     $grupo = new \Modelos\userPosix('uid=alortiz,ou=http_access,ou=Users,dc=hacienda,dc=gob,dc=sv','Figaro.12', "central");
+//   #     print "<br>getAll para userPosix";        
+//   #     $grupos = $grupo->getAll(array('cn','gidNumber'));
+//   #     print "<br>" ;
+//   #     print_r($grupo->getErrorLdap());
+//   #     print "<br>" ;
+//   #     foreach ($grupos as $value) {
+//   #         print_r($value);
+//   #         print "<br>";
+//   #             
+//   #     }
+//   #     
+//   #     print "<br>search para userPosix";        
+//   #     $filtro = Array ( 'cn'=>'Alexander Ortiz', 'gidNumber' => 1009 );
+//   #     print "<br>" ;
+//   #     $busqueda = $grupo->search($filtro);
+//   #     print_r($grupo->getErrorLdap());
+//   #     print "<br>" ;
+//   #     
+//   #     foreach ($busqueda as $value) {
+//   #         print_r($value);
+//   #         print "<br><br>";        
+//   #     }
+//   #     
+//   #     print "<br>search para userPosix";        
+//   #     $filtro = Array ( 'cn'=>'*', 'gidNumber' => 1009 );
+//   #     print "<br>" ;
+//   #     $busqueda = $grupo->search($filtro);
+//   #     foreach ($busqueda as $value) {
+//   #         print_r($value);
+//   #         print "<br><br>";        
+//   #     }
+//   #     
+//   #     
+//   #     
+//   # }
+    public function display(){
+        $administrador = "admin@salud.gob.sv";
+	$contrasenia = "srv2025";
+
+	$usuario = array(
+            'sn' => "Guevara",
+            'dn' => "uid=alortiz,ou=Users,dc=salud,dc=gob,dc=sv",
+            'mail' => "virgini138@salud.gob.sv",
+            'password' => 'virginia134',
+            'givenName' => "Virginia"
+        );
+
+        $modificacionUsuario = array(
+            'givenName' => "Virginia Esmeralda",
+            'sn' => "Guevara Ochoa",
+        );
+
+        $login = new \Acceso\zimbraSoapAccess("10.10.20.102");
+        $login->login("admin@salud.gob.sv", "srv2025");
+        print "\n\n";
+        print_r($login->getErrorSoap());
+        print "\n\n";
+        $cuenta = $login->getAccount("virgini137", "full");
+        print "\n\n";
+        print_r($login->getErrorSoap());
+        print "\n\n";
+        print_r($login->getAttributeAccount($cuenta, "givenName"));
+        print_r($login->getErrorSoap());
+        print "\n\n";
+//        $login->modificarMailbox("virgini137", $modificacionUsuario);
+//        $cuentaMod = $login->getAccount("virgini137", "full");
+//        print_r($login->getAttributeAccount($cuentaMod, "givenName"));
+//        print "\n\n";
+        //$login->modificarMailbox($usuario, $cambios);
+        //$login->getMensaje();
+        //$login->crearMailbox($usuario);
+        //$login->getMensaje();
     }
 }

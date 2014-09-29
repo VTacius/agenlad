@@ -10,7 +10,7 @@
  * @package ZimbraSoapPhp
  * @link https://code.google.com/p/zimbra-admin-api-soap-php/source/browse/trunk/zm/Zm/Auth.php description Sacada desde acá
  */
-//namespace clases;
+namespace clases;
 class xmlToArray
 {
         var $stack=array();

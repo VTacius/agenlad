@@ -59,7 +59,6 @@ class objectosLdap extends \Modelos\ldapAccess{
         if (empty($this->entrada)) {
             // Si esta vacío, llene el array por primera vez
             $this->entrada = $this->getDatos($filtro, $this->atributos)[0];
-            
             foreach ($this->atributos as $attr) {
                 $this->entrada[$attr] = isset($this->entrada[$attr])?$this->entrada[$attr]:"{empty}"; 
             }

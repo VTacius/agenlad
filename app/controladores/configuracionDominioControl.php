@@ -28,7 +28,7 @@ $usuarios = array(
 //print "Técnicos: " . serialize($tecnicos) . "\n";
 //print "Usuarios: " . serialize($usuarios) . "\n";
 
-function configuracionDominio($dominio, $ip_server, $puerto, $dn_admin){
+function configuracionDominio($dominio, $ip_server, $puerto, $dn_admin_ldap, $admin_zimbra){
     $rdn = explode(".", $dominio);
     $dn = "";
     foreach ($rdn as $componente) {
@@ -43,14 +43,15 @@ function configuracionDominio($dominio, $ip_server, $puerto, $dn_admin){
         'grupos_ou' => FALSE,
         'base_grupo' => 'ou=Groups,' . $base,
         'base_usuario' => 'ou=Users,' . $base,
-        'dn_administrador' => $dn_admin
+        'admin_zimbra' => $admin_zimbra,
+        'dn_administrador' => $dn_admin_ldap
     );
     
     return serialize($configuracion);
 }
 
-print "Dominio Hacienda: " . configuracionDominio("hacienda.gob.sv", "192.168.2.10", "389", 'cn=admin,dc=hacienda,dc=gob,dc=sv') . "\n";
-print "Dominio Donaciones: " . configuracionDominio("donaciones.gob.sv", "192.168.2.14", "389", 'cn=admin,dc=donaciones,dc=gob,dc=sv') . "\n";
+print "Dominio Hacienda: " . configuracionDominio("hacienda.gob.sv", "192.168.2.10", "389", 'cn=admin,dc=hacienda,dc=gob,dc=sv', "admin") . "\n";
+print "Dominio Donaciones: " . configuracionDominio("donaciones.gob.sv", "192.168.2.14", "389", 'cn=admin,dc=donaciones,dc=gob,dc=sv', "admin") . "\n";
 
 // Necesario para resetear la contraseña de alguien con permisos administrativos
 $cmds_reset_password = "update user set firmas=:password_admin_ldap, firmaz='Zimbra2025_Lector', bandera=1 where user=:user";
