@@ -113,6 +113,8 @@ $index->route('GET|POST @usermod_modificar: /usermod/@usuarioModificar',
         'controladores\usermodControl->mostrarUsuarioGet');
 $index->route('POST @usermod_modificar: /usermod/cambio [ajax]', 
         'controladores\usermodControl->modificarUsuario');
+$index->route('POST @zimbra_modificar: /usermod/zimbra [ajax]', 
+        'controladores\usermodControl->modificarBuzon');
 //Rutas hacia useradd
 $index->route('GET|POST @useradd: /useradd', 
         'controladores\useraddControl->display');

@@ -1,11 +1,18 @@
 $(document).ready(function(){
     $("form").hide();
     $("#busqueda").show();
+    $("#cargador").hide();
 });
 
 $('.btn-toggle').click(function(e) {
+    $("#cargador").show();
     $(this).children('.btn').toggleClass('active btn-primary btn-default');  
-    console.log($(this).children(".active").text());
+    var datos = {
+        textElemento: $(this).children(".active").text(),
+        idElemento: $(this).attr('id'),
+        usermod : $("#usermod").text()
+    };
+    modificarZimbra(datos);
     e.stopPropagation(); 
     e.preventDefault();
 });
@@ -91,6 +98,7 @@ var obtenerDatos = function(){
  */
 var mostrarDatosBusqueda = function(data){
     mostrarErrorConexion(data);
+    console.log(data);
     $("b#usermod").text(data.usermod);
     $("#cargo").val(data.cargo);
     $("#oficina").val(data.oficina);
@@ -104,16 +112,20 @@ var mostrarDatosBusqueda = function(data){
         $("#grupos option:contains('" + elemento + "')").attr('selected','selected');
     });
     
-    if (data.cuentastatus == "active"){
-        $("#cuenta #apagado").text("Inhabilitar");
+    if (data.cuentastatus === "active"){
+        $("#cuenta #apagado").text("Locked");
     }else{
         $("#cuenta #apagado").text(data.cuentastatus);
+        // Dado que por defecto, twig lo envia como el desactivado
+        $("#cuenta *").children().toggleClass('active btn-primary btn-default');
     }
     
     if (data.buzonstatus === "enabled"){
-        $("#buzon #apagado").text("Inhabilitar");
+        $("#buzon #apagado").text("Disabled");
     }else{
-        $("#buzon #apagado").text(data.cuentastatus);
+        $("#buzon #apagado").text(data.buzonstatus);
+        // Dado que por defecto, twig lo envia como el desactivado
+        $("#buzon *").children().toggleClass('active btn-primary btn-default');
     }
 
     
@@ -166,6 +178,23 @@ var modificarUsuario = function(){
         dataType: 'json',
         data: datos,
         success: mostrarDatosModificar,
+        error: errorOnResponse
+    });
+};
+
+var mostrarModificarZimbra = function(data){
+    console.log(data);
+    mostrarErrorConexion(data);
+    $("#cargador").hide();
+};
+
+var modificarZimbra = function(datos){
+    $.ajax({
+        type: 'POST',
+        url: '/usermod/zimbra',
+        dataType: 'json',
+        data: datos,
+        success: mostrarModificarZimbra,
         error: errorOnResponse
     });
 };

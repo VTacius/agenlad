@@ -72,7 +72,9 @@ class zimbraSoapAccess {
     }
     
     public function getErrorSoap(){
-        return $this->errorSoap;
+        if (sizeof($this->errorSoap)>0) {
+            return $this->errorSoap;
+        }
     }
     
     public function setLastResponse($titulo, $mensaje){
@@ -80,11 +82,7 @@ class zimbraSoapAccess {
     }
     
     public function getLastResponse(){
-	foreach($this->lastResponse as $index => $response){
-		print "<br><br><br>$index: <br>";
-		print_r($response);
-		print "<br>Acá termina<br><br>";
-	}
+	return $this->lastResponse;
     }
     /**
      * Ocultamos un poco la clase que estamos usando para esto, no vaya a ser 

@@ -22,13 +22,13 @@
             <div class="col-xs-6">
                 <label for="ou" class="col-xs-7 text-left">Estado de Cuenta de Correo</label>
                 <div class="col-xs-5" id="cuenta">
-                    <div class="btn-group btn-toggle" id="cuentastatusBtn"> 
+                    <div class="btn-group btn-toggle" id="cuentastatus"> 
                     {% if not datos %}
                         <button id="encendido" class="btn btn-xs btn-primary active">Active</button>
-                        <button id="apagado" class="btn btn-xs btn-default">Inactive</button>
+                        <button id="apagado" class="btn btn-xs btn-default">Locked</button>
                     {% elseif datos.cuentastatus == "active" %}
                         <button id="encendido" class="btn btn-xs btn-primary active">Active</button>
-                        <button id="apagado" class="btn btn-xs btn-default">Inactive</button>
+                        <button id="apagado" class="btn btn-xs btn-default">Locked</button>
                     {% else %}
                         <button id="encendido" class="btn btn-xs btn-default">Active</button>
                         <button id="apagado" class="btn btn-xs btn-primary active">{{ datos.cuentastatus | capitalize }}</button>
@@ -39,7 +39,7 @@
             <div class="col-xs-6">
                 <label for="ou" class="col-xs-7 text-left">Estado del Buzón de Correo</label>
                 <div class="col-xs-5" id="buzon">
-                    <div class="btn-group btn-toggle" id="buzonstatusBtn">
+                    <div class="btn-group btn-toggle" id="buzonstatus">
                     {% if not datos %}
                         <button id="encendido" class="btn btn-xs btn-primary active">Enabled</button>
                         <button id="apagado" class="btn btn-xs btn-default">Disabled</button>
@@ -54,6 +54,9 @@
                     
                 </div>
             </div>
+        </div>
+        <div class="form-group text-center" id="cargador" name="cargador">
+            <img src="/ui/resources/loader.gif" alt="espere..." class="img-circle">
         </div>
     </form>
                     

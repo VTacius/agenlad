@@ -13,7 +13,7 @@ class usermodControl extends \clases\sesion {
     }
     
     /**
-     * 
+     * Lista todos los grupos que existen dentro del dominio dado
      * @param string $base
      * @return array
      */
@@ -42,6 +42,15 @@ class usermodControl extends \clases\sesion {
         return $grupos;
     }
     
+    /**
+     * Si $grupo (De la lista de grupos enviados desde el formulario) no existe 
+     * en $gruposActuales (De la lista de actuales), entonces agregamos $uid a 
+     * ese grupo
+     * @param string $uid
+     * @param string $grupo
+     * @param array $gruposActuales
+     * @param array $claves
+     */
     private function anadirGruposAdicionales($uid, $grupo, $gruposActuales, $claves){
         if(!in_array($grupo, $gruposActuales)){
             $valores['memberuid'] = $uid;
@@ -51,11 +60,20 @@ class usermodControl extends \clases\sesion {
                 $this->mensajes[] =  "Agregado $uid a ".  $grupu->getDNEntrada();
             }else{
                 $this->error[] = $grupu->getErrorLdap();
-                return "Error agregando $uid a ".  $grupu->getDNEntrada() . ". Revise los mensajes asociados ";
+                $this->mensajes[] = "Error agregando $uid a ".  $grupu->getDNEntrada() . ". Revise los mensajes asociados ";
             }
         }
     }
     
+    /**
+     * Si $grupo (De la lista de grupos actuales) no existe en $usuarioGrupos 
+     * (De la lista de grupos enviados desde el formulario), entonces removemos 
+     * a $uid de ese grupo
+     * @param string $uid
+     * @param string $grupo
+     * @param array $usuarioGrupos
+     * @param array $claves
+     */
     private function removerGruposAdicionales($uid, $grupo, $usuarioGrupos, $claves){
         if(!in_array($grupo, $usuarioGrupos)){
             $valores['memberuid'] = $uid;
@@ -66,7 +84,7 @@ class usermodControl extends \clases\sesion {
                 $this->mensajes[] = "Eliminado $uid de ". $grupu->getDNEntrada();
             }else{
                 $this->error[] = $grupu->getErrorLdap();
-                return "Error eliminando $uid en ".  $grupu->getDNEntrada() . ". Revise los mensajes asociados ";
+                $this->mensajes[] = "Error eliminando $uid en ".  $grupu->getDNEntrada() . ". Revise los mensajes asociados ";
             }
                 
         }
@@ -74,8 +92,8 @@ class usermodControl extends \clases\sesion {
 
     /**
      * 
-     * @param array $usuarioGrupos Los grupos que el formulario nos envia para
      * configurar como los nuevos grupos adicionales del usuario
+     * @param array $usuarioGrupos Los grupos que el formulario nos envia
      * @param string $usuario
      * @param array $claves
      * @return type
@@ -113,13 +131,9 @@ class usermodControl extends \clases\sesion {
         }
     }
     
-    private function modificarCuentaZimbra($usuario){
-        $mailbox = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
-        $mailbox->cuenta($usuario);
-    }
-    
     /**
-     * Actualizamos los atributos del usuario
+     * Actualizamos los atributos de $usuario con los datos contenidos en 
+     * $usuarioAttr, que formamos con los datos obtenidos del formulario
      * @param string $usuario
      * @param string $usuarioAttr
      * @return string
@@ -165,9 +179,7 @@ class usermodControl extends \clases\sesion {
         $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
         // Modificamos los atributos del usuario
         $this->modificarAttrUsuario($usuario, $usuarioAttr);       
-        
-        $this->modificarCuentaZimbra($usuarioAttr['usuarioModificar']);
-        
+       
         $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
         
         $resultado = array_merge($this->error, array('datos'=> $this->mensajes) );
@@ -233,6 +245,44 @@ class usermodControl extends \clases\sesion {
         );
        
 	return array_merge($datos, $errores);
+    }
+    
+    private function modificarEstadoZimbra($clavez, $operacion, $estado, $usuario){
+        $mailbox = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
+        $mailbox->cuenta($usuario);
+        if ($operacion == 'cuentastatus') {
+            $estatuto = (strtolower($estado)==="active") ? 'active': 'locked'; 
+            $mailbox->setZimbraAccountStatus($estatuto);
+        }elseif($operacion == 'buzonstatus'){
+            $estatuto = (strtolower($estado)==="enabled") ? 'enabled': 'disabled'; 
+            $mailbox->setZimbraMailStatus($estatuto);
+        }
+        // Realizamos la operacion
+        $mailbox->actualizarEntrada();
+        $msg = $mailbox->getLastResponse();
+        
+        // Obtenemos los mensajes
+        $this->mensajes[] = empty($msg)? "La operacion ha fallado para $usuario": "Estatus cambiado a $estatuto para $usuario";
+        $this->error[] = $mailbox->getErrorSoap();
+    }
+    
+    public function modificarBuzon(){
+        // Comprobamos permisos
+        $this->comprobar($this->pagina); 
+        
+        // Obtenemos los datos
+        $clavez = $this->getClavez();
+        $usuario = $this->index->get('POST.usermod');
+        $estado = $this->index->get('POST.textElemento');
+        $operacion = $this->index->get('POST.idElemento');
+        
+        // Mandamos los datos donde puedan usarlos
+        $this->modificarEstadoZimbra($clavez, $operacion, $estado, $usuario);
+        
+        $resultado = array_merge($this->error, array('datos'=> $this->mensajes) );
+        // Recuerdo algo dejar un poco de tiempo a zimbra entre cada uso
+        sleep(1);
+        print json_encode($resultado);
     }
     
     public function display(){

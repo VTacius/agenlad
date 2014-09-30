@@ -18,7 +18,6 @@ function errorOnResponse(data){
 }
 
 function mostrarErrorConexion(data){
-    console.log(data);
     var errores = ['errorLdap', 'errorGrupo', 'errorZimbra', 'mensajes'];
     var respuesta = "";
     $(errores).each(function(index, elemento){
@@ -26,12 +25,15 @@ function mostrarErrorConexion(data){
             respuesta += mostrarErrorLabel(data[elemento]);
         }
     });
+    if (!isEmpty(respuesta)) {
+        console.log(respuesta);
+        $("#errorLdap").show();
+    }
     $("#errorLdap").html(respuesta);
     
 }
 
 function mostrarErrorLabel(data){
-    $("#errorLdap").show();
     var respuesta = "";
     $(data).each(function(index, elemento){
         respuesta += elemento.titulo + ": " + elemento.mensaje + "<br> ";
