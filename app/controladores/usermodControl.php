@@ -98,7 +98,7 @@ class usermodControl extends \clases\sesion {
      * @param array $claves
      * @return type
      */
-    protected function modificarGruposAdicionales($usuarioGrupos, $usuario, $claves){
+    private function modificarGruposAdicionales($usuarioGrupos, $usuario, $claves){
         $uid = $usuario->getUid();
         $gruposActuales = $this->listarGruposUsuarios($usuario->getDNBase(), $usuario->getUid());
         foreach ($usuarioGrupos as $grupo) {
@@ -159,6 +159,24 @@ class usermodControl extends \clases\sesion {
         }
     }
     
+    private function modificarUsuarioZimbra($correo, $usuarioAttr){
+        $clavez = $this->getClavez();
+        $userZimbra = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
+        $userZimbra->cuenta($correo);
+        $userZimbra->setOu($usuarioAttr['usuarioOficina']);
+        $userZimbra->setTitle($usuarioAttr['usuarioCargo']);
+        $userZimbra->setCompany($usuarioAttr['usuarioLocalidad']);
+        $userZimbra->configuraNombre($usuarioAttr['usuarioNombre'], $usuarioAttr['usuarioApellido']);
+        $userZimbra->setTelephoneNumber($usuarioAttr['usuarioPhone']);
+        
+        //TODO: Tenés que hacer que este metodo se parezca al de usuario
+        $userZimbra->actualizarEntrada();
+        $msg = $userZimbra->getLastResponse();
+        
+        // Obtenemos los mensajes
+        $this->mensajes[] = empty($msg) ? "Los cambios para $correo han fallado": "Cambio exitoso para entrada en zimbra de $correo";
+    }
+    
     public function modificarUsuario(){
         $this->comprobar($this->pagina);         
         // Modificaciones de los grupos de usuario
@@ -178,7 +196,10 @@ class usermodControl extends \clases\sesion {
         $claves = $this->getClaves();       
         $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
         // Modificamos los atributos del usuario
-        $this->modificarAttrUsuario($usuario, $usuarioAttr);       
+        $this->modificarAttrUsuario($usuario, $usuarioAttr);
+        //Modificamos la entrada del usuario en Zimbra
+        $correo = $usuario->getMail();
+        $this->modificarUsuarioZimbra($correo, $usuarioAttr);
        
         $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
         

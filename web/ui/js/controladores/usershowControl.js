@@ -1,6 +1,6 @@
 $(document).ready(function(){
     toggleUseradd(false);
-    $("#respuesta").hide();
+    $("dl").hide();
 });
 
 $("#enviar").click(function(e){
@@ -43,11 +43,12 @@ var mostrarDatos = function(data){
         $("#nameuser").text(data.nameuser);
         $("#oficina").text(data.oficina);
         $("#usermod").text(data.usermod);
+        $("#mailuser").text(data.mailuser);
         // Modificamos el enlace
         $("#usermodTecnico").attr( 'href', "/usermod/" + $("#usuarioCliente").val() );
         // Una vez todo configurado, mostramos y ocultamos
         toggleUseradd(false);
-        $("#respuesta").show();
+        $("dl").show();
     }else{
         $("#useraddTecnico").attr( 'href', "/useradd/" + $("#usuarioCliente").val() );
         toggleUseradd(true);

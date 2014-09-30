@@ -27,6 +27,7 @@ class usershowControl extends \clases\sesion {
         // Empezamos con un objeto usuario
         $usuario = new \Modelos\userSamba($this->dn, $this->pswd);
         $usuario->setUid($usuarioCliente);
+        $correo = $usuario->getMail();
         
         // Seguimos con el objeto Grupo
         $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
@@ -34,12 +35,13 @@ class usershowControl extends \clases\sesion {
         
         // Por último, el objeto mailbox
         $mailbox = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
-        $mailbox->cuenta($usuarioCliente);
+        $mailbox->cuenta($correo);
         
         // Configuramos los datos
         $datos = array(
             'oficina' => $usuario->getOu(),
             'nameuser' => $usuario->getCn(),
+            'mailuser' => $correo,
             'psswduser' => $usuario->getuserPassword(),
             'grupouser' => $grupo->getCn(),
             'localidad' => $usuario->getO(),

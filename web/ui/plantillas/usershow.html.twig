@@ -30,8 +30,7 @@
             <button class="btn btn-lg btn-primary" id="enviar" tabindex="1" role="button">Contraseña!</button> 
         </div>
     </form>
-
-    <dl class="dl-horizontal" id="respuesta">
+    <dl class="dl-horizontal" id="respuestaUsuario">
         <dt>Contraseña:</dt>
             <dd>
 		<b class="contraseniaTecnico" id="psswduser">{{datos.psswduser}}</b>
@@ -43,12 +42,16 @@
             <dd id="nameuser">{{datos.nameuser}}</dd>
         <dt>Localidad:</dt>
             <dd><b id="oficina">{{datos.oficina}}</b> en <b id="localidad">{{datos.localidad}}</b></dd>
+        <dt>Grupo Principal:</dt>
+            <dd id="grupouser">{{datos.grupouser}}</dd>
+    </dl>
+    <dl class="dl-horizontal" id="respuestaMail">
+        <dt>Correo</dt>
+            <dd id="mailuser">{{datos.mailuser}}</dd>
         <dt>Estado de la Cuenta:</dt>
             <dd id="cuentastatus">{{datos.cuentastatus}}</dd>
         <dt>Estado del Buzón:</dt>
             <dd id="buzonstatus">{{datos.buzonstatus}}</dd>
-        <dt>Grupo Principal:</dt>
-            <dd id="grupouser">{{datos.grupouser}}</dd>
     </dl>
     {% if rol=="admon"%}
         <div class="form-group text-center">
