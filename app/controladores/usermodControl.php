@@ -113,6 +113,11 @@ class usermodControl extends \clases\sesion {
         }
     }
     
+    private function modificarCuentaZimbra($usuario){
+        $mailbox = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
+        $mailbox->cuenta($usuario);
+    }
+    
     /**
      * Actualizamos los atributos del usuario
      * @param string $usuario
@@ -160,6 +165,8 @@ class usermodControl extends \clases\sesion {
         $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
         // Modificamos los atributos del usuario
         $this->modificarAttrUsuario($usuario, $usuarioAttr);       
+        
+        $this->modificarCuentaZimbra($usuarioAttr['usuarioModificar']);
         
         $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
         

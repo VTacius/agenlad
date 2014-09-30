@@ -53,7 +53,6 @@ class usershowControl extends \clases\sesion {
                 array("errorZimbra" => $mailbox->getErrorSoap())
         );
         
-	// TODO: ¿Como manejamos el hecho que son varias las conexiones LDAP que pueden mostrar error?
 	$resultado = array_merge($datos, $errores);
         print json_encode($resultado);
     }

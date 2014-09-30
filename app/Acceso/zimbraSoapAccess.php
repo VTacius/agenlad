@@ -76,11 +76,15 @@ class zimbraSoapAccess {
     }
     
     public function setLastResponse($titulo, $mensaje){
-        $this->lastResponse[] = array( 'titulo' => $titulo, 'mensaje' => $mensaje);
+        $this->lastResponse[$titulo] =  $mensaje;
     }
     
     public function getLastResponse(){
-        print_r($this->lastResponse);
+	foreach($this->lastResponse as $index => $response){
+		print "<br><br><br>$index: <br>";
+		print_r($response);
+		print "<br>Acá termina<br><br>";
+	}
     }
     /**
      * Ocultamos un poco la clase que estamos usando para esto, no vaya a ser 
@@ -94,16 +98,17 @@ class zimbraSoapAccess {
         return $result['SOAP:ENVELOPE']['SOAP:BODY'];
     }
     
-    
-
-
     protected function llamada ($peticion, $parametros, $uri){
         // Intentamos
         try {
             @$this->soapClient->__soapCall($peticion, $parametros, $uri);
             // La última llamada tiro error. No llenemos ya esto, basta con el primer error
             $mensaje = $this->parsearRespuesta($this->soapClient->__getLastResponse());
-            $this->setLastResponse("mensaje", $mensaje);
+            // Me preocupa un poco que sea más bien indiferente con el hecho de tener una respuesta vacía
+            $index = array_keys($mensaje)[0];
+	    // Esto parece ser el límte de lo que podemos limpiar
+	    unset($mensaje[$index]['XMLNS']);
+            $this->setLastResponse($index, $mensaje[$index]);
         } catch (SoapFault $error) {
                 $this->setErrorSoap($error->faultcode, $error->faultstring);
         }
@@ -213,6 +218,18 @@ class zimbraSoapAccess {
             if (array_key_exists($attrSamba, $cambios)){
                 $parametrosModificacionUsuario[] = new SoapVar("<a n='$attrZimbra'>{$cambios[$attrSamba]}</a>", XSD_ANYXML);
             }
+        }
+        $this->llamada("ModifyAccountRequest" , $parametrosModificacionUsuario, array ( 'uri' => 'urn:zimbraAdmin'));
+    }
+    
+    public function modificarCuenta($usuario, $cambios){
+        $cuenta = $this->getAccount($usuario);
+        $zimbraId = $this->getAttributeAccount($cuenta, "zimbraId");
+        $parametrosModificacionUsuario = array(
+            new SoapParam($zimbraId, 'id')
+        );
+        foreach ($cambios as $attrZimbra => $attrValue) {
+            $parametrosModificacionUsuario[] = new SoapVar("<a n='$attrZimbra'>$attrValue</a>", XSD_ANYXML);
         }
         $this->llamada("ModifyAccountRequest" , $parametrosModificacionUsuario, array ( 'uri' => 'urn:zimbraAdmin'));
     }

@@ -88,7 +88,7 @@ class mainControl extends \clases\sesion {
      * @param type $password
      */
     private function cambioPasswordAdmin($usuario, $password){
-        $cambioPassword = $this->changeLdapPassword($password);
+        $cambioPassword = $this->changeLdapPassword($usuario, $password);
         $cambioFirma = $this->cambiosFirmas($usuario, $password);
         return array("password"=>$cambioPassword, "Firmas"=>$cambioFirma);
     }

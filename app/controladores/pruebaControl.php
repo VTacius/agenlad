@@ -98,18 +98,36 @@ class pruebaControl extends \clases\sesion{
             'sn' => "Guevara Ochoa",
         );
 
-        $login = new \Acceso\zimbraSoapAccess("10.10.20.102");
-        $login->login("admin@salud.gob.sv", "srv2025");
-        print "\n\n";
-        print_r($login->getErrorSoap());
-        print "\n\n";
-        $cuenta = $login->getAccount("virgini137", "full");
-        print "\n\n";
-        print_r($login->getErrorSoap());
-        print "\n\n";
-        print_r($login->getAttributeAccount($cuenta, "givenName"));
-        print_r($login->getErrorSoap());
-        print "\n\n";
+        $mailbox = new \Modelos\mailbox("admin", "srv2025");
+        $mailbox->cuenta("mcardenas");
+	foreach($mailbox->getCuenta() as $index => $attr){
+		print "$index: $attr <br>";
+	}
+	$mailbox->setZimbraAccountStatus("active");
+	$mailbox->actualizarEntrada();
+        print "<br><br>Devuelto el siguiente error<br>";
+        print_r($mailbox->getErrorSoap());
+        print "<br><br>Devuelto el siguiente mensaje<br>";
+        $mailbox = new \Modelos\mailbox("admin", "srv2025");
+        $mailbox->cuenta("mcardenas");
+	foreach($mailbox->getCuenta() as $index => $attr){
+		print "$index: $attr <br>";
+	}
+	
+	#var_dump($mailbox->getLastResponse());
+
+//        $login = new \Acceso\zimbraSoapAccess("10.10.20.102");
+//        $login->login("admin@salud.gob.sv", "srv2025");
+//        print "\n\n";
+//        print_r($login->getErrorSoap());
+//        print "\n\n";
+//        $cuenta = $login->getAccount("virgini137", "full");
+//        print "\n\n";
+//        print_r($login->getErrorSoap());
+//        print "\n\n";
+//        print_r($login->getAttributeAccount($cuenta, "givenName"));
+//        print_r($login->getErrorSoap());
+//        print "\n\n";
 //        $login->modificarMailbox("virgini137", $modificacionUsuario);
 //        $cuentaMod = $login->getAccount("virgini137", "full");
 //        print_r($login->getAttributeAccount($cuentaMod, "givenName"));
