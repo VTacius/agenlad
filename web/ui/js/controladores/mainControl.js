@@ -7,13 +7,11 @@ $(document).ready(function() {
     $("input").val("");
 });
 
-
 $('#passchangeprima').keyup(function(){
     $("#pswd_info").show();
     $("#msgadvertencia").hide();
     validar($("#passchangeprima").val());
 });
-
 
 $('#passchangeprima').focusin(function(){
     $("#msgadvertencia").hide();
@@ -97,7 +95,7 @@ var confirmar = function(texto, objeto, regex){
 
 var mostrarResultado = function(data){
     mostrarErrorConexion(data);
-    console.log(data);
+//    console.log(data);
     pmostrarError(data);
     pmostrarMensaje(data);
     if(isEmpty(data.error)){
@@ -105,7 +103,7 @@ var mostrarResultado = function(data){
             document.location.reload(true);
         }, 3500);
     }
-}
+};
 
 /**
  * 

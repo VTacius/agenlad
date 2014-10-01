@@ -252,10 +252,15 @@ class userPosix extends \Modelos\objectosLdap{
     /** 
      * Tentativamente, esta función es necesaria para un formulario de respuesta
      * No creo que algo como eso vaya en este lugar
-     * 
+     * Cambio para regresar {empty} propiamente dicho, y no la contraseña para 
+     * {empty}
      */
     public function getUserPassword(){
-        return $this->password($this->entrada['uid']);
+        if ($this->entrada['uid'] === "{empty}" ) {
+            return "{empty}";
+        }else{   
+            return $this->password($this->entrada['uid']);
+        }
     }
 
     /**

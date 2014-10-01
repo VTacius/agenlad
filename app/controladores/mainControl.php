@@ -34,7 +34,7 @@ class mainControl extends \clases\sesion {
         if ($this->usuario->actualizarEntrada()) {
             $this->mensaje[] = array("codigo" => "success", 'mensaje'=> "Contraseña cambiada exitosamente");
         }else{
-            $this->error[] = array("codigo" => "danger", 'mensaje' => $this->usuario->getErrorLdap());
+            $this->error[] = $this->usuario->getErrorLdap();
             $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "Ha ocurrido un error al cambiar las contraseñas");
         }
         

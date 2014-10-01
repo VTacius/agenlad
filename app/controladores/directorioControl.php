@@ -18,8 +18,8 @@ class directorioControl extends \clases\sesion {
     
     
     /**
-     * 
-     * @param array $filtro Use los siguiente valores: ('cn','title','o', 'ou','mail')
+     * TODO: Hay uno bastante parecido en usershowControl
+     * @param array @filtro Use los siguiente valores: ('cn','title','o', 'ou','mail')
      * @return array
      */
     private function busquedaUsuarios($filter = array()) {

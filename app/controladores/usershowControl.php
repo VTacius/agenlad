@@ -6,7 +6,11 @@ namespace controladores;
  * @author alortiz
  */
 class usershowControl extends \clases\sesion {
-  
+    
+    protected $error = array();
+    protected $datos = array();
+    protected $mensaje = array();
+    
     public function __construct() {
         parent::__construct();
         // Nombramos la página que hemos de producir
@@ -15,47 +19,85 @@ class usershowControl extends \clases\sesion {
         $this->parametros['pagina'] = $this->pagina;
     }
     
+    /**
+     * TODO: Hay uno bastante parecido en directorioControl
+     * @param type $filter
+     * @return type
+     */
+    private function busquedaUsuario($usuario) {
+        $usuarios = new \Modelos\userPosix($this->dn, $this->pswd, 'central' );
+        $atributos = array('cn');
+        $filtro = array("cn"=>"NOT (root OR nobody)",'uid'=>$usuario); 
+        $datos = $usuarios->search($filtro, $atributos, "dc=sv");
+        if (empty($datos[0]['cn'])) {
+            return false;
+        }else{
+            return true;
+        }
+    }
     
-    public function datos(){
-        // ¿Tenemos en serio acceso a esta página?
-        $this->comprobar($this->pagina); 
-        // Recuperamos los parametros que le son enviados
-        $usuarioCliente = $this->input('usuarioCliente','Favor, escriba un username');
-        // Recuperamos firmaz desde sesion        
-        $clavez = $this->getClavez();
-        
+    protected function usuario($usuarioCliente){
         // Empezamos con un objeto usuario
         $usuario = new \Modelos\userSamba($this->dn, $this->pswd);
         $usuario->setUid($usuarioCliente);
-        $correo = $usuario->getMail();
-        
+        if ($usuario->getUid() === "{empty}") {
+            if ($this->busquedaUsuario($usuarioCliente)) {
+                $this->mensaje = array("codigo" => "warning", 'mensaje' => "Usuario $usuarioCliente no se encuentra bajo su administración");
+            }else{
+                $this->mensaje = array("codigo" => "warning", 'mensaje' => "Usuario $usuarioCliente no existe");
+            }
+            $correo = "{empty}";
+        }else{
+            $correo = $usuario->getMail();
+        }
+        $group = $usuario->getGidNumber();
+        $this->datos['oficina'] = $usuario->getOu();
+        $this->datos['nameuser'] = $usuario->getCn();
+        $this->datos['psswduser'] = $usuario->getuserPassword();
+        $this->datos['localidad'] = $usuario->getO();
+        return array('correo'=>$correo, 'grupo'=>$group);
+    }
+    
+    protected function grupo($group){
         // Seguimos con el objeto Grupo
-        $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
-        $grupo->setGidNumber($usuario->getGidNumber());
-        
+        $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd );
+        $grupo->setGidNumber($group);
+        $this->datos['grupouser'] = $grupo->getCn();
+        $this->error[] = $grupo->getErrorLdap();
+    }  
+    
+    protected function mail($clavez, $correo){
         // Por último, el objeto mailbox
         $mailbox = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
         $mailbox->cuenta($correo);
         
         // Configuramos los datos
-        $datos = array(
-            'oficina' => $usuario->getOu(),
-            'nameuser' => $usuario->getCn(),
-            'mailuser' => $correo,
-            'psswduser' => $usuario->getuserPassword(),
-            'grupouser' => $grupo->getCn(),
-            'localidad' => $usuario->getO(),
-            'buzonstatus'=> $mailbox->getZimbraMailStatus(),
-            'cuentastatus'=> $mailbox->getZimbraAccountStatus()
+        $this->datos['mailuser'] = $correo;
+        $this->datos['buzonstatus']= $mailbox->getZimbraMailStatus();
+        $this->datos['cuentastatus'] = $mailbox->getZimbraAccountStatus();
+    }
+
+
+    public function datos(){
+        // ¿Tenemos en serio acceso a esta página?
+        $this->comprobar($this->pagina); 
+        // Recuperamos los parametros que le son enviados
+        $usuarioCliente = $this->input('usuarioCliente','Favor, escriba un username');
+        // Obtenemos las claves para acceder a Soap Zimbra
+        $clavez = $this->getClavez();
+        
+        $usuario = $this->usuario($usuarioCliente);
+        
+        $this->grupo($usuario['grupo']);
+        
+        $this->mail($clavez, $usuario['correo']);
+        
+        $resultado = array(
+                'error' => $this->error,
+                'datos' => $this->datos,
+                'mensaje'=> $this->mensaje
         );
         
-        $errores = array_merge(
-                array("errorLdap" => $usuario->getErrorLdap()),
-                array("errorGrupo" => $grupo->getErrorLdap()),
-                array("errorZimbra" => $mailbox->getErrorSoap())
-        );
-        
-	$resultado = array_merge($datos, $errores);
         print json_encode($resultado);
     }
     

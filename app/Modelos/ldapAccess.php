@@ -240,7 +240,7 @@ class ldapAccess {
                 throw new Exception(ldap_error($this->conexionLdap));
             }
         }catch(Exception $e){
-            $this->setErrorLdap("Error en modificación", $e->getMessage() . $dn);	
+            $this->setErrorLdap("Error en modificación", $e->getMessage());	
             return false;
         }
     }
