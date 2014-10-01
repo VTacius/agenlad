@@ -43,12 +43,11 @@
             </div>
             <div class="col-lg-9">
                 {% block contenido %} 
+                    <div class="text-center" id="mensaje" name=mensaje" > 
+                    </div>
                 {%endblock %} 
- {#               {% if errorLdap %} #}
-  {#                  {% for error in errorLdap %} #}
-                        <div class="alert alert-danger" id="errorLdap" name="errorLdap" role="alert">{{ error.titulo }}: <b>{{ error.mensaje }}</b></div>
-    {#                {% endfor %} #}
- {#              {% endif %}	#}
+                 <div class="text-center" id="error" name="error">
+                 </div>
             </div>
         </div>
         <div class="row">

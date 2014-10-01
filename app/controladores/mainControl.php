@@ -10,6 +10,9 @@ class mainControl extends \clases\sesion {
     private $hashes;
     private $usuario;
     
+    protected $error = array();
+    protected $mensaje = array();
+    
     function __construct(){
         parent::__construct();
         // Nombramos la página que hemos de producir
@@ -29,8 +32,11 @@ class mainControl extends \clases\sesion {
         $this->usuario->setUid($usuario);
         $this->usuario->configuraPassword($password);
         if ($this->usuario->actualizarEntrada()) {
+            $this->mensaje[] = array("codigo" => "success", 'mensaje'=> "Contraseña cambiada exitosamente");
             return "Contraseña cambiada exitosamente";
         }else{
+            $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "Ha ocurrido un error al cambiar las contraseñas");
+            $this->error[] = array("codigo" => "danger", 'mensaje' => "Este tendrá que ser un mensaje LDAP");
             return "Ha ocurrido un error al cambiar las contraseñas";
         }
         
@@ -77,6 +83,7 @@ class mainControl extends \clases\sesion {
             $clavez = $this->hashes->encrypt($firmaz, $password);
             // Ahora, que actualice la firma en la base de datos con la nueva contraseña
             $this->configurarFirma($usuario, $claves, $clavez);
+            $this->mensaje[] = array("codigo" => "success", 'mensaje'=> "Cambio de Firmas exitoso");
             return "Cambio de Firmas exitoso";
     }
     
@@ -141,7 +148,10 @@ class mainControl extends \clases\sesion {
             if ($this->complejidad($passchangeprima)) {
                 $resultado = $this->credenciales($rol, $usuario, $passchangeprima);
                 $retorno = array_merge($resultado, array('errorLdap'=> $this->usuario->getErrorLdap()));
-                print json_encode($retorno); 
+                $resultado = array(
+                    'mensaje' => $this->mensaje, 
+                    'error' => $this->error);
+                print json_encode($resultado); 
                 //Me encanta rehusar código de esta forma. Recuerda no hacer la redirección desde acá
                 $cierre = new \controladores\loginControl();
                 $cierre->cerrarSesion();

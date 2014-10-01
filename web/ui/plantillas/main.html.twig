@@ -9,8 +9,7 @@
 {% set pagina = pagina %}
 
 {% block lateral %} 
-    <h3>Creación de usuarios</h3>
-    <p>Cambio de Contraseña<br>
+    <h3>Cambio de Contraseña</h3>
     Bienvenido <b>{{titulo}} {{usuario}}</b></p>
 {% endblock%}
 
@@ -38,7 +37,6 @@
                 <input type="password" class="form-control" id="passchangeconfirm" name="passchangeconfirm" placeholder="Confirmar Contraseña">
             </div>
         </div>
-            <div class="text-center alert" id="msgadvertencia" name=msgadvertencia" role="alert"> <strong id="advertencia">{{mensajeError}}</strong></div>
         <div class="form-group text-center">
             <button type="submit" class="btn btn-primary" id="enviar" name="enviar">Cambiar Contraseña</button>
         </div>

@@ -4,7 +4,7 @@ $(document).ready(function() {
     $.indexControl.validacion = false;
     // Asegurarnos que las instrucciones y alertas estén ocultas
     $("#pswd_info").hide();
-    $("#msgadvertencia").hide();
+    $("input").val("");
 });
 
 
@@ -17,7 +17,6 @@ $('#passchangeprima').keyup(function(){
 
 $('#passchangeprima').focusin(function(){
     $("#msgadvertencia").hide();
-    console.log("En este momento debería desaparecer");
 });
 
 $('#passchangeprima').blur(function(e){
@@ -43,9 +42,7 @@ $('#enviar').click(function(e){
     e.preventDefault();
     if (comprobarPassword()){
         procesarDatos();
-    } else {
-        console.log("Parece que si la lee acá, ahora es False");
-    }
+    } 
 });
 
 /**
@@ -98,6 +95,18 @@ var confirmar = function(texto, objeto, regex){
     }
 };
 
+var mostrarResultado = function(data){
+    mostrarErrorConexion(data);
+    console.log(data);
+    pmostrarError(data);
+    pmostrarMensaje(data);
+    if(isEmpty(data.error)){
+        setTimeout(function() {
+            document.location.reload(true);
+        }, 3500);
+    }
+}
+
 /**
  * 
  * @returns {undefined}
@@ -106,34 +115,13 @@ var procesarDatos = function () {
     $.ajax({ 
         type: 'POST',
         url: '/main/cambio',
-	dataType: "json",
+        dataType: "json",
         data: {
             passchangeprima: $("#passchangeprima").val(),
             passchangeconfirm: $("#passchangeconfirm").val()
         },
-        success: function(data){
-	    mostrarErrorLdap(data);
-            $("#msgadvertencia").show();
-		if(isEmpty(data.errorLdap)){
-	    		$("#msgadvertencia").addClass("alert-success");
-		        $("#passchangeprima").prop('disabled', true);
-            		$("#passchangeconfirm").prop('disabled', true);
-	                setTimeout(
-				function() {
-                        		document.location.reload(true);
-                    		}, 3500);
-            
-	}else{
-		$("#msgadvertencia").addClass("alert-danger");
-	}
-            $("#advertencia").text(data.password);
-	    $("a").attr('disabled','disabled');
-        },
-        error: function(){
-            $("#msgadvertencia").show();
-            $("#msgadvertencia").addClass("alert-danger");
-            $("#advertencia").text("El procedimiento ha fallado por razones indeterminadas");
-        }
+        success: mostrarResultado,
+        error: errorOnResponse     
     });
 };
 

@@ -9,7 +9,6 @@ class usermodControl extends \clases\sesion {
         parent::__construct();
         $this->pagina = "usermod";
         $this->parametros['pagina'] = $this->pagina;
-        $this->configuracion = $this->getConfiguracionDominio();
     }
     
     /**
@@ -31,11 +30,11 @@ class usermodControl extends \clases\sesion {
      */
     private function listarGruposUsuarios($base, $memberUid){
         $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
-        $search = array('memberUid'=>$memberUid);	
+        $search = array('memberUid'=>$memberUid);   
         $resultado = $grupo->search($search, array('cn'), $base);
         $grupos = array();
         foreach ($resultado as $value) {
-            if 	(array_key_exists('cn', $value)){
+            if  (array_key_exists('cn', $value)){
                 array_push($grupos, $value['cn']);
             }
         }
@@ -146,8 +145,9 @@ class usermodControl extends \clases\sesion {
         $usuario->setGidNumber($usuarioAttr['usuarioGrupo']);
         $usuario->configuraNombre($usuarioAttr['usuarioNombre'], $usuarioAttr['usuarioApellido']);
         $usuario->setTelephoneNumber($usuarioAttr['usuarioPhone']);
+        $configuracion = $this->getConfiguracionDominio();
         // ¿Debe moverse el usuario a un objeto ou de grupo bajo la rama ou=Users?
-        if ($this->configuracion['grupos_ou']) {
+        if ($configuracion['grupos_ou']) {
             $this->moverEnGrupo($usuario, $usuarioAttr['usuarioGrupo']);
         }
         
@@ -212,19 +212,19 @@ class usermodControl extends \clases\sesion {
         $this->comprobar($this->pagina);     
 
         $usuarioCliente = $this->index->get('POST.usuarioModificar');
-	$resultado = $this->mostrarUsuario($usuarioCliente);
+        $resultado = $this->mostrarUsuario($usuarioCliente);
         print json_encode($resultado);
-	
+    
     }
     
     public function mostrarUsuarioGet(){
         $this->comprobar($this->pagina);
         $usuarioCliente = $this->index->get('PARAMS.usuarioModificar');
-	$resultado = $this->mostrarUsuario($usuarioCliente);
+        $resultado = $this->mostrarUsuario($usuarioCliente);
         $this->parametros['datos'] = $resultado;
         
         echo $this->twig->render('usermod.html.twig', $this->parametros);       
-	
+    
     }
 
     private function mostrarUsuario($usuarioCliente){
@@ -265,7 +265,7 @@ class usermodControl extends \clases\sesion {
                 array("errorZimbra" => $mailbox->getErrorSoap())
         );
        
-	return array_merge($datos, $errores);
+    return array_merge($datos, $errores);
     }
     
     private function modificarEstadoZimbra($clavez, $operacion, $estado, $usuario){
