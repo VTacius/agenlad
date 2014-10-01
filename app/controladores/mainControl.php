@@ -1,8 +1,9 @@
 <?php
 namespace controladores;
 /**
- * Controlador para el index de la aplicación, especificamente, donde hacemos cambios de contraseña
- *
+ * Controlador para el index de la aplicación, en nuestro caso, el lugar donde 
+ * cambiamos contraseñas
+ *v 0.1
  * @author alortiz
  */
 
@@ -23,7 +24,6 @@ class mainControl extends \clases\sesion {
   }
     
     /**
-     * Auxiliar de cambioPassword y cambioPasswordAdmin
      * Cambiar las contraseñas en el directorio LDAP
      * @param string $password
      */
@@ -33,11 +33,9 @@ class mainControl extends \clases\sesion {
         $this->usuario->configuraPassword($password);
         if ($this->usuario->actualizarEntrada()) {
             $this->mensaje[] = array("codigo" => "success", 'mensaje'=> "Contraseña cambiada exitosamente");
-            return "Contraseña cambiada exitosamente";
         }else{
+            $this->error[] = array("codigo" => "danger", 'mensaje' => $this->usuario->getErrorLdap());
             $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "Ha ocurrido un error al cambiar las contraseñas");
-            $this->error[] = array("codigo" => "danger", 'mensaje' => "Este tendrá que ser un mensaje LDAP");
-            return "Ha ocurrido un error al cambiar las contraseñas";
         }
         
     }
@@ -84,23 +82,8 @@ class mainControl extends \clases\sesion {
             // Ahora, que actualice la firma en la base de datos con la nueva contraseña
             $this->configurarFirma($usuario, $claves, $clavez);
             $this->mensaje[] = array("codigo" => "success", 'mensaje'=> "Cambio de Firmas exitoso");
-            return "Cambio de Firmas exitoso";
     }
-    
-    /**
-     * Bifurcación de credenciales para usuarios con nivel administrativo
-     * No sólo cambia la contraseña en LDAP, sino que configura sus firmas en 
-     * la base de datos
-     * @param type $usuario
-     * @param type $password
-     */
-    private function cambioPasswordAdmin($usuario, $password){
-        $cambioPassword = $this->changeLdapPassword($usuario, $password);
-        $cambioFirma = $this->cambiosFirmas($usuario, $password);
-        return array("password"=>$cambioPassword, "Firmas"=>$cambioFirma);
-    }
-
-
+   
     /**
      * Auxiliar de cambioCredenciales
      * Escoge el método para cambiar contraseña en base al $rol
@@ -111,9 +94,10 @@ class mainControl extends \clases\sesion {
      */
     protected function credenciales($rol, $usuario, $password){
         if ($rol=='usuario'){
-            return array("password"=>$this->changeLdapPassword($usuario, $password));
+            $this->changeLdapPassword($usuario, $password);
         }else{
-            return array("password"=> $this->cambioPasswordAdmin($usuario, $password));
+            $this->changeLdapPassword($usuario, $password);
+            $this->cambiosFirmas($usuario, $password);
         }
     }
 
@@ -146,21 +130,20 @@ class mainControl extends \clases\sesion {
         $passchangeconfirm = $this->index->get('POST.passchangeconfirm');
         if ($passchangeconfirm == $passchangeprima){
             if ($this->complejidad($passchangeprima)) {
-                $resultado = $this->credenciales($rol, $usuario, $passchangeprima);
-                $retorno = array_merge($resultado, array('errorLdap'=> $this->usuario->getErrorLdap()));
-                $resultado = array(
-                    'mensaje' => $this->mensaje, 
-                    'error' => $this->error);
-                print json_encode($resultado); 
+                $this->credenciales($rol, $usuario, $passchangeprima);
                 //Me encanta rehusar código de esta forma. Recuerda no hacer la redirección desde acá
                 $cierre = new \controladores\loginControl();
                 $cierre->cerrarSesion();
             } else {
-                print json_encode(array("password"=>"Las contraseña no tiene la complejidad necesaria"));
+                $this->mensaje[] = array("codigo" => "warning", 'mensaje' => "La contraseña no tiene la complejidad necesaria");
             }
         }else{
-            print json_encode(array("password"=>"Las contraseñas no coinciden"));
+            $this->mensaje[] = array("codigo" => "warning", 'mensaje' => "Las contraseñas no coinciden");
         }
+        $resultado = array(
+            'mensaje' => $this->mensaje, 
+            'error' => $this->error);
+        print json_encode($resultado); 
     }
     
     /**
@@ -174,5 +157,3 @@ class mainControl extends \clases\sesion {
         echo $this->twig->render('main.html.twig', $this->parametros);       
     }
 }
-
-
