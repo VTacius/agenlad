@@ -9,7 +9,7 @@ $("#enviar").click(function(e){
     var datos =  {
         usuarioCliente: $("#usuarioCliente").val()
     };
-    procesarDatos(datos, mostrarDatos);
+    procesarDatos('/usershow/datos', datos, mostrarDatos);
 //    $("#usermodTecnico").show();
 });
 

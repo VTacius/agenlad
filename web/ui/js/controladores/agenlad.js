@@ -96,14 +96,15 @@ function pmostrarMensaje(data){
 /**
  * Envia una petición del tipo POST en espera de datos json
  * Cuide que de no agregar () al nombre de funcion
+ * @param {string} url
  * @param {array} datos
  * @param {callback} funcion
  * @returns {undefined}
  */
-var procesarDatos = function(datos, funcion){
+var procesarDatos = function(url, datos, funcion){
     $.ajax({
         type: 'POST',
-        url: '/usershow/datos',
+        url: url,
         dataType: 'json',
         data: datos,
         success: funcion,
