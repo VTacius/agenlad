@@ -1,16 +1,6 @@
-    .usermodTecnico {
-        width: 50%;
-    }
     dt:first-of-type,dd:first-of-type{
         font-size: xx-large
     } 
     dt, dd{
         font-size: large
     } 
-    .enlaceTecnico {
-        margin-left: 30%;
-    }
-    
-    .useraddTecnico{
-        font-size: x-large
-    }

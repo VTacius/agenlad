@@ -1,6 +1,6 @@
 $(document).ready(function(){
-    toggleUseradd(false);
     $("dl").hide();
+    $("#admon a").hide();
 });
 
 $("#enviar").click(function(e){
@@ -9,24 +9,9 @@ $("#enviar").click(function(e){
     var datos =  {
         usuarioCliente: $("#usuarioCliente").val()
     };
-    procesarDatos(datos);
+    procesarDatos(datos, mostrarDatos);
+//    $("#usermodTecnico").show();
 });
-
-/**
- * Cambia #respuesta si que existe, es decir, si fue creada desde Twig 
- * en respuesta al rol del usuario
- * @param {boolean} cambio
- * @returns {undefined}
- */
-function toggleUseradd(cambio){
-    if ( $("#useraddTecnico").length > 0 ){
-        if (cambio){
-            $("#useraddTecnico").show();
-        } else {
-            $("#useraddTecnico").hide();
-        }
-    }
-}
 
 /**
  * Dato el id de un elemento dd|dt, revisa si tiene datos para ver si los muestra
@@ -45,50 +30,58 @@ function llenarControl(datos, objeto) {
     }
 }
 
+function llenarControlUbicacion(datos){
+    llenarControl(datos.localidad);
+    llenarControl(datos.oficina);
+    if (isEmpty(datos.localidad) && isEmpty(datos.oficina)) {
+        $("#ubicacion").hide();
+    }else{
+        $("#oficina").text(datos.oficina);
+        $("#localidad").text(datos.localidad);
+    }
+}
+
+/**
+ * Muestra los enlaces para administrador según lo devuelto por el usuario en cuestión
+ * @param {string} usuario
+ * @param {array} estados
+ * @returns {undefined}
+ */
+var mostrarEnlaces = function(usuario, estados){
+    if (estados.creacion) {
+        $("#creacion")
+                .show()
+                .attr( 'href', "/useradd/" + usuario );     
+    }else{
+        $("#creacion").hide() 
+    }
+    if (estados.modificacion) {
+        $("#modificacion")
+                .show()
+                .attr( 'href', "/usermod/" + usuario ); 
+    }else{
+        $("#modificacion").hide()
+    }
+};
+
 /**
  * Llena la pantalla del usuario con los datos obtenidos del servidor
  * @param {json} data
  * @returns {undefined}
  */
 var mostrarDatos = function(data){
-    llenarControl(data.datos, 'psswduser')
-    
-    llenarControl(data.datos, 'nameuser');
-    llenarControl(data.datos, 'psswduser');
-    llenarControl(data.datos, 'grupouser');
-    llenarControl(data.datos, 'mailuser');
-    llenarControl(data.datos, 'buzonstatus');
-    llenarControl(data.datos, 'cuentastatus');
-    
-    llenarControl(data.datos, 'usermod');
-  
-    llenarControl(data.datos, 'localidad');
-    llenarControl(data.datos, 'oficina');
-    
-    console.log(data);
     pmostrarError(data);
     pmostrarMensaje(data);
+    
     // Llenamos los datos
-    if (!(data.nameuser==="{empty}" && data.buzonstatus==="{empty}")){
-        // Modificamos el enlace
-        $("#usermodTecnico").attr( 'href', "/usermod/" + $("#usuarioCliente").val() );
-        // Una vez todo configurado, mostramos y ocultamos
-        toggleUseradd(false);
-        $("dl").show();
-    }else{
-        $("#useraddTecnico").attr( 'href', "/useradd/" + $("#usuarioCliente").val() );
-        toggleUseradd(true);
-        $("#respuesta").hide();
-    }
-};
-
-var procesarDatos = function(datos){
-    $.ajax({
-        type: 'POST',
-        url: '/usershow/datos',
-        dataType: 'json',
-        data: datos,
-        success: mostrarDatos,
-        error: errorOnResponse
+    elementos = ["psswduser", "nameuser","psswduser","grupouser","mailuser","buzonstatus","cuentastatus"];
+    $(elementos).each(function(i, e){
+        llenarControl(data.datos, e);
     });
+        
+    mostrarEnlaces(data.datos.usermod, data.datos.enlaces);
+     
+    if (!(data.nameuser==="{empty}" && data.buzonstatus==="{empty}")){
+        $("dl").show();
+    }
 };

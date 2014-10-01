@@ -3,7 +3,8 @@ namespace controladores;
 /**
  * Controlador para el index de la aplicación, en nuestro caso, el lugar donde 
  * cambiamos contraseñas
- *v 0.1
+ * 
+ * @version 0.1
  * @author alortiz
  */
 

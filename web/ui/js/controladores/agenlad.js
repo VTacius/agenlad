@@ -67,6 +67,7 @@ function mostrarElementoError(error){
 
 function pmostrarError(data){
     console.log(data.error);
+    console.log(data);
     var respuesta = "";
     if(!isEmpty(data.error)){
         $(data.error).each(function(index, error){
@@ -90,4 +91,22 @@ function pmostrarMensaje(data){
         $("#mensaje").show();
         $("#mensaje").html(respuesta);
     }
+};
+
+/**
+ * Envia una petición del tipo POST en espera de datos json
+ * Cuide que de no agregar () al nombre de funcion
+ * @param {array} datos
+ * @param {callback} funcion
+ * @returns {undefined}
+ */
+var procesarDatos = function(datos, funcion){
+    $.ajax({
+        type: 'POST',
+        url: '/usershow/datos',
+        dataType: 'json',
+        data: datos,
+        success: funcion,
+        error: errorOnResponse
+    });
 };

@@ -1,8 +1,9 @@
 <?php
 namespace controladores;
 /**
- * Description of tecnicoControl
- *
+ * Controlador para revision de datos de usuario
+ * 
+ * @version 0.1
  * @author alortiz
  */
 class usershowControl extends \clases\sesion {
@@ -43,14 +44,18 @@ class usershowControl extends \clases\sesion {
         if ($usuario->getUid() === "{empty}") {
             if ($this->busquedaUsuario($usuarioCliente)) {
                 $this->mensaje = array("codigo" => "warning", 'mensaje' => "Usuario $usuarioCliente no se encuentra bajo su administración");
+                $this->datos['enlaces'] = array('creacion'=>false, "modificacion"=>false);
             }else{
                 $this->mensaje = array("codigo" => "warning", 'mensaje' => "Usuario $usuarioCliente no existe");
+                $this->datos['enlaces'] = array('creacion'=>true, "modificacion"=>false);
             }
             $correo = "{empty}";
         }else{
+            $this->datos['enlaces'] = array('creacion'=>false, "modificacion"=>true);
             $correo = $usuario->getMail();
         }
         $group = $usuario->getGidNumber();
+        $this->datos['usermod'] = $usuario->getUid();
         $this->datos['oficina'] = $usuario->getOu();
         $this->datos['nameuser'] = $usuario->getCn();
         $this->datos['psswduser'] = $usuario->getuserPassword();
@@ -76,8 +81,10 @@ class usershowControl extends \clases\sesion {
         $this->datos['buzonstatus']= $mailbox->getZimbraMailStatus();
         $this->datos['cuentastatus'] = $mailbox->getZimbraAccountStatus();
     }
-
-
+    
+    /**
+     * Responde a la ruta en /usermod/cambio
+     */
     public function datos(){
         // ¿Tenemos en serio acceso a esta página?
         $this->comprobar($this->pagina); 
