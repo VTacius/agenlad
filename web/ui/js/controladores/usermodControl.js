@@ -2,8 +2,17 @@ $(document).ready(function(){
     $("form").hide();
     $("#busqueda").show();
     $("#cargador").hide();
+    $("#espera").hide();
+    $("#cargadorResponse").hide();
+    $("#regresarInicio").hide();
+    $("#creacion").hide();
 });
 
+/**
+ * Cuando se hace click en los botones de Estado de Buzon, se envia la peticion
+ * para cambio de estado
+ * @param {object} e
+ */
 $('.btn-toggle').click(function(e) {
     $("#cargador").show();
     $(this).children('.btn').toggleClass('active btn-primary btn-default');  
@@ -12,66 +21,66 @@ $('.btn-toggle').click(function(e) {
         idElemento: $(this).attr('id'),
         usermod : $("#usermod").text()
     };
-    modificarZimbra(datos);
+    procesarDatos('/usermod/zimbra', datos, mostrarModificarZimbra );
     e.stopPropagation(); 
     e.preventDefault();
 });
 
+/**
+ * Una vez el formulario ha sido cargado con datos
+ * nos arrepentimos y no hacemos nada  
+ * Se parece a regresarInicio
+ * @param {object} e
+ */
 $("#userModForm #reset").click(function(e){
+    $("form").hide();
+    $("input").val("");
+    $("#busqueda").show();
+    crearSelectOption();
     e.stopPropagation(); 
     e.preventDefault();
-    $("input").val("");
-    crearSelectOption();
-    $("form").hide();
-    $("#busqueda").show();
     
 });
 
-$("#busqueda #enviar").click(function(e){
+/**
+ * Enviamos los datos del formulario para modificacion del usuario
+ * @param {object} e
+ */
+$("#userModForm #enviar").click(function(e){
+    $("#espera").show();
+    var datos = obtenerDatos();
+    procesarDatos('/usermod/cambio', datos, mostrarDatosModificar);
     e.stopPropagation(); 
     e.preventDefault();
+});
+
+/**
+ * Enviamos el nombre de usuario que queremos modificar para que obtenga los 
+ * datos del mismo y luego los muestre
+ * @param {object} e
+ */
+$("#busqueda #enviar").click(function(e){
     datos = {
             usuarioModificar: $("#usuarioModificar").val()
         };
     procesarDatos('/usermod/envio', datos, mostrarDatosBusqueda);
-    $("#busqueda").hide();
-    $("#mailModForm").show();
-    $("#userModForm").show();
+    e.stopPropagation(); 
+    e.preventDefault();
 });
 
 /**
- * Crea la consulta para buscar por los datos del usuario
- * @returns {undefined}
+ * Una vez ha finalizado, da la opcion de volver a configurar otro usuario
+ * Se parece a userModForm
+ * @param {object} e
  */
-//var buscarUsuario = function(){
-//    $.ajax({
-//        type: 'POST',
-//        url: '/usermod/envio',
-//        dataType: 'json',
-//        data: {
-//            usuarioModificar: $("#usuarioModificar").val()
-//        },
-//        success: mostrarDatosBusqueda,
-//        error: errorOnResponse
-//        
-//    });
-//};
-
-$("#userModForm #enviar").click(function(e){
-    e.stopPropagation(); 
-    e.preventDefault();
-    modificarUsuario();
-});
-
 $("#regresarInicio").click(function(e){
+    $("form").hide();
+    $("input").val("");
+    $("#busqueda").show();
+    crearSelectOption();
     e.stopPropagation(); 
     e.preventDefault();
-    $("form").hide();
-    $("#busqueda").show();
-    $("input").val("");
-    crearSelectOption();
 });
-
 
 /**
  * Crea ambas listas de selección con el resultado devuelto desde el servidor
@@ -104,28 +113,25 @@ var obtenerDatos = function(){
         usermod : $("#usermod").text(),
         nameuser : $("#nameuser").val(),
         apelluser : $("#apelluser").val(),
-        grupouser : $("#grupouser option:selected").val(),
         localidad : $("#localidad").val(),
+        grupouser : $("#grupouser option:selected").val(),
         "grupos[]" : $("#grupos").val()
     };
     return contenido;
 };
 
+/**
+ * Usado por mostrarDatosBusqueda
+ * @param {array} data
+ * @param {string} objeto
+ * @returns {undefined}
+ */
 var llenarControl = function(data, objeto){
     $("#" + objeto).val(data[objeto]);
 };
 
-/**
- * Llenamos el formulario de los datos actuales del usuario para que sean 
- * considerados para su modificacion
- * @param {array} data
- * @returns {undefined}
- */
-var mostrarDatosBusqueda = function(data){
-    pmostrarError(data);
-    pmostrarMensaje(data);
-    console.log(data);
-    $("b#usermod").text(data.usermod);
+var llenarControles = function(data){
+    $("b#usermod").text(data.datos.usermod);
     elementos = ['cargo', 'oficina', 'nameuser', 'phone', 'apelluser', 'localidad'];
     $(elementos).each(function(item, elemento){
         llenarControl(data.datos, elemento);
@@ -151,12 +157,32 @@ var mostrarDatosBusqueda = function(data){
         $("#buzon #apagado").text(data.buzonstatus);
         // Dado que por defecto, twig lo envia como el desactivado
         $("#buzon *").children().toggleClass('active btn-primary btn-default');
-    }
-
-    
+    }  
 };
 
-
+/**
+ * Llenamos el formulario de los datos actuales del usuario para que sean 
+ * considerados para su modificacion
+ * @param {array} data
+ * @returns {undefined}
+ */
+var mostrarDatosBusqueda = function(data){
+    pmostrarError(data);
+    pmostrarMensaje(data);
+    
+    if (data.datos.enlaces.modificacion) {
+        llenarControles(data);
+        $("#busqueda").hide();
+        $("#mailModForm").show();
+        $("#userModForm").show();
+    }else if(data.datos.enlaces.creacion){
+        $("#creacion").show();
+        $("a#creacion")
+            .show()
+            .attr( 'href', "/useradd/" + $("#usuarioModificar").val() );
+    }
+    
+};
 
 /**
  * Muestra los datos después con la respuesta que el servidor envía después
@@ -165,45 +191,20 @@ var mostrarDatosBusqueda = function(data){
  * @returns {undefined}
  */
 var mostrarDatosModificar = (function(data){
-    mostrarErrorConexion(data);
-    contenido = "";
-    $(data.datos).each(function(index, elemento){
-        contenido += elemento + "<br>";
-    });
-    $("#resultadoDiv").html(contenido);
-    $("form").hide();
-    $("#resultadoForm").show();
+    pmostrarError(data);
+    pmostrarMensaje(data);
+    $('html, body').animate({scrollTop : 0},800);
+    $("#espera").hide();
 });
 
 /**
- * Crea la consulta para cambiar los datos del usuario
+ * Cambia el estado de los botones de estado de buzón después de realizar la 
+ * peticion
+ * @param {array} data
  * @returns {undefined}
  */
-var modificarUsuario = function(){
-    var datos = obtenerDatos();
-    $.ajax({
-        type: 'POST',
-        url: '/usermod/cambio',
-        dataType: 'json',
-        data: datos,
-        success: mostrarDatosModificar,
-        error: errorOnResponse
-    });
-};
-
 var mostrarModificarZimbra = function(data){
-    console.log(data);
-    mostrarErrorConexion(data);
+    pmostrarError(data);
+    pmostrarMensaje(data);
     $("#cargador").hide();
-};
-
-var modificarZimbra = function(datos){
-    $.ajax({
-        type: 'POST',
-        url: '/usermod/zimbra',
-        dataType: 'json',
-        data: datos,
-        success: mostrarModificarZimbra,
-        error: errorOnResponse
-    });
 };

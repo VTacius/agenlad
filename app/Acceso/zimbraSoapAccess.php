@@ -82,7 +82,9 @@ class zimbraSoapAccess {
     }
     
     public function getLastResponse(){
-	return $this->lastResponse;
+        if (sizeof($this->lastResponse)>0) {
+            return $this->lastResponse;
+        }
     }
     /**
      * Ocultamos un poco la clase que estamos usando para esto, no vaya a ser 

@@ -18,7 +18,7 @@ function isEmpty(obj) {
 
 /**
  * Método a usar en procesarDatos cuando el servidor entre en estado de error
- * @param array data
+ * @param {array} data
  * @returns {undefined}
  */
 function errorOnResponse(data){

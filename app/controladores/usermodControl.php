@@ -1,8 +1,6 @@
 <?php
 namespace controladores;
-class usermodControl extends \controladores\usershowControl {
-    
-   
+class usermodControl extends \controladores\usershowControl { 
     protected $error = array();
     protected $datos = array();
     protected $mensaje = array();
@@ -57,11 +55,12 @@ class usermodControl extends \controladores\usershowControl {
             $valores['memberuid'] = $uid;
             $grupu = new \Modelos\grupoSamba($claves['dn'], $claves['pswd']);
             $grupu->setCn($grupo);
-            if (($retorno = $grupu->agregarAtributos($grupu->getDNEntrada(), $valores))) {
-                $this->mensajes[] =  "Agregado $uid a ".  $grupu->getDNEntrada();
+            
+            if ($grupu->agregarAtributos($grupu->getDNEntrada(), $valores)) {
+                $this->mensaje[] = array("codigo" => "success", 'mensaje' => "Agregado $uid a ".  $grupu->getDNEntrada());
             }else{
                 $this->error[] = $grupu->getErrorLdap();
-                $this->mensajes[] = "Error agregando $uid a ".  $grupu->getDNEntrada() . ". Revise los mensajes asociados ";
+                $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "Error agregando $uid a ".  $grupu->getDNEntrada() . ". Revise los mensajes asociados ");
             }
         }
     }
@@ -81,11 +80,11 @@ class usermodControl extends \controladores\usershowControl {
             $grupu = new \Modelos\grupoSamba($claves['dn'], $claves['pswd']);
             $grupu->setCn($grupo);
 
-            if (($retorno = $grupu->removerAtributos($grupu->getDNEntrada(), $valores))) {
-                $this->mensajes[] = "Eliminado $uid de ". $grupu->getDNEntrada();
+            if ($grupu->removerAtributos($grupu->getDNEntrada(), $valores)) {
+                $this->mensaje[] = array("codigo" => "success", 'mensaje' => "Eliminado $uid de ". $grupu->getDNEntrada());
             }else{
                 $this->error[] = $grupu->getErrorLdap();
-                $this->mensajes[] = "Error eliminando $uid en ".  $grupu->getDNEntrada() . ". Revise los mensajes asociados ";
+                $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "Error eliminando $uid en ".  $grupu->getDNEntrada() . ". Revise los mensajes asociados ");
             }
                 
         }
@@ -125,10 +124,10 @@ class usermodControl extends \controladores\usershowControl {
         $ou->setOu($grupo->getCn());
         $ou->getEntrada();
         if($usuario->moverEntrada($usuario->getDNEntrada(), $ou->getDNEntrada())){
-            $this->mensajes[] = "El usuario $usuario ahora esta bajo  " . $ou->getDNEntrada();
+            $this->mensaje[] = array("codigo" => "success", 'mensaje' => "El usuario $usuario ahora esta bajo  " . $ou->getDNEntrada());
         }else{
             $this->error[] = $usuario->getErrorLdap();
-            $this->mensajes[] = "El movimiento de usuario ha sufrido un error. Revise los mensajes asociados";
+            $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "El movimiento de usuario ha sufrido un error. Revise los mensajes asociados");
         }
     }
     
@@ -148,18 +147,17 @@ class usermodControl extends \controladores\usershowControl {
         $usuario->configuraNombre($usuarioAttr['usuarioNombre'], $usuarioAttr['usuarioApellido']);
         $usuario->setTelephoneNumber($usuarioAttr['usuarioPhone']);
         $configuracion = $this->getConfiguracionDominio();
-        // ¿Debe moverse el usuario a un objeto ou de grupo bajo la rama ou=Users?
         
-        
+        // ¿Debe moverse el usuario a un objeto ou de grupo bajo la rama ou=Users?        
         if ($configuracion['grupos_ou']) {
             $this->moverEnGrupo($usuario, $usuarioAttr['usuarioGrupo']);
         }
         
         if ($usuario->actualizarEntrada()) {
-            $this->mensajes[] = "Usuario {$usuarioAttr['usuarioModificar']} ha sido modificado con éxito";
+            $this->mensaje[] = array("codigo" => "success", 'mensaje' => "Usuario {$usuarioAttr['usuarioModificar']} ha sido modificado con éxito");
         }else{
             $this->error[] = $usuario->getErrorLdap();
-            $this->mensajes[] = "La modificación de atributos ha sufrido un error. Revise los mensajes asociados";
+            $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "La modificación de atributos ha sufrido un error. Revise los mensajes asociados");
         }
     }
     
@@ -174,23 +172,19 @@ class usermodControl extends \controladores\usershowControl {
         $userZimbra->setTelephoneNumber($usuarioAttr['usuarioPhone']);
         
         //TODO: Tenés que hacer que este metodo se parezca al de usuario
+        //NOTA: Posiblemente no sea del todo necesario si te fijas en el otro de 
+        //allá abajo en modificarEstado Zimbra
         $userZimbra->actualizarEntrada();
-        $msg = $userZimbra->getLastResponse();
+        $mensaje = $userZimbra->getErrorSoap();
         
         // Obtenemos los mensajes
-        $this->mensajes[] = empty($msg) ? "Los cambios para $correo han fallado": "Cambio exitoso para entrada en zimbra de $correo";
-    }
-    
-    private function busquedaUsuario($usuario) {
-        $usuarios = new \Modelos\userPosix($this->dn, $this->pswd, 'central' );
-        $atributos = array('cn');
-        $filtro = array("cn"=>"NOT (root OR nobody)",'uid'=>$usuario); 
-        $datos = $usuarios->search($filtro, $atributos, "dc=sv");
-        if (empty($datos[0]['cn'])) {
-            return false;
+        if (empty($mensaje)) {
+            $this->mensaje[] = array("codigo" => "success", 'mensaje' => "Cambio exitoso para buzón de $correo");
         }else{
-            return true;
+            $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "Los cambios en el buzón para $correo han fallado");
+            $this->error[] = $mensaje;
         }
+        sleep(1);
     }
     
     public function modificarUsuario(){
@@ -220,7 +214,7 @@ class usermodControl extends \controladores\usershowControl {
         $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
         
         $resultado = array(
-            'mensaje' => $this->mensajes,
+            'mensaje' => $this->mensaje,
             'error' => $this->error
         );
         
@@ -269,13 +263,21 @@ class usermodControl extends \controladores\usershowControl {
         
         $this->datos['grupos'] = $this->listarGrupos();
         
+        $this->datos['gruposuser'] = $this->listarGruposUsuarios("atributo falso", $usuarioCliente);
+        
         $this->grupo($usuario['grupo']);
         
         $this->mail($clavez, $usuario['correo']);
         
     }
-
-
+    
+    /**
+     * Usada por modificarBuzon()
+     * @param array $clavez
+     * @param string $operacion cuentastatus, buzonstatus
+     * @param string $estado
+     * @param string $usuario
+     */
     private function modificarEstadoZimbra($clavez, $operacion, $estado, $usuario){
         $mailbox = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
         $mailbox->cuenta($usuario);
@@ -288,13 +290,20 @@ class usermodControl extends \controladores\usershowControl {
         }
         // Realizamos la operacion
         $mailbox->actualizarEntrada();
-        $msg = $mailbox->getLastResponse();
+        $mensaje = $mailbox->getErrorSoap();
         
         // Obtenemos los mensajes
-        $this->mensajes[] = empty($msg)? "La operacion ha fallado para $usuario": "Estatus cambiado a $estatuto para $usuario";
-        $this->error[] = $mailbox->getErrorSoap();
+        if (empty($mensaje)) {
+            $this->mensaje[] = array("codigo" => "success", 'mensaje' => "Estatus cambiado a $estatuto para $usuario");
+        }else{
+            $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "La operacion ha fallado para $usuario");
+        }
+        $this->error[] = $mensaje;
     }
     
+    /**
+     * Punto de entrada para la ruta /usermod/zimbra
+     */
     public function modificarBuzon(){
         // Comprobamos permisos
         $this->comprobar($this->pagina); 
@@ -307,13 +316,20 @@ class usermodControl extends \controladores\usershowControl {
         
         // Mandamos los datos donde puedan usarlos
         $this->modificarEstadoZimbra($clavez, $operacion, $estado, $usuario);
-        
-        $resultado = array_merge($this->error, array('datos'=> $this->mensajes) );
+
+        $resultado = array(
+            'mensaje'=>$this->mensaje,
+            'error'=>$this->error,
+            'datos'=>$this->datos        
+        );
         // Recuerdo algo dejar un poco de tiempo a zimbra entre cada uso
         sleep(1);
         print json_encode($resultado);
     }
     
+    /**
+     * Punto de entrada para ruta /usermod
+     */
     public function display(){
         // Esto es importante en la vista
         $this->parametros['pagina'] = $this->pagina;

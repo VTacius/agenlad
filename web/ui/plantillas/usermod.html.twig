@@ -27,6 +27,7 @@
 
 {% block contenido -%}
     {{ parent() }}
+    
     <form class="form-horizontal" role="form" id="busqueda" name="busqueda" action="/usermod/envio" method="POST">
         <div class="form-group">
             <div class="col-lg-12">
@@ -38,15 +39,9 @@
         </div>
     </form>
     {% include 'usermod.form.twig' %}
-    
-    <form class="form-horizontal" role="form" id="resultadoForm" name="resultadoForm">
-        <div class="form-group">
-            <legend>Resultado de la operación con usuario <b id="usermod">{{datos.usermod}}</b></legend>
-            <div class="alert alert-info" id="resultadoDiv" name="resultadoDiv" role="alert"></div>
+    {% if rol=="admon"%}
+        <div class="form-group text-center" id="creacion">
+            <h4><a id="creacion" href="/useradd">¿Desea agregar al usuario?</a></h4>
         </div>
-        <div class="form-group text-center">
-            <button class="btn btn-lg btn-link" id="regresarInicio" name="regresarInicio" tabindex="1" role="button">Inicio!</button> 
-        </div>
-    </form>
-    
+    {% endif %}
 {% endblock %}
