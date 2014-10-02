@@ -34,9 +34,11 @@ class mainControl extends \clases\sesion {
         $this->usuario->configuraPassword($password);
         if ($this->usuario->actualizarEntrada()) {
             $this->mensaje[] = array("codigo" => "success", 'mensaje'=> "Contraseña cambiada exitosamente");
+            return true;
         }else{
             $this->error[] = $this->usuario->getErrorLdap();
             $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "Ha ocurrido un error al cambiar las contraseñas");
+            return false;
         }
         
     }
@@ -97,8 +99,9 @@ class mainControl extends \clases\sesion {
         if ($rol=='usuario'){
             $this->changeLdapPassword($usuario, $password);
         }else{
-            $this->changeLdapPassword($usuario, $password);
-            $this->cambiosFirmas($usuario, $password);
+            if ($this->changeLdapPassword($usuario, $password)) {
+                $this->cambiosFirmas($usuario, $password);
+            }
         }
     }
 
