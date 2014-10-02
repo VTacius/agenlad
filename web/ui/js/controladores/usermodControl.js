@@ -49,6 +49,7 @@ $("#userModForm #reset").click(function(e){
 $("#userModForm #enviar").click(function(e){
     $("#espera").show();
     var datos = obtenerDatos();
+    console.log(datos);
     procesarDatos('/usermod/cambio', datos, mostrarDatosModificar);
     e.stopPropagation(); 
     e.preventDefault();
@@ -93,7 +94,7 @@ var crearSelectOption = function(lista){
     //TODO: Aunque no parece tirar error, ordenar este código para usarlo sin parametro lista
     $(lista).each(function(index, elemento){
         var valueGidNumber = "<option value=" + elemento.gidNumber + ">" + elemento.cn + "</option>";
-        var valueCn = "<option value=" + elemento.cn + ">" + elemento.cn + "</option>";
+        var valueCn = "<option value=\"" + elemento.cn + "\">" + elemento.cn + "</option>";
         $("#grupouser").append(valueGidNumber);
         $("#grupos").append(valueCn);
     });
@@ -115,7 +116,7 @@ var obtenerDatos = function(){
         apelluser : $("#apelluser").val(),
         localidad : $("#localidad").val(),
         grupouser : $("#grupouser option:selected").val(),
-        "grupos[]" : $("#grupos").val()
+        grupos : $("#grupos").val() || []
     };
     return contenido;
 };
@@ -130,6 +131,11 @@ var llenarControl = function(data, objeto){
     $("#" + objeto).val(data[objeto]);
 };
 
+/**
+ * Llenemos todos los controles
+ * @param {array} data
+ * @returns {undefined}
+ */
 var llenarControles = function(data){
     $("b#usermod").text(data.datos.usermod);
     elementos = ['cargo', 'oficina', 'nameuser', 'phone', 'apelluser', 'localidad'];
@@ -173,8 +179,11 @@ var mostrarDatosBusqueda = function(data){
     if (data.datos.enlaces.modificacion) {
         llenarControles(data);
         $("#busqueda").hide();
-        $("#mailModForm").show();
         $("#userModForm").show();
+        if (!(data.datos.mailuser === "{empty}")) {
+            $("#mailModForm").show();
+            
+        }
     }else if(data.datos.enlaces.creacion){
         $("#creacion").show();
         $("a#creacion")

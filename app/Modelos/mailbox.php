@@ -12,7 +12,7 @@ class mailbox extends \Modelos\objetosSoap {
     public function __construct($administrador, $password) {
         parent::__construct($administrador, $password);
         $this->atributos = array('zimbraAccountStatus', 'zimbraMailStatus', 
-            'zimbraAuthLdapExternalDn', 'company ', 
+            'zimbraAuthLdapExternalDn', 'company ','mail',  
             'ou', 'sn', 'title', 'givenName', 
             'displayName', 'telephoneNumber');
     }
@@ -48,7 +48,11 @@ class mailbox extends \Modelos\objetosSoap {
     function getTelephoneNumber() {
         return $this->cuenta['telephoneNumber'];
     }
-
+    
+    function getMail(){
+        return $this->cuenta['mail'];
+    }
+    
     function setCompany($company) {
         $this->cuenta['company'] = $company;
     }

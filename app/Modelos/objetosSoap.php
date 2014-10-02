@@ -46,6 +46,9 @@ class objetosSoap extends \Acceso\zimbraSoapAccess{
     }
     
     public function actualizarEntrada(){
+        // De hecho, creo que algo así deberías ponerlo en objetosLdap
+        unset($this->cuenta['mail']);
+        // Odio no saber que es lo que quite de acá, pero me parece que es el DN
 	$cuenta = array_shift($this->cuenta);
         $this->modificarCuenta($cuenta, $this->cuenta);
     }

@@ -52,16 +52,7 @@ class usermodControl extends \controladores\usershowControl {
      */
     private function anadirGruposAdicionales($uid, $grupo, $gruposActuales, $claves){
         if(!in_array($grupo, $gruposActuales)){
-            $valores['memberuid'] = $uid;
-            $grupu = new \Modelos\grupoSamba($claves['dn'], $claves['pswd']);
-            $grupu->setCn($grupo);
-            
-            if ($grupu->agregarAtributos($grupu->getDNEntrada(), $valores)) {
-                $this->mensaje[] = array("codigo" => "success", 'mensaje' => "Agregado $uid a ".  $grupu->getDNEntrada());
-            }else{
-                $this->error[] = $grupu->getErrorLdap();
-                $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "Error agregando $uid a ".  $grupu->getDNEntrada() . ". Revise los mensajes asociados ");
-            }
+            $this->agregarEnGrupo($uid, $grupo, $claves);
         }
     }
     
@@ -90,6 +81,20 @@ class usermodControl extends \controladores\usershowControl {
         }
     }
 
+    private function agregarEnGrupo($uid, $grupo, $claves){
+            $valores['memberuid'] = $uid;
+            $grupu = new \Modelos\grupoSamba($claves['dn'], $claves['pswd']);
+            $grupu->setCn($grupo);
+
+            if ($grupu->agregarAtributos($grupu->getDNEntrada(), $valores)) {
+                $this->mensaje[] = array("codigo" => "success", 'mensaje' => "Agregado $uid de ". $grupu->getDNEntrada());
+            }else{
+                $this->error[] = $grupu->getErrorLdap();
+                $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "Error agregando $uid en ".  $grupu->getDNEntrada() . ". Revise los mensajes asociados ");
+            }
+    }
+
+
     /**
      * 
      * configurar como los nuevos grupos adicionales del usuario
@@ -99,8 +104,19 @@ class usermodControl extends \controladores\usershowControl {
      * @return type
      */
     private function modificarGruposAdicionales($usuarioGrupos, $usuario, $claves){
+        
         $uid = $usuario->getUid();
+        
         $gruposActuales = $this->listarGruposUsuarios($usuario->getDNBase(), $usuario->getUid());
+        
+        //Agrego el grupo principal a la lista
+        $principal = new \Modelos\grupoSamba($claves['dn'], $claves['pswd']);
+        $principal->setGidNumber($usuario->getGidNumber());
+        $grupoPrincipal = $principal->getCn();
+        if (array_search($grupoPrincipal, $usuarioGrupos) === false || array_search($grupoPrincipal, $gruposActuales) === false) {
+            array_push($usuarioGrupos, $grupoPrincipal);
+        }
+        
         foreach ($usuarioGrupos as $grupo) {
             $this->anadirGruposAdicionales($usuario->getUid(), $grupo, $gruposActuales, $claves);
         }
@@ -165,26 +181,31 @@ class usermodControl extends \controladores\usershowControl {
         $clavez = $this->getClavez();
         $userZimbra = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
         $userZimbra->cuenta($correo);
-        $userZimbra->setOu($usuarioAttr['usuarioOficina']);
-        $userZimbra->setTitle($usuarioAttr['usuarioCargo']);
-        $userZimbra->setCompany($usuarioAttr['usuarioLocalidad']);
-        $userZimbra->configuraNombre($usuarioAttr['usuarioNombre'], $usuarioAttr['usuarioApellido']);
-        $userZimbra->setTelephoneNumber($usuarioAttr['usuarioPhone']);
         
-        //TODO: Tenés que hacer que este metodo se parezca al de usuario
-        //NOTA: Posiblemente no sea del todo necesario si te fijas en el otro de 
-        //allá abajo en modificarEstado Zimbra
-        $userZimbra->actualizarEntrada();
-        $mensaje = $userZimbra->getErrorSoap();
-        
-        // Obtenemos los mensajes
-        if (empty($mensaje)) {
-            $this->mensaje[] = array("codigo" => "success", 'mensaje' => "Cambio exitoso para buzón de $correo");
+        if ($userZimbra->getMail() !== "{empty}") {
+            $userZimbra->setOu($usuarioAttr['usuarioOficina']);
+            $userZimbra->setTitle($usuarioAttr['usuarioCargo']);
+            $userZimbra->setCompany($usuarioAttr['usuarioLocalidad']);
+            $userZimbra->configuraNombre($usuarioAttr['usuarioNombre'], $usuarioAttr['usuarioApellido']);
+            $userZimbra->setTelephoneNumber($usuarioAttr['usuarioPhone']);
+            //TODO: Tenés que hacer que este metodo se parezca al de usuario
+            //NOTA: Posiblemente no sea del todo necesario si te fijas en el otro de 
+            //allá abajo en modificarEstado Zimbra
+            $userZimbra->actualizarEntrada();
+            $mensaje = $userZimbra->getErrorSoap();
+
+            // Obtenemos los mensajes
+            if (empty($mensaje)) {
+                $this->mensaje[] = array("codigo" => "success", 'mensaje' => "Cambio exitoso para buzón de $correo");
+            }else{
+                $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "Los cambios en el buzón para $correo han fallado");
+                $this->error[] = $mensaje;
+            }
+            sleep(1);
         }else{
-            $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "Los cambios en el buzón para $correo han fallado");
-            $this->error[] = $mensaje;
+            $this->mensaje[] = array("codigo" => "warning", 'mensaje' => "No existe un buzón asociado a {$usuarioAttr['usuarioModificar']}");
         }
-        sleep(1);
+      
     }
     
     public function modificarUsuario(){
@@ -207,8 +228,9 @@ class usermodControl extends \controladores\usershowControl {
         $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
         // Modificamos los atributos del usuario
         $this->modificarAttrUsuario($usuario, $usuarioAttr);
-        //Modificamos la entrada del usuario en Zimbra
+        //Modificamos la entrada del usuario en Zimbra si es que acaso existe
         $correo = $usuario->getMail();
+        
         $this->modificarUsuarioZimbra($correo, $usuarioAttr);
        
         $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);

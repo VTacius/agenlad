@@ -85,7 +85,6 @@ class usershowControl extends \clases\sesion {
         $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd );
         $grupo->setGidNumber($group);
         $this->datos['grupouser'] = $grupo->getCn();
-        $this->error[] = $grupo->getErrorLdap();
     }  
     
     /**
@@ -101,7 +100,7 @@ class usershowControl extends \clases\sesion {
         $mailbox->cuenta($correo);
         
         // Configuramos los datos
-        $this->datos['mailuser'] = $correo;
+        $this->datos['mailuser'] = $mailbox->getMail();
         $this->datos['buzonstatus']= $mailbox->getZimbraMailStatus();
         $this->datos['cuentastatus'] = $mailbox->getZimbraAccountStatus();
     }

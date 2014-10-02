@@ -99,7 +99,7 @@ class pruebaControl extends \clases\sesion{
         );
 
         $mailbox = new \Modelos\mailbox("admin", "srv2025");
-        $mailbox->cuenta("mcardenas");
+        $mailbox->cuenta("mcardenas1");
 	foreach($mailbox->getCuenta() as $index => $attr){
 		print "$index: $attr <br>";
 	}
@@ -107,6 +107,7 @@ class pruebaControl extends \clases\sesion{
 	$mailbox->actualizarEntrada();
         print "<br><br>Devuelto el siguiente error<br>";
         print_r($mailbox->getErrorSoap());
+//        print_r($mailbox->getLastResponse());
         print "<br><br>Devuelto el siguiente mensaje<br>";
         $mailbox = new \Modelos\mailbox("admin", "srv2025");
         $mailbox->cuenta("mcardenas");

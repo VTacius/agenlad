@@ -17,8 +17,9 @@ $("input").keypress(function(e){
     } 
 });
 
-/*
- * Una vez ha presionado la tecla más de tres veces, ejecuta la busqueda
+/**
+ * Una vez ha presionado la tecla más de tres dos, ejecuta la busqueda
+ * @param {type} e
  */
 $("input").keyup(function(e){
     verificaVacio();
@@ -35,7 +36,9 @@ $("input").keyup(function(e){
 });
 
 /**
- * TODO: Algo me dice que esto no puede estar bien, dadas las condiciones de las demás funciones
+ * Al borrar todos los datos, volvamos a llenar los datos
+ * TODO: Algo me dice que esto no puede estar bien, dadas las condiciones de las
+ *  demás funciones
  * @returns {undefined}
  */
 var verificaVacio = function(){
@@ -45,14 +48,27 @@ var verificaVacio = function(){
     }
 };
 
-// TODO: Esto debería estar en el keyup del #uid, pero no sé que tal se llevara con dos metodos enlazados al mismo evento
+/**
+ * Realiza una consulta cuando se ingresa un espacio, suponemos que es posible 
+ * que el nombre de alguien se parezca al usuario de muchos
+ * TODO: Esto debería estar en el keyup del #uid, pero no sé que tal se llevara 
+ * con dos metodos enlazados al mismo evento
+ * @param {String} valor
+ * @returns {undefined}
+ */
 var verificaEspacio = function(valor){
     if (valor.indexOf(" ")!==-1){
         var filtraje = filtro();
         busqueda(filtraje);
     }
-}
+};
 
+/**
+ * Ayuda a asignando un valor por defecto a los valores enviados al servidor
+ * como filtro
+ * @param {type} valor
+ * @returns {String}
+ */
 var preFiltro = function(valor){
     if (!isEmpty(valor)) {
         return valor + "*";
@@ -61,6 +77,10 @@ var preFiltro = function(valor){
     }
 };
 
+/**
+ * Forma los datos a ser enviados al servidor como filtro
+ * @type type
+ */
 var filtro = function(){
     var filtro = {
         'o': preFiltro($("#o").val()),
@@ -71,8 +91,6 @@ var filtro = function(){
 };
 
 var busqueda = function(filtro){
-    console.log("Desde busqueda AJAX Request");
-    console.log(filtro);
     $.ajax({
         url: "/directorio/busqueda",
         type: "POST",
@@ -86,6 +104,11 @@ var busqueda = function(filtro){
     });
 };
 
+/**
+ * Para un string vacío, devuelve un -
+ * @param {String} attr
+ * @returns {String}
+ */
 var elementoAttr = function(attr){
     if (!isEmpty(attr)) {
         return "<td>" + attr + "</td>";
@@ -93,20 +116,20 @@ var elementoAttr = function(attr){
         return "<td> - </td>";
     }
     
-}
+};
 
+/**
+ * Sea cual sea la informacion que reciba, la muestra en pantalla
+ * @param {array} result
+ * @returns {undefined}
+ */
 var mostrar = function(result){
-    console.log("Estoy recibiendo datos");
-    console.log(result);
-    console.log(result.datos);
-    mostrarErrorLdap(result);
+    pmostrarError(result);
+    pmostrarMensaje(result);
     $("#respuesta tr").remove();
     $(result.datos).each(
         function(item, elemento){
-            // Creo que debido a lo que hace elementoAttr, ya no será necesario validar de esta forma
-//            if ((!isEmpty(elemento.cn)) && (!isEmpty(elemento.mail))) {
-                $("#respuesta").append("<tr>" + elementoAttr(elemento.cn) +  elementoAttr(elemento.mail) + elementoAttr(elemento.title) + elementoAttr(elemento.telephoneNumber) + "</tr>");
-//            }
+            $("#respuesta").append("<tr>" + elementoAttr(elemento.cn) +  elementoAttr(elemento.mail) + elementoAttr(elemento.title) + elementoAttr(elemento.telephoneNumber) + "</tr>");
         });
 };
 
