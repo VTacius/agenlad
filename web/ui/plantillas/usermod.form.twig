@@ -48,7 +48,7 @@
                         <button id="apagado" class="btn btn-xs btn-default">Disabled</button>
                     {% else %}
                         <button id="encendido" class="btn btn-xs btn-default">Enabled</button>
-                        <button id="apagado" class="btn btn-xs btn-primary active">{{ datos.cuentastatus | capitalize }}</button>
+                        <button id="apagado" class="btn btn-xs btn-primary active">{{ datos.buzonstatus | capitalize }}</button>
                     {% endif %}
                     </div>
                     
@@ -96,7 +96,7 @@
         <div class="form-group">
             <label for="phone" class="col-xs-3 text-left">Teléfono</label>
             <div class="col-xs-9">
-                <input type="text" class="form-control input-sm" id="phone" name="phone" placeholder="Telefono" autocomplete="off" value="{{datos.telefono}}">
+                <input type="text" class="form-control input-sm" id="phone" name="phone" placeholder="Telefono" autocomplete="off" value="{{datos.phone}}">
             </div>
         </div>
         <div class="form-group">

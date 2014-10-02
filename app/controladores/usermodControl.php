@@ -262,8 +262,8 @@ class usermodControl extends \controladores\usershowControl {
     public function mostrarUsuarioGet(){
         $this->comprobar($this->pagina);
         $usuarioCliente = $this->index->get('PARAMS.usuarioModificar');
-        $resultado = $this->mostrarUsuario($usuarioCliente);
-        $this->parametros['datos'] = $resultado;
+        $this->mostrarUsuario($usuarioCliente);
+        $this->parametros['datos'] = $this->datos;
         
         echo $this->twig->render('usermod.html.twig', $this->parametros);       
     
