@@ -33,9 +33,14 @@ function llenarControl(datos, objeto) {
 function llenarControlUbicacion(datos){
     llenarControl(datos.localidad);
     llenarControl(datos.oficina);
-    if (isEmpty(datos.localidad) && isEmpty(datos.oficina)) {
-        $("#ubicacion").hide();
+    if (datos.localidad === "{empty}" && datos.oficina === "{empty}") {
+        console.log(datos.oficina);
+        console.log(datos.localidad);
+        $("*#ubicacion").hide();
+        $("b#oficina").text("");
+        $("b#localidad").text("");
     }else{
+        $("*#ubicacion").show();
         $("#oficina").text(datos.oficina);
         $("#localidad").text(datos.localidad);
     }
@@ -74,11 +79,11 @@ var mostrarDatos = function(data){
     pmostrarMensaje(data);
     
     // Llenamos los datos
-    elementos = ["psswduser", "nameuser","psswduser","grupouser","mailuser","buzonstatus","cuentastatus"];
+    elementos = ["psswduser", "nombrecompleto","psswduser","grupouser","mailuser","buzonstatus","cuentastatus"];
     $(elementos).each(function(i, e){
         llenarControl(data.datos, e);
     });
-        
+    llenarControlUbicacion(data.datos);
     mostrarEnlaces(data.datos.usermod, data.datos.enlaces);
      
     if (!(data.nameuser==="{empty}" && data.buzonstatus==="{empty}")){

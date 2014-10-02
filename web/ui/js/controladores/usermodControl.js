@@ -30,11 +30,32 @@ $("#userModForm #reset").click(function(e){
 $("#busqueda #enviar").click(function(e){
     e.stopPropagation(); 
     e.preventDefault();
-    buscarUsuario();
+    datos = {
+            usuarioModificar: $("#usuarioModificar").val()
+        };
+    procesarDatos('/usermod/envio', datos, mostrarDatosBusqueda);
     $("#busqueda").hide();
     $("#mailModForm").show();
     $("#userModForm").show();
 });
+
+/**
+ * Crea la consulta para buscar por los datos del usuario
+ * @returns {undefined}
+ */
+//var buscarUsuario = function(){
+//    $.ajax({
+//        type: 'POST',
+//        url: '/usermod/envio',
+//        dataType: 'json',
+//        data: {
+//            usuarioModificar: $("#usuarioModificar").val()
+//        },
+//        success: mostrarDatosBusqueda,
+//        error: errorOnResponse
+//        
+//    });
+//};
 
 $("#userModForm #enviar").click(function(e){
     e.stopPropagation(); 
@@ -90,6 +111,10 @@ var obtenerDatos = function(){
     return contenido;
 };
 
+var llenarControl = function(data, objeto){
+    $("#" + objeto).val(data[objeto]);
+};
+
 /**
  * Llenamos el formulario de los datos actuales del usuario para que sean 
  * considerados para su modificacion
@@ -97,22 +122,22 @@ var obtenerDatos = function(){
  * @returns {undefined}
  */
 var mostrarDatosBusqueda = function(data){
-    mostrarErrorConexion(data);
+    pmostrarError(data);
+    pmostrarMensaje(data);
     console.log(data);
     $("b#usermod").text(data.usermod);
-    $("#cargo").val(data.cargo);
-    $("#oficina").val(data.oficina);
-    $("#nameuser").val(data.nameuser);
-    $("#phone").val(data.telefono);
-    $("#apelluser").val(data.apelluser);
-    $("#localidad").val(data.localidad);
-    crearSelectOption(data.grupos);
-    $("#grupouser option:contains('" + data.grupouser + "')").attr('selected','selected');
-    $(data.gruposuser).each(function(index, elemento){
+    elementos = ['cargo', 'oficina', 'nameuser', 'phone', 'apelluser', 'localidad'];
+    $(elementos).each(function(item, elemento){
+        llenarControl(data.datos, elemento);
+    });
+    crearSelectOption(data.datos.grupos);
+    
+    $("#grupouser option:contains('" + data.datos.grupouser + "')").attr('selected','selected');
+    $(data.datos.gruposuser).each(function(index, elemento){
         $("#grupos option:contains('" + elemento + "')").attr('selected','selected');
     });
     
-    if (data.cuentastatus === "active"){
+    if (data.datos.cuentastatus === "active"){
         $("#cuenta #apagado").text("Locked");
     }else{
         $("#cuenta #apagado").text(data.cuentastatus);
@@ -120,7 +145,7 @@ var mostrarDatosBusqueda = function(data){
         $("#cuenta *").children().toggleClass('active btn-primary btn-default');
     }
     
-    if (data.buzonstatus === "enabled"){
+    if (data.datos.buzonstatus === "enabled"){
         $("#buzon #apagado").text("Disabled");
     }else{
         $("#buzon #apagado").text(data.buzonstatus);
@@ -131,23 +156,7 @@ var mostrarDatosBusqueda = function(data){
     
 };
 
-/**
- * Crea la consulta para buscar por los datos del usuario
- * @returns {undefined}
- */
-var buscarUsuario = function(){
-    $.ajax({
-        type: 'POST',
-        url: '/usermod/envio',
-        dataType: 'json',
-        data: {
-            usuarioModificar: $("#usuarioModificar").val()
-        },
-        success: mostrarDatosBusqueda,
-        error: errorOnResponse
-        
-    });
-};
+
 
 /**
  * Muestra los datos después con la respuesta que el servidor envía después

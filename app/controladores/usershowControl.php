@@ -22,6 +22,7 @@ class usershowControl extends \clases\sesion {
     
     /**
      * TODO: Hay uno bastante parecido en directorioControl
+     * TODO: Una copia descarada en usermodControl
      * @param type $filter
      * @return type
      */
@@ -37,10 +38,18 @@ class usershowControl extends \clases\sesion {
         }
     }
     
+    /**
+     * Devuelve los datos de usuario, y envia mensajes de error según el usuario
+     * exista o no, en que ámbito administrativo existe y otros
+     * @param string $usuarioCliente
+     * @return array
+     */
     protected function usuario($usuarioCliente){
         // Empezamos con un objeto usuario
         $usuario = new \Modelos\userSamba($this->dn, $this->pswd);
         $usuario->setUid($usuarioCliente);
+        // TODO: Hay uno bastante parecido en directorioControl
+         // TODO: Una copia descarada en usermodControl
         if ($usuario->getUid() === "{empty}") {
             if ($this->busquedaUsuario($usuarioCliente)) {
                 $this->mensaje = array("codigo" => "warning", 'mensaje' => "Usuario $usuarioCliente no se encuentra bajo su administración");
@@ -57,12 +66,20 @@ class usershowControl extends \clases\sesion {
         $group = $usuario->getGidNumber();
         $this->datos['usermod'] = $usuario->getUid();
         $this->datos['oficina'] = $usuario->getOu();
-        $this->datos['nameuser'] = $usuario->getCn();
+        $this->datos['nombrecompleto'] = $usuario->getCn();
+        $this->datos['nameuser'] = $usuario->getGivenName();
+        $this->datos['apelluser'] = $usuario->getSn();
+        $this->datos['cargo'] = $usuario->getTitle();
+        $this->datos['phone'] = $usuario->getTelephoneNumber();
         $this->datos['psswduser'] = $usuario->getuserPassword();
         $this->datos['localidad'] = $usuario->getO();
         return array('correo'=>$correo, 'grupo'=>$group);
     }
     
+    /**
+     * Obtiene el grupo al cual pertenece el usuario
+     * @param type $group
+     */
     protected function grupo($group){
         // Seguimos con el objeto Grupo
         $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd );
@@ -71,6 +88,13 @@ class usershowControl extends \clases\sesion {
         $this->error[] = $grupo->getErrorLdap();
     }  
     
+    /**
+     * Obtiene los datos del buzón de correos para el usuario
+     * Espera a que $correo sea {empty} para invalidar toda la busqueda si acaso
+     * el usuario en cuestion no debe ser modificado por tal administrador
+     * @param array $clavez
+     * @param string $correo
+     */
     protected function mail($clavez, $correo){
         // Por último, el objeto mailbox
         $mailbox = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);

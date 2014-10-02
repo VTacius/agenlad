@@ -1,9 +1,11 @@
 <?php
 namespace controladores;
-class usermodControl extends \clases\sesion {
+class usermodControl extends \controladores\usershowControl {
     
+   
     protected $error = array();
-    protected $mensajes = array();
+    protected $datos = array();
+    protected $mensaje = array();
     
     public function __construct() {
         parent::__construct();
@@ -16,7 +18,7 @@ class usermodControl extends \clases\sesion {
      * @param string $base
      * @return array
      */
-    private function listarGrupos($base){
+    private function listarGrupos($base = "A" ){
         $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
         $search = array('cn'=>'*');
         return $grupo->search($search, array('gidNumber'), $base);
@@ -147,6 +149,8 @@ class usermodControl extends \clases\sesion {
         $usuario->setTelephoneNumber($usuarioAttr['usuarioPhone']);
         $configuracion = $this->getConfiguracionDominio();
         // ¿Debe moverse el usuario a un objeto ou de grupo bajo la rama ou=Users?
+        
+        
         if ($configuracion['grupos_ou']) {
             $this->moverEnGrupo($usuario, $usuarioAttr['usuarioGrupo']);
         }
@@ -177,6 +181,18 @@ class usermodControl extends \clases\sesion {
         $this->mensajes[] = empty($msg) ? "Los cambios para $correo han fallado": "Cambio exitoso para entrada en zimbra de $correo";
     }
     
+    private function busquedaUsuario($usuario) {
+        $usuarios = new \Modelos\userPosix($this->dn, $this->pswd, 'central' );
+        $atributos = array('cn');
+        $filtro = array("cn"=>"NOT (root OR nobody)",'uid'=>$usuario); 
+        $datos = $usuarios->search($filtro, $atributos, "dc=sv");
+        if (empty($datos[0]['cn'])) {
+            return false;
+        }else{
+            return true;
+        }
+    }
+    
     public function modificarUsuario(){
         $this->comprobar($this->pagina);         
         // Modificaciones de los grupos de usuario
@@ -192,7 +208,7 @@ class usermodControl extends \clases\sesion {
             'usuarioModificar' => $this->index->get('POST.usermod'),
             'usuarioLocalidad' => $this->index->get('POST.localidad')
         );
-        
+              
         $claves = $this->getClaves();       
         $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
         // Modificamos los atributos del usuario
@@ -203,18 +219,28 @@ class usermodControl extends \clases\sesion {
        
         $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
         
-        $resultado = array_merge($this->error, array('datos'=> $this->mensajes) );
+        $resultado = array(
+            'mensaje' => $this->mensajes,
+            'error' => $this->error
+        );
         
         print json_encode($resultado);
     }
-
+    
+    /**
+     * Retorna datos para usuario al script 
+     */
     public function mostrarUsuarioPost(){
         $this->comprobar($this->pagina);     
-
         $usuarioCliente = $this->index->get('POST.usuarioModificar');
-        $resultado = $this->mostrarUsuario($usuarioCliente);
-        print json_encode($resultado);
-    
+        $this->mostrarUsuario($usuarioCliente);
+
+        $resultado = array(
+            'mensaje'=>$this->mensaje,
+            'error'=>$this->error,
+            'datos'=>$this->datos        
+        );
+        print json_encode($resultado);  
     }
     
     public function mostrarUsuarioGet(){
@@ -226,48 +252,30 @@ class usermodControl extends \clases\sesion {
         echo $this->twig->render('usermod.html.twig', $this->parametros);       
     
     }
-
-    private function mostrarUsuario($usuarioCliente){
-        // Recuperamos firmaz desde sesion
+   
+    /**
+     * Los métodos aca usados provienen de usershowControl()
+     * Es la forma más certera para ahorar toneladas de código
+     * @param string $usuarioCliente
+     * @return array
+     */
+    protected function mostrarUsuario($usuarioCliente){
+        $this->comprobar($this->pagina); 
+        
+        // Obtenemos las claves para acceder a Soap Zimbra
         $clavez = $this->getClavez();
         
-        // Empezamos con un objeto usuario
-        $usuario = new \Modelos\userSamba($this->dn, $this->pswd);
-        $usuario->setUid($usuarioCliente);
-       
-        // Seguimos con el objeto Grupo
-        $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd);
-        $grupo->setGidNumber($usuario->getGidNumber());
+        $usuario = $this->usuario($usuarioCliente);
         
-        // Por último, el objeto mailbox
-        $mailbox = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
-        $mailbox->cuenta($usuarioCliente);
+        $this->datos['grupos'] = $this->listarGrupos();
         
-        // Configuramos los datos
-        $datos = array(
-            'cargo' => $usuario->getTitle(),
-            'grupos' => $this->listarGrupos($usuario->getDNBase()),
-            'usermod' => $usuarioCliente,
-            'oficina' => $usuario->getOu(),
-            'nameuser' => $usuario->getGivenName(),
-            'telefono' => $usuario->getTelephoneNumber(),
-            'grupouser' => $grupo->getCn(),
-            'apelluser' => $usuario->getSn(),
-            'localidad' => $usuario->getO(),
-            'gruposuser' => $this->listarGruposUsuarios($usuario->getDNBase(), $usuario->getUid()),
-            'buzonstatus'=> $mailbox->getZimbraMailStatus(),
-            'cuentastatus'=> $mailbox->getZimbraAccountStatus(),
-        );
+        $this->grupo($usuario['grupo']);
         
-        $errores = array_merge(
-                array("errorLdap" => $usuario->getErrorLdap()),
-                array("errorGrupo" => $grupo->getErrorLdap()),
-                array("errorZimbra" => $mailbox->getErrorSoap())
-        );
-       
-    return array_merge($datos, $errores);
+        $this->mail($clavez, $usuario['correo']);
+        
     }
-    
+
+
     private function modificarEstadoZimbra($clavez, $operacion, $estado, $usuario){
         $mailbox = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
         $mailbox->cuenta($usuario);

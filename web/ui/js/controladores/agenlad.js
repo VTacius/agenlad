@@ -4,7 +4,7 @@ $(document).ready(function(){
 });
 
 /**
- * 
+ * Comprueba si el parametro pasado es nulo de varias formas posibles
  * @param {var} obj
  * @returns {Boolean}
  */
@@ -16,6 +16,11 @@ function isEmpty(obj) {
     return false;
 }
 
+/**
+ * Método a usar en procesarDatos cuando el servidor entre en estado de error
+ * @param array data
+ * @returns {undefined}
+ */
 function errorOnResponse(data){
     $("#advertencia").text("La aplicación ha fallado. Consulte con su técnico asociado");
     console.log("Un error ha ocurrido");

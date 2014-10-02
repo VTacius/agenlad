@@ -53,6 +53,7 @@ abstract class sesion {
     
     /**
      * Verifica que $parametros haya llegado en POST
+     * Parece que esta obsoleto y nadie usa este método
      * @param string $parametro
      * @param string $mensaje
      * @return string
