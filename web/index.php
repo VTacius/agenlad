@@ -121,6 +121,13 @@ $index->route('GET|POST @useradd: /useradd',
 // Estas son algunas rutas de pruebas, que espero que no sean muchas
 $index->route('GET|POST @prueba_user: /pruebas', 
         'controladores\pruebaControl->display');
+$index->route('GET|POST @prueba_useradd: /pruebas/useradd', 
+        'Pruebas\useraddPrueba->display');
+// Rutas para configuracion de usuarios
+$index->route('GET|POST @conf_dominios: /confdominios', 
+        'controladores\configuracion\dominioControl->display');
+$index->route('GET|POST @conf_usuario: /confpermisos', 
+        'controladores\configuracion\usuarioControl->display');
 
 // Esta es la forma en que la aplicación empieza
 $index->run();

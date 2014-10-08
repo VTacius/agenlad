@@ -21,13 +21,11 @@ class objectosLdap extends \Modelos\ldapAccess{
     protected $entrada = array();
     
     /**
-     * 
      * @var clases\cifrado
      */
     protected $hashito;
     
     /**
-     *
      * @var string (ObjectClass) 
      */
     protected $objeto;
@@ -53,17 +51,33 @@ class objectosLdap extends \Modelos\ldapAccess{
      * @param string $atributo
      * @param string $especificacion
      */
+    // TODO: Hay que revisar esto con urgencia
+    // TODO: Dicho de la forma más seria posible, esto necesita revision
     protected function configurarDatos($atributo, $especificacion){
+//        print "Estoy en configurar datos gracias a " . $atributo . "<br>";
         $valor = strtolower($atributo);
         $filtro = "(&($valor=$especificacion)(objectClass=$this->objeto))";
         if (empty($this->entrada)) {
+//            print "La entrada esta vacía en este momento<br>";
             // Si esta vacío, llene el array por primera vez
             $this->entrada = $this->getDatos($filtro, $this->atributos)[0];
-            foreach ($this->atributos as $attr) {
-                $this->entrada[$attr] = isset($this->entrada[$attr])?$this->entrada[$attr]:"{empty}"; 
+            // ¿La busqueda esta vacía?
+            if (empty($this->entrada['dn'])){
+//                print "dn esta vació, por tanto todo esta vacío<br>";
+                foreach ($this->atributos as $attr) {
+                    $this->entrada[$attr] = "{empty}"; 
+                }
+                $this->entrada[$atributo] = $especificacion;
+            }else{
+//                print "dn Esta lleno y habra que ver que mas esta lleno<br>";
+                foreach ($this->atributos as $attr) {
+                    $this->entrada[$attr] = isset($this->entrada[$attr]) ? $this->entrada[$attr] : "{empty}"; 
+                }
             }
+
         }else{
             // Si alguien ya lleno el array, vea que tiene datos que pueda tener
+//            print "La entrada ya esta llena, así que solo configuro $atributo = $especificacion <br>";
             $this->entrada[$atributo] = $especificacion;
         }
     }
@@ -168,7 +182,7 @@ class objectosLdap extends \Modelos\ldapAccess{
      * Para debug, pero algo me dice que podrìamos sacarle un provecho real
      */
     public function getEntrada(){
-        print_r($this->entrada);
+        return $this->entrada;
     }
     
     /**
@@ -196,5 +210,20 @@ class objectosLdap extends \Modelos\ldapAccess{
         }else{
             return false;
         }
+    }
+    
+    public function crearEntrada($dn){
+        // Elimina los elementos vacíos (Asignados {empyt} por defecto) mediante self::elementosVacios
+        $valores = array_filter($this->entrada, 'self::elementosVacios');
+        // El primer índice es dn, pero ya no lo usaremos màs
+        print 'Este es el dn de esta entrada<br>';
+        print_r($dn);
+        return $valores;
+       //$dn = array_shift($valores);
+       // if($this->nuevarEntrada($valores, $dn)){
+       //     return true;
+       // }else{
+       //     return false;
+       // }
     }
 }

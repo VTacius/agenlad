@@ -128,6 +128,7 @@ class ldapAccess {
             if ((@$this->enlaceLdap = ldap_bind($this->conexionLdap, $rdnLDAP, $passLDAP))){
                 // No entiendo porque mi necesidad de configurar acá el controLDAP::dn, si
                 // Ya esta configurado en las variables de sesión
+                // TODO: Revisar de que va esta onda
                 $this->dn = $rdnLDAP;
                 return true;
             } else {
@@ -211,7 +212,7 @@ class ldapAccess {
         $atributos = array('uid','cn','title','o', 'ou','mail');
         foreach ($atributos as $value) {
             if (array_key_exists($value, $filtro)) {
-                $filtrado .= "($value=$filtro[$value])";
+                $filtrado .= "($value={$filtro[$value]})";
             }
         }
         $filtrado .= $filtrado=="(&(&(!(uid=root))(!(uid=nobody)))" ? "(uid=*))" :  ")";

@@ -143,7 +143,7 @@ abstract class sesion {
      * @param type $permisos
      */
     private function permisos ($pagina, $permisos){
-      if (!array_key_exists($pagina, $permisos)){
+      if (array_search($pagina, $permisos) === false){
           $this->index->reroute('@login_mensaje(@mensaje=No tiene permiso)');
           exit();
       }
@@ -156,7 +156,15 @@ abstract class sesion {
     protected function comprobar($pagina){
         if ($this->index->exists('SESSION.permisos')){
             $permisos = $this->index->get('SESSION.permisos');
-            $this->permisos($pagina, $permisos);
+            $reglas = array();
+            foreach($permisos as $v => $i){
+                if (is_array($i)){
+                    $reglas = array_merge($reglas, array_keys($i));
+                }else{
+                    $reglas[] = $v;
+                }
+            }
+            $this->permisos($pagina, $reglas);
         }else{
             $this->index->reroute('@login_mensaje(@mensaje=Necesita autenticarse)');
             exit();

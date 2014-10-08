@@ -1,0 +1,23 @@
+{% extends "base/layout.html.twig" %}
+{% block titulo -%}Listado de usuarios{% endblock %}
+{% block javascript -%}
+{% endblock %}
+
+{# Configuramos las variables que la plantilla padre usa para formar el menu #}
+{% set menu = menu %}
+{% set pagina = pagina %}
+
+{% block lateral %}
+    <h3>Configuracion</h3>
+    Bienvenido <b>{{titulo}} {{usuario}}</b></p>
+{% endblock %}
+
+{% block contenido -%}
+  {{ parent() }}
+    <div class="panel panel-primary">
+        <div class="panel-heading"><h3 class="panel-title">Configuracion Permisos</h3></div>
+        <div class="panel-body">
+            Contenido
+        </div>
+    </div>
+{% endblock %}

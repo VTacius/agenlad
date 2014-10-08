@@ -50,7 +50,9 @@ class usershowControl extends \clases\sesion {
         $usuario->setUid($usuarioCliente);
         // TODO: Hay uno bastante parecido en directorioControl
          // TODO: Una copia descarada en usermodControl
-        if ($usuario->getUid() === "{empty}") {
+        if ($usuario->getEntrada()['dn'] === "{empty}") {
+            // Por las nuevas formas en objetosLdap
+            $usuario->setUid('{empty}');
             if ($this->busquedaUsuario($usuarioCliente)) {
                 $this->mensaje = array("codigo" => "warning", 'mensaje' => "Usuario $usuarioCliente no se encuentra bajo su administración");
                 $this->datos['enlaces'] = array('creacion'=>false, "modificacion"=>false);

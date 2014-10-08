@@ -13,6 +13,6 @@ class useraddControl extends \clases\sesion{
         // ¿Tenemos en serio acceso a esta página?
         $this->comprobar($this->pagina); 
         echo $this->twig->render('useradd.html.twig', $this->parametros);       
-    
+
     }
 }

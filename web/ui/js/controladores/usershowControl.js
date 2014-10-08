@@ -56,7 +56,7 @@ var mostrarEnlaces = function(usuario, estados){
     if (estados.creacion) {
         $("#creacion")
                 .show()
-                .attr( 'href', "/useradd/" + usuario );     
+                .attr( 'href', "/useradd/" + $("#usuarioCliente").val() );     
     }else{
         $("#creacion").hide() 
     }
@@ -75,6 +75,7 @@ var mostrarEnlaces = function(usuario, estados){
  * @returns {undefined}
  */
 var mostrarDatos = function(data){
+    console.log(data);
     pmostrarError(data);
     pmostrarMensaje(data);
     

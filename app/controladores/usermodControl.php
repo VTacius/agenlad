@@ -13,6 +13,7 @@ class usermodControl extends \controladores\usershowControl {
     
     /**
      * Lista todos los grupos que existen dentro del dominio dado
+     * 
      * @param string $base
      * @return array
      */
@@ -128,6 +129,7 @@ class usermodControl extends \controladores\usershowControl {
     /**
      * Si el atributo grupos_ou se encuentra verficado como verdadero, se 
      * procede a mover al usuario a una nueva rama organizativa
+     * TODO: Por allí anda una en la creacion de usuarios algo que podr{ias usar
      * @param \Modelos\userSamba $usuario
      * @param string $usuarioGrupo
      * @return string
@@ -211,7 +213,8 @@ class usermodControl extends \controladores\usershowControl {
     public function modificarUsuario(){
         $this->comprobar($this->pagina);         
         // Modificaciones de los grupos de usuario
-        $usuarioGrupos = $this->index->get('POST.grupos');
+        $userGrupos = $this->index->get('POST.grupos');
+        $usuarioGrupos = empty($userGrupos) ? array() : $userGrupos;  
         // Modificaciones de los datos de usuario
         $usuarioAttr = array(
             'usuarioCargo' => $this->index->get('POST.cargo'),

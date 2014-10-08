@@ -12,7 +12,7 @@ class directorioControl extends \clases\sesion {
         // Consigue el objeto F3 en uso mediante el constructor de la clase padre
         parent::__construct();
         // Nombramos la página que hemos de producir
-        $this->pagina = "directorio";
+        $this->pagina = 'directorio';
         // Objetos que hemos de usar
     }
     
@@ -64,7 +64,9 @@ class directorioControl extends \clases\sesion {
      * Método por defecto
      */
     public function display() {
+       
         // Esto es importante en la vista
+//        $this->parametros['pagina'] = $this->pagina;
         $this->parametros['pagina'] = $this->pagina;
         // ¿Tenemos en serio acceso a esta página?
         $this->comprobar($this->pagina); 
