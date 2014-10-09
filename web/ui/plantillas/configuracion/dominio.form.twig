@@ -1,0 +1,110 @@
+<form class="form-horizontal" id="userModForm" name="userModForm" role="form" action="#" method="POST">
+        <legend>{{legenda}} <b id="clave">{{datos.clave}}</b></legend>
+        <div class="form-group">
+            <label for="uid" class="col-md-3 text-left">Descripcion</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="descripcion" name="descripcion" required placeholder="Descripcion" autofocus autocomplete="off" value="{{datos.descripcion}}">
+            </div>
+                <input type="hidden" name="clave" value="{{datos.clave}}">
+        </div>
+        <div class="form-group">
+            <label for="dominio" class="col-md-3 text-left">Dominio DNS</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="dominio" name="dominio" required placeholder="Dominio DNS" autofocus autocomplete="off" value="{{datos.dominio}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ou" class="col-xs-3 text-left">Servidor</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="oficina" name="servidor" required placeholder="Servidor" autocomplete="off" value="{{datos.attr.servidor}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="o" class="col-xs-3 text-left">Puerto</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="puerto" name="puerto" required placeholder="Puerto" autocomplete="off" value="{{datos.attr.puerto}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="apelluser" class="col-md-3 text-left">Base</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="apelluser" name="base" required placeholder="Base" autocomplete="off" value="{{datos.attr.base}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="cargo" class="col-xs-3 text-left">Base de Usuarios</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="base_usuario" name="base_usuario" required placeholder="Base de Usuarios" autocomplete="off" value="{{datos.attr.base_usuario}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="base_grupo" class="col-xs-3 text-left">Base de Grupos</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="base_grupo" name="base_grupo" required placeholder="Base de Grupos" autocomplete="off" value="{{datos.attr.base_grupo}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="admin_zimbra" class="col-xs-3 text-left">Administrador Zimbra</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="admin_zimbra" name="admin_zimbra" required placeholder="Administrador Zimbra" autocomplete="off" value="{{datos.attr.admin_zimbra}}">
+            </div>
+        </div>
+        {#<div class="form-group" name="show_admin_zimbra_password" id="show_admin_zimbra_password">
+            <p class="text-center"><a href="#" >Cambiar contraseña para administrador Zimbra</a></p>
+        </div>
+        <div class="form-group" name="div_admin_zimbra_password" hidden>
+            <label for="admin_zimbra_password" class="col-xs-3 text-left">Contraseña para administrador Zimbra</label>
+            <div class="col-xs-9">
+                <p><input type="text" class="form-control input-sm" id="admin_zimbra_password" name="admin_zimbra_password" placeholder="Contraseña para administrador Zimbra" autocomplete="off"></p>
+                <p><input type="text" class="form-control input-sm" id="admin_zimbra_password_confirmacion" name="admin_zimbra_password_confirmacion" placeholder="Confirmacion" autocomplete="off"></p>
+            </div>
+        </div>#}
+        <div class="form-group">
+            <label for="dn_administrador" class="col-xs-3 text-left">Administrador Samba</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="dn_administrador" name="dn_administrador" required placeholder="Administrador Samba" autocomplete="off" value="{{datos.attr.dn_administrador}}">
+            </div>
+        </div>
+       {# <div class="form-group" name="show_admin_ldap_password">
+            <p class="text-center"><a href="#">Cambiar contraseña para administrador Samba</a></p>
+        </div>
+        <div class="form-group" name="div_admin_ldap_password" hidden>
+            <label for="admin_ldap_password" class="col-xs-3 text-left">Contraseña para administrador Zimbra</label>
+            <div class="col-xs-9">
+                <p><input type="text" class="form-control input-sm" id="admin_samba_password" name="admin_ldap_password" placeholder="Contraseña para administrador LDAP" autocomplete="off"></p>
+                <p><input type="text" class="form-control input-sm" id="admin_samba_password_confirmacion" name="admin_ldap_password_confirmacion" placeholder="Confirmacion" autocomplete="off"></p>
+            </div>
+        </div>#}
+        
+        {%if datos.attr.grupos_ou == 1 %}
+            <div class="radio">
+                <label>
+                <input type="radio" name="grupos_ou" id="mover_ou" value="1" checked>
+                    El usuario debe moverse de acuerdo al grupo que pertenezca
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                <input type="radio" name="grupos_ou" id="no_mover_ou" value="0">
+                    El usuario no debe moverse a su grupo principal
+                </label>
+            </div>
+        {% else %}
+            <div class="radio">
+                <label>
+                <input type="radio" name="grupos_ou" id="mover_ou" value="1">
+                    El usuario debe moverse de acuerdo al grupo que pertenezca
+                </label>
+            </div>
+            <div class="radio">
+                <label>
+                <input type="radio" name="grupos_ou" id="no_mover_ou" value="0" checked>
+                    El usuario no debe moverse a su grupo principal
+                </label>
+            </div>
+        {% endif %}
+        <div class="form-group text-center">
+            <button class="btn btn-md btn-primary" id="enviar" tabindex="1" role="button">Guardar Cambios</button> 
+            <a href="/confdominios"><button class="btn btn-md btn-default" id="reset" tabindex="1" role="buttton">Cancelar</button></a> 
+        </div>
+    </form>

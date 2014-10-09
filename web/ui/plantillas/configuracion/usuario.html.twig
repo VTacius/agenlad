@@ -14,10 +14,20 @@
 
 {% block contenido -%}
   {{ parent() }}
-    <div class="panel panel-primary">
-        <div class="panel-heading"><h3 class="panel-title">Configuracion Permisos</h3></div>
-        <div class="panel-body">
-            Contenido
-        </div>
-    </div>
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th>Dominio</th><th>Descripcion</th><th>Configuracion</th>
+        </tr>
+        </thead>
+        <tbody id=respuesta>
+        {% for usuario in datos %}
+            <tr>
+                <td>{{ usuario.user }}</td>
+                <td>{{ usuario.rol}}</td>
+                <td>{{ usuario.dominio}}</td>
+            </tr> 
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

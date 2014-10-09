@@ -58,14 +58,14 @@ var mostrarEnlaces = function(usuario, estados){
                 .show()
                 .attr( 'href', "/useradd/" + $("#usuarioCliente").val() );     
     }else{
-        $("#creacion").hide() 
+        $("#creacion").hide();
     }
     if (estados.modificacion) {
         $("#modificacion")
                 .show()
                 .attr( 'href', "/usermod/" + usuario ); 
     }else{
-        $("#modificacion").hide()
+        $("#modificacion").hide();
     }
 };
 

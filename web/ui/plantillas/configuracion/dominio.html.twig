@@ -9,36 +9,37 @@
 
 {% block lateral %}
     <h3>Configuracion</h3>
-    Bienvenido <b>{{titulo}} {{usuario}}</b></p>
+    Bienvenido <b>{{titulo}} {{usuario}}</b>
+    <p>Puede configurar algunos de los dominios ya existentes, o crear uno nuevo</p>
 {% endblock %}
 
 {% block contenido -%}
   {{ parent() }}
-        <table class="table table-condensed">
-            <thead>
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th>Dominio</th><th>Descripcion</th><th>Configuracion</th>
+        </tr>
+        </thead>
+        <tbody id=respuesta>
+        {% for dominio in datos %}
             <tr>
-                <th>Dominio</th><th>Descripcion</th><th>Configuracion</th>
-            </tr>
-            </thead>
-            <tbody id=respuesta>
-            {% for dominio in datos %}
-                <tr>
-                    <td>{{ dominio.dominio }}</td>
-                    <td>{{ dominio.descripcion}}</td>
-                    <td>
-                        <ul>
-                            {% for key, valor in dominio.attr %}
-                                <li><b>{{key}} </b>: 
-                                    {% if valor == true %}
-                                        {{ valor }}
-                                    {% else %}
-                                        contenido
-                                    {% endif %}</li>
-                            {% endfor %}
-                        </ul>
-                    </td>
-                </tr> 
-            {% endfor %}
-            </tbody>
-        </table>
+                <td><a href="/confdominios/{{dominio.clave}}" >{{ dominio.dominio }}</a></td>
+                <td>{{ dominio.descripcion}}</td>
+                <td>
+                    <ul>
+                        {% for key, valor in dominio.attr %}
+                            <li><b>{{key}} </b>: 
+                                {% if valor == true %}
+                                    {{ valor }}
+                                {% else %}
+                                    {{ valor }}
+                                {% endif %}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr> 
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base/layout.html.twig" %}
+{% block titulo -%}Listado de usuarios{% endblock %}
+{% block javascript -%}
+    <script src="{{ activos('js/controladores/configuracion/dominio.js') }}" type="text/javascript"></script>
+{% endblock %}
+
+{# Configuramos las variables que la plantilla padre usa para formar el menu #}
+{% set menu = menu %}
+{% set pagina = pagina %}
+
+{% block lateral %}
+    <h3>Configuracion de Dominios</h3>
+    Bienvenido <b>{{titulo}} {{usuario}}</b>
+
+{% endblock %}
+
+{% block contenido -%}
+    {{ parent() }}
+    {% include 'configuracion/dominio.form.twig' with {'legenda': "Modificacion para dominio", 'datos': datos} %}
+{% endblock %}
