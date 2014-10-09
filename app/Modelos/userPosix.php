@@ -4,7 +4,6 @@
  *
  * @author alortiz
  */
-
 namespace Modelos;
 
 class userPosix extends \Modelos\objectosLdap{
@@ -13,14 +12,10 @@ class userPosix extends \Modelos\objectosLdap{
      * @var array 
      */
     private $letras = array(
-        'a','b','c','d','e',
-        'f','g','h','i','j',
-        'k','l','m','n','ñ',
-        'o', 'p','q','r','s',
-        't','u','v','w','x',
-        'y','z','_','.','1',
-        '2','3','4','5','6',
-        '7','8','9','0');
+        'a','b','c','d','e','f','g','h','i','j',
+        'k','l','m','n','ñ','o', 'p','q','r','s',
+        't','u','v','w','x','y','z','_','.','1',
+        '2','3','4','5','6','7','8','9','0');
     
     private $mailDomain;
     
@@ -28,17 +23,16 @@ class userPosix extends \Modelos\objectosLdap{
         parent::__construct($rdnLDAP, $passLDAP, $destino, $parametros);
         // Usamos desde acá la clase cifrado. 
         $this->hashito = new \clases\cifrado();
-        $this->objeto='shadowAccount';
-        
+        $this->objeto='shadowAccount';   
         $this->atributos = array(    
             'cn','displayName','dn','gecos','gidNumber',
             'givenName','homeDirectory','loginShell','mail','o',
-            'objectClass','ou','postalAddress','sambaAcctFlags','sambaHomeDrive',
-            'sambaHomePath','sambaKickoffTime','sambaLMPassword','sambaLogoffTime','sambaLogonScript',
-            'sambaLogonTime','sambaNTPassword','sambaPrimaryGroupSID','sambaPwdCanChange','sambaPwdLastSet',
-            'sambaPwdMustChange','sambaSID','shadowLastChange','shadowMax','shadowMin',
+            'objectClass','ou','postalAddress',
+            'shadowLastChange','shadowMax','shadowMin',
             'sn','telephoneNumber','title','uid','uidNumber',
             'userPassword');
+        $this->objectClass = array('top', 'person', 'organizationalPerson', 'posixAccount', 'shadowAccount', 'inetOrgPerson');
+        // Configuracion desde donde sea que se guarde la configuracion para este tipo de cosas
         $this->mailDomain = $this->index->get('maildomain');
     }
     
@@ -173,11 +167,6 @@ class userPosix extends \Modelos\objectosLdap{
     
     public function setUidNumber($uidNumber) {
         $this->configurarDatos('uidNumber', $uidNumber);
-        // $this->sambaSID y $this->setSambaSID están definidas en sambaUser
-        // Pues parece que funciona después de todo, aunque creo que esto es una de esas cosas
-        // que cualquiera en su sano juicio desaconsejaría
-        $sambaSID = $this->sambaSID . "-" . strval(($uidNumber *2) + 1000);
-        $this->setSambaSID($sambaSID);
     }
 
     /**
@@ -193,10 +182,6 @@ class userPosix extends \Modelos\objectosLdap{
         $this->setHomeDirectory($homeDirectory);
         $mail = $uid . "@" . $this->mailDomain;
         $this->setMail($mail);
-        //TODO: Repara esto por el amor de Satán.
-        //Estos no son atributos Posix, sino samba
-//        $sambaHomePath = "\\\\" .$this->netbiosName . "\\" . $uid;
-//        $this->setSambaHomePath($sambaHomePath);
         
     }
 

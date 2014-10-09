@@ -7,7 +7,7 @@
 
 namespace Modelos;
 
-class objectosLdap extends \Modelos\ldapAccess{
+class objectosLdap extends \Acceso\ldapAccess{
     /** 
      * Arreglo de los atributos del usuario. Recuerde que DN no se considera atributo
      * @var array 
@@ -207,7 +207,7 @@ class objectosLdap extends \Modelos\ldapAccess{
      */
     public function actualizarEntrada(){
         // Elimina los elementos vacíos (Asignados {empyt} por defecto) mediante self::elementosVacios
-        $valores = array_filter($this->entrada, self::elementosVacios);
+        $valores = array_filter($this->entrada, 'self::elementosVacios');
         // El primer índice es dn, pero ya no lo usaremos màs
         $dn = array_shift($valores);
         if($this->modificarEntrada($valores, $dn)){

@@ -12,9 +12,17 @@ class userSamba extends \Modelos\userPosix {
     protected $sambaSID;
     protected $netbiosName;
 
-
     public function __construct($rdnLDAP, $passLDAP) {
         parent::__construct($rdnLDAP, $passLDAP);
+        $this->objeto='sambaSamAccount';
+        $this->atributos = array_merge($this->atributos, array(    
+            'sambaAcctFlags','sambaHomeDrive',
+            'sambaHomePath','sambaKickoffTime','sambaLMPassword','sambaLogoffTime','sambaLogonScript',
+            'sambaLogonTime','sambaNTPassword','sambaPrimaryGroupSID','sambaPwdCanChange','sambaPwdLastSet',
+            'sambaPwdMustChange','sambaSID',
+            ));
+        $this->objectClass = array( 'top', 'person', 'organizationalPerson', 'posixAccount', 'shadowAccount', 'inetOrgPerson');
+        // Configuracion desde donde sea que se guarde la configuracion para este tipo de cosas
         $this->sambaSID = $this->index->get('sambasid');
         $this->netbiosName = $this->index->get('netbiosname'); 
     }
@@ -68,11 +76,11 @@ class userSamba extends \Modelos\userPosix {
     }
     
     public function setSambaAcctFlags($sambaAcctFlags) {
-        $this->sambaAcctFlags = $sambaAcctFlags;
+        $this->configurarValor('sambaAcctFlags', $sambaAcctFlags);
     }
 
     public function setSambaHomeDrive($sambaHomeDrive) {
-        $this->sambaHomeDrive = $sambaHomeDrive;
+        $this->configurarValor('sambaHomeDrive', $sambaHomeDrive);
     }
 
     /**
@@ -80,23 +88,23 @@ class userSamba extends \Modelos\userPosix {
      * @return array 
      */
     public function setSambaHomePath($sambaHomePath) {
-        $this->sambaHomePath = $sambaHomePath;
+        $this->configurarValor('sambaHomePath', $sambaHomePath);
     }
 
     public function setSambaKickoffTime($sambaKickoffTime) {
-        $this->sambaKickoffTime = $sambaKickoffTime;
+        $this->configurarValor('sambaKickoffTime', $sambaKickoffTime);
     }
 
     public function setSambaLogoffTime($sambaLogoffTime) {
-        $this->sambaLogoffTime = $sambaLogoffTime;
+        $this->configurarValor('sambaLogoffTime', $sambaLogoffTime);
     }
 
     public function setSambaLogonScript($sambaLogonScript) {
-        $this->sambaLogonScript = $sambaLogonScript;
+        $this->configurarValor('sambaLogonScript', $sambaLogonScript);
     }
 
     public function setSambaLogonTime($sambaLogonTime) {
-        $this->sambaLogonTime = $sambaLogonTime;
+        $this->configurarValor('sambaLogonTime', $sambaLogonTime);
     }
         
     public function setSambaPrimaryGroupSID($sambaPrimaryGroupSID) {
@@ -104,7 +112,7 @@ class userSamba extends \Modelos\userPosix {
     }
 
     public function setSambaPwdCanChange($sambaPwdCanChange) {
-        $this->sambaPwdCanChange = $sambaPwdCanChange;
+        $this->configurarValor('sambaPwdCanChange', $sambaPwdCanChange);
     }
 
     public function setSambaPwdLastSet($sambaPwdLastSet) {
@@ -134,10 +142,24 @@ class userSamba extends \Modelos\userPosix {
     }
        
     protected function setSambaLMPassword($sambaLMPassword) {
-        $this->configurarValor('sambaLMPassword', $this->hashito->NTLMHash($sambaLMPassword));
+        $this->configurarValor('sambaLMPassword', $this->hashito->LMhash($sambaLMPassword));
     }
 
     protected function setSambaNTPassword($sambaNTPassword) {
         $this->configurarValor('sambaNTPassword', $this->hashito->NTLMHash($sambaNTPassword));
     }    
+
+    public function setUidNumber($uidNumber) {
+        parent::setUidNumber($uidNumber);
+        // $this->sambaSID y $this->setSambaSID están definidas en sambaUser
+        // Pues parece que funciona después de todo, aunque creo que esto es una de esas cosas
+        // que cualquiera en su sano juicio desaconsejaría
+        $sambaSID = $this->sambaSID . "-" . strval(($uidNumber *2) + 1000);
+        $this->setSambaSID($sambaSID);
+    }
+    public function setUid($uid) {
+        parent::setUid($uid);
+        $sambaHomePath = "\\\\" .$this->netbiosName . "\\" . $uid;
+        $this->setSambaHomePath($sambaHomePath);
+    }
 }

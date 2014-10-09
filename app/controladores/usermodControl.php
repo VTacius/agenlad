@@ -142,7 +142,7 @@ class usermodControl extends \controladores\usershowControl {
         $ou->setOu($grupo->getCn());
         $ou->getEntrada();
         if($usuario->moverEntrada($usuario->getDNEntrada(), $ou->getDNEntrada())){
-            $this->mensaje[] = array("codigo" => "success", 'mensaje' => "El usuario $usuario ahora esta bajo  " . $ou->getDNEntrada());
+            $this->mensaje[] = array("codigo" => "success", 'mensaje' => "El usuario ahora esta bajo  " . $ou->getDNEntrada());
         }else{
             $this->error[] = $usuario->getErrorLdap();
             $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "El movimiento de usuario ha sufrido un error. Revise los mensajes asociados");

@@ -4,7 +4,7 @@
  *
  * @author alortiz
  */
-namespace Modelos;
+namespace Acceso;
 use Exception;
 use ErrorException;
 
