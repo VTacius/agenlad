@@ -1,5 +1,19 @@
+{#<h2>{{legenda}} <b id="clave">{{datos.clave}}</b></h2>#}
 <form class="form-horizontal" id="userModForm" name="userModForm" role="form" action="#" method="POST">
-        <legend>{{legenda}} <b id="clave">{{datos.clave}}</b></legend>
+        <legend>Conexion</legend>
+        <div class="form-group">
+            <label for="ou" class="col-xs-3 text-left">Servidor</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="oficina" name="servidor" required placeholder="Servidor" autocomplete="off" value="{{datos.attr.servidor}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="o" class="col-xs-3 text-left">Puerto</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="puerto" name="puerto" required placeholder="Puerto" autocomplete="off" value="{{datos.attr.puerto}}">
+            </div>
+        </div>
+        <legend>Datos Generales</legend>
         <div class="form-group">
             <label for="uid" class="col-md-3 text-left">Descripcion</label>
             <div class="col-xs-9">
@@ -13,20 +27,9 @@
                 <input type="text" class="form-control input-sm" id="dominio" name="dominio" required placeholder="Dominio DNS" autofocus autocomplete="off" value="{{datos.dominio}}">
             </div>
         </div>
+        <legend>Configuracion LDAP</legend>
         <div class="form-group">
-            <label for="ou" class="col-xs-3 text-left">Servidor</label>
-            <div class="col-xs-9">
-                <input type="text" class="form-control input-sm" id="oficina" name="servidor" required placeholder="Servidor" autocomplete="off" value="{{datos.attr.servidor}}">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="o" class="col-xs-3 text-left">Puerto</label>
-            <div class="col-xs-9">
-                <input type="text" class="form-control input-sm" id="puerto" name="puerto" required placeholder="Puerto" autocomplete="off" value="{{datos.attr.puerto}}">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="apelluser" class="col-md-3 text-left">Base</label>
+            <label for="apelluser" class="col-md-3 text-left">Base LDAP</label>
             <div class="col-xs-9">
                 <input type="text" class="form-control input-sm" id="apelluser" name="base" required placeholder="Base" autocomplete="off" value="{{datos.attr.base}}">
             </div>
@@ -44,9 +47,48 @@
             </div>
         </div>
         <div class="form-group">
+            <label for="dn_administrador" class="col-xs-3 text-left">Ubicacion del Usuario</label>
+            <div class="col-xs-9">
+                {%if datos.attr.grupos_ou == 1 %}
+                    <div class="radio">
+                        <label>
+                        <input type="radio" name="grupos_ou" id="mover_ou" value="1" checked>
+                            El usuario debe moverse de acuerdo al grupo que pertenezca
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                        <input type="radio" name="grupos_ou" id="no_mover_ou" value="0">
+                            El usuario no debe moverse a su grupo principal
+                        </label>
+                    </div>
+                {% else %}
+                    <div class="radio">
+                        <label>
+                        <input type="radio" name="grupos_ou" id="mover_ou" value="1">
+                            El usuario debe moverse de acuerdo al grupo que pertenezca
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label>
+                        <input type="radio" name="grupos_ou" id="no_mover_ou" value="0" checked>
+                            El usuario no debe moverse a su grupo principal
+                        </label>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <legend>Configuracion Correo</legend>
+        <div class="form-group">
             <label for="admin_zimbra" class="col-xs-3 text-left">Administrador Zimbra</label>
             <div class="col-xs-9">
                 <input type="text" class="form-control input-sm" id="admin_zimbra" name="admin_zimbra" required placeholder="Administrador Zimbra" autocomplete="off" value="{{datos.attr.admin_zimbra}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="maildomain" class="col-xs-3 text-left">Dominio de Correo</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="mail_domain" name="mail_domain" required placeholder="Dominio de Correo" autocomplete="off" value="{{datos.attr.mail_domain}}">
             </div>
         </div>
         {#<div class="form-group" name="show_admin_zimbra_password" id="show_admin_zimbra_password">
@@ -59,10 +101,23 @@
                 <p><input type="text" class="form-control input-sm" id="admin_zimbra_password_confirmacion" name="admin_zimbra_password_confirmacion" placeholder="Confirmacion" autocomplete="off"></p>
             </div>
         </div>#}
+        <legend>Configuracion Samba</legend>
         <div class="form-group">
             <label for="dn_administrador" class="col-xs-3 text-left">Administrador Samba</label>
             <div class="col-xs-9">
                 <input type="text" class="form-control input-sm" id="dn_administrador" name="dn_administrador" required placeholder="Administrador Samba" autocomplete="off" value="{{datos.attr.dn_administrador}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="sambaSID" class="col-xs-3 text-left">Administrador Zimbra</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="sambaSID" name="sambaSID" required placeholder="SID del Dominio" autocomplete="off" value="{{datos.attr.sambaSID}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="netbiosName" class="col-xs-3 text-left">Nombre NetBIOS</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="netbiosName" name="netbiosName" required placeholder="Nombre NetBIOS" autocomplete="off" value="{{datos.attr.netbiosName}}">
             </div>
         </div>
        {# <div class="form-group" name="show_admin_ldap_password">
@@ -76,33 +131,6 @@
             </div>
         </div>#}
         
-        {%if datos.attr.grupos_ou == 1 %}
-            <div class="radio">
-                <label>
-                <input type="radio" name="grupos_ou" id="mover_ou" value="1" checked>
-                    El usuario debe moverse de acuerdo al grupo que pertenezca
-                </label>
-            </div>
-            <div class="radio">
-                <label>
-                <input type="radio" name="grupos_ou" id="no_mover_ou" value="0">
-                    El usuario no debe moverse a su grupo principal
-                </label>
-            </div>
-        {% else %}
-            <div class="radio">
-                <label>
-                <input type="radio" name="grupos_ou" id="mover_ou" value="1">
-                    El usuario debe moverse de acuerdo al grupo que pertenezca
-                </label>
-            </div>
-            <div class="radio">
-                <label>
-                <input type="radio" name="grupos_ou" id="no_mover_ou" value="0" checked>
-                    El usuario no debe moverse a su grupo principal
-                </label>
-            </div>
-        {% endif %}
         <div class="form-group text-center">
             <button class="btn btn-md btn-primary" id="enviar" tabindex="1" role="button">Guardar Cambios</button> 
             <a href="/confdominios"><button class="btn btn-md btn-default" id="reset" tabindex="1" role="buttton">Cancelar</button></a> 

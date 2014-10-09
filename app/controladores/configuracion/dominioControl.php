@@ -57,7 +57,11 @@ class dominioControl extends \clases\sesion{
         $admin_zimbra = $this->index->get('POST.admin_zimbra');
         $dn_administrador = $this->index->get('POST.dn_administrador');
         
-        $attr = $this->configuracionDominio($base, $servidor, $puerto, $dn_administrador, $admin_zimbra, $grupos_ou);
+        $sambaSID = $this->index->get('POST.sambaSID');
+        $mail_domain = $this->index->get('POST.mail_domain');
+        $netbiosName = $this->index->get('POST.netbiosName');
+        
+        $attr = $this->configuracionDominio($base, $servidor, $puerto, $dn_administrador, $admin_zimbra, $grupos_ou, $sambaSID, $mail_domain, $netbiosName);
         $cmds = "update configuracion set attr=:attr where clave=:clave";
         $args = array('attr'=> $attr, 'clave'=> $clave);
         $resultado = $this->db->exec($cmds, $args);
@@ -77,7 +81,7 @@ class dominioControl extends \clases\sesion{
         print json_encode($retorno);
     }
     
-    protected function configuracionDominio($base, $ip_server, $puerto, $dn_admin_ldap, $admin_zimbra, $grupos_ou){
+    protected function configuracionDominio($base, $ip_server, $puerto, $dn_admin_ldap, $admin_zimbra, $grupos_ou, $sambaSID, $mail_domain, $netbiosName){
 //        $rdn = explode(".", $dominio);
 //        $dn = "";
 //        foreach ($rdn as $componente) {
@@ -88,10 +92,13 @@ class dominioControl extends \clases\sesion{
         $configuracion = array(
             'base' => $base,
             'puerto' => $puerto,
+            'sambaSID' => $sambaSID,
             'servidor' => $ip_server,
             'grupos_ou' => (bool)$grupos_ou,
             'base_grupo' => 'ou=Groups,' . $base,
             'base_usuario' => 'ou=Users,' . $base,
+            'netbiosName' => $netbiosName,
+            'mail_domain' => $mail_domain,
             'admin_zimbra' => $admin_zimbra,
             'dn_administrador' => $dn_admin_ldap
         );
