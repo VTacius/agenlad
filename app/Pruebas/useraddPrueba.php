@@ -79,16 +79,19 @@ class useraddPrueba extends \clases\sesion{
         print "<br>Listamos usuarios<br>";
         $lista = $this->listarAtributosUsuarios("uidNumber");
         
-        $user = "mcardenas";
-//        $user = "alortizd";
+//        $user = "mcardenas";
+        $user = "alortiz";
         print "<br><br>";
         print "Este es el usuario $user en todo su esplendor<br>";
         $claves = $this->getClaves();       
         $usuario = new \Pruebas\userSamba($claves['dn'], $claves['pswd']);
         $usuario->setUid($user);
-        print_r($usuario->crearEntrada());
-        $entrada = $usuario->crearEntrada();
-        $this->mostrarEntrada($entrada);
+        print "<pre>";
+        print_r($usuario->getEntrada());
+        print "</pre>";
+//        print_r($usuario->crearEntrada());
+//        $entrada = $usuario->crearEntrada();
+//        $this->mostrarEntrada($entrada);
 
         
         
@@ -102,7 +105,8 @@ class useraddPrueba extends \clases\sesion{
         $localidad = "Dependencia Ejecutora";
         // Los siguiente no pueden estar vacíos
         // Necesitan algunas operaciones previas para configurarse
-        $uidNumber = $this->getUidNumber($lista); // Necesita verificarse que sea único y mayor que un numero dado, para no confundirse con los locales
+        $uidNumber = $this->getUidNumber($lista); // Necesita verificarse que sea único y mayor que un numero dado, 
+        //para no confundirse con los locales
         $gidNumber = '1002'; // Debe buscarse la correspondencia con un grupo real
         // Pude tener valores por defecto
         $loginShell = "/bin/bash"; // Es un select en el formulario
@@ -129,9 +133,11 @@ class useraddPrueba extends \clases\sesion{
         $configuracion['rama_users'] = "ou=Users,dc=salud,dc=gob,dc=sv";
         // ¿Debe moverse el usuario a un objeto ou de grupo bajo la rama ou=Users?        
         if (!$configuracion['grupos_ou']) {
-            print "<br>uid=$user,{$this->obtenerDnGrupoOu($gidNumber)}<br>";
+            $dn = "uid=$user,{$this->obtenerDnGrupoOu($gidNumber)}";
+            print "<br>$dn<br>";
         }else{
-            print "<br>dn es igual a uid=$user,{$configuracion['base_usuario']}<br><br>";
+            $dn = "uid=$user,{$configuracion['base_usuario']}";
+            print "<br>dn es igual a <br>$dn<br>";
             
         }
         
@@ -171,48 +177,48 @@ class useraddPrueba extends \clases\sesion{
         //Este lo escojo al azar, porque no encuentro cero para nadie
         $usuario->setSambaPwdMustChange('2147483647');
         
-        $entrada = $usuario->crearEntrada();
+        $entrada = $usuario->crearEntrada($dn);
         $this->mostrarEntrada($entrada);
         
 
 
-        print "<br><br>";
-        print "Creando un usuario Samba<br>";
-        $usuario = new \Pruebas\userSamba($claves['dn'], $claves['pswd']);
-        $usuario->setUid($user);
-        $usuario->configuraNombre($nombre, $apellido);
-        $usuario->configuraPassword($user);
-        
-        //Estos son atributos definitorios
-        $usuario->setO($localidad);
-        $usuario->setOu($oficina);
-        $usuario->setTitle($cargo);
-        
-        //Atributos Posix con cierto detalle en cuanto a su configuracion
-        $usuario->setUidNumber($uidNumber);
-        $usuario->setLoginShell($loginShell);
-        $usuario->setGidNumber($gidNumber);
-        
-        // Atributos administrativos Posix
-        $usuario->setSambaAcctFlags($sambaAcctFlags);
-        $usuario->setShadowLastChange('16144');
-        $usuario->setShadowMax('99999');
-        
-        //Atributos administrativos samba
-        $usuario->setSambaKickoffTime('2147483647');
-        $usuario->setSambaLogoffTime('2147483647');
-        $usuario->setSambaLogonTime('0');
-        
-        //Cuidado con estos administrativos samba respecto al password 
-        $usuario->setSambaPwdCanChange('0');
-        //Parece que con esto se refiere al hecho que no lo ha cambiado antes, 
-        //no todos los usuarios lo tienen configurado a decir verdad
-        $usuario->setSambaPwdLastSet('0');
-        //Este lo escojo al azar, porque no encuentro cero para nadie
-        $usuario->setSambaPwdMustChange('2147483647');
-        
-        $entrada = $usuario->crearEntrada();
-        $this->mostrarEntrada($entrada);
+//        print "<br><br>";
+//        print "Creando un usuario Samba<br>";
+//        $usuario = new \Pruebas\userSamba($claves['dn'], $claves['pswd']);
+//        $usuario->setUid($user);
+//        $usuario->configuraNombre($nombre, $apellido);
+//        $usuario->configuraPassword($user);
+//        
+//        //Estos son atributos definitorios
+//        $usuario->setO($localidad);
+//        $usuario->setOu($oficina);
+//        $usuario->setTitle($cargo);
+//        
+//        //Atributos Posix con cierto detalle en cuanto a su configuracion
+//        $usuario->setUidNumber($uidNumber);
+//        $usuario->setLoginShell($loginShell);
+//        $usuario->setGidNumber($gidNumber);
+//        
+//        // Atributos administrativos Posix
+//        $usuario->setSambaAcctFlags($sambaAcctFlags);
+//        $usuario->setShadowLastChange('16144');
+//        $usuario->setShadowMax('99999');
+//        
+//        //Atributos administrativos samba
+//        $usuario->setSambaKickoffTime('2147483647');
+//        $usuario->setSambaLogoffTime('2147483647');
+//        $usuario->setSambaLogonTime('0');
+//        
+//        //Cuidado con estos administrativos samba respecto al password 
+//        $usuario->setSambaPwdCanChange('0');
+//        //Parece que con esto se refiere al hecho que no lo ha cambiado antes, 
+//        //no todos los usuarios lo tienen configurado a decir verdad
+//        $usuario->setSambaPwdLastSet('0');
+//        //Este lo escojo al azar, porque no encuentro cero para nadie
+//        $usuario->setSambaPwdMustChange('2147483647');
+//        
+//        $entrada = $usuario->crearEntrada();
+//        $this->mostrarEntrada($entrada);
         
     $resultado = <<<MAFI
 dn: uid=alortizd,ou=Users,dc=donaciones,dc=gob,dc=sv

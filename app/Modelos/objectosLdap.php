@@ -30,6 +30,11 @@ class objectosLdap extends \Modelos\ldapAccess{
      */
     protected $objeto;
     
+    /**
+     * @var array (Una lista de ObjectClass )
+     */
+    protected $objectClass;
+    
     
     /**
      * Configura el valor de un elemento cualquiera dentro del árbol LDAP
@@ -202,7 +207,7 @@ class objectosLdap extends \Modelos\ldapAccess{
      */
     public function actualizarEntrada(){
         // Elimina los elementos vacíos (Asignados {empyt} por defecto) mediante self::elementosVacios
-        $valores = array_filter($this->entrada, 'self::elementosVacios');
+        $valores = array_filter($this->entrada, self::elementosVacios);
         // El primer índice es dn, pero ya no lo usaremos màs
         $dn = array_shift($valores);
         if($this->modificarEntrada($valores, $dn)){
@@ -215,9 +220,12 @@ class objectosLdap extends \Modelos\ldapAccess{
     public function crearEntrada($dn){
         // Elimina los elementos vacíos (Asignados {empyt} por defecto) mediante self::elementosVacios
         $valores = array_filter($this->entrada, 'self::elementosVacios');
+        print_r($this->objectClass);
         // El primer índice es dn, pero ya no lo usaremos màs
         print 'Este es el dn de esta entrada<br>';
-        print_r($dn);
+        print "$dn <br>";
+        $valores['objectClass'] = $this->objectClass;
+        $valores['dn'] = $dn;
         return $valores;
        //$dn = array_shift($valores);
        // if($this->nuevarEntrada($valores, $dn)){

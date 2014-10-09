@@ -23,7 +23,7 @@ class userSamba extends \Pruebas\userPosix {
             'sambaLogonTime','sambaNTPassword','sambaPrimaryGroupSID','sambaPwdCanChange','sambaPwdLastSet',
             'sambaPwdMustChange','sambaSID',
             ));
-//        $this->entrada['objectClass'] = array_merge( $this->entrada['objectClass'], array('sambaSamAccount'));
+        $this->objectClass = array( 'top', 'person', 'organizationalPerson', 'posixAccount', 'shadowAccount', 'inetOrgPerson');
         // Configuracion desde donde sea que se guarde la configuracion para este tipo de cosas
         $this->sambaSID = $this->index->get('sambasid');
         $this->netbiosName = $this->index->get('netbiosname'); 

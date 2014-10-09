@@ -36,7 +36,7 @@ class userPosix extends \Modelos\objectosLdap{
             'shadowLastChange','shadowMax','shadowMin',
             'sn','telephoneNumber','title','uid','uidNumber',
             'userPassword');
-//        $this->entrada['objectClass'] = array('top', 'person', 'organizationalPerson', 'posixAccount', 'shadowAccount', 'inetOrgPerson');
+        $this->objectClass = array('top', 'person', 'organizationalPerson', 'posixAccount', 'shadowAccount', 'inetOrgPerson');
         // Configuracion desde donde sea que se guarde la configuracion para este tipo de cosas
         $this->mailDomain = $this->index->get('maildomain');
     }
