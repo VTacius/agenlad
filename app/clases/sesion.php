@@ -122,7 +122,10 @@ abstract class sesion {
         $cmds = "select attr from configuracion where dominio=:dominio";
         $args = array('dominio'=>$dominio);
         $resultado = $base->exec($cmds, $args);
-        return unserialize($resultado[0]['attr']);
+        
+        if ($base->count() > 0) {
+            return unserialize($resultado[0]['attr']);
+        }
     }
     
     protected function getConfiguracionUsuario(){

@@ -197,7 +197,7 @@ class objectosLdap extends \Acceso\ldapAccess{
      * @return type
      */
     private static function elementosVacios($elemento){
-        return !($elemento ==="{empty}");
+        return !($elemento ==="{empty}" || $elemento ==="" || $elemento == NULL || $elemento===' ');
     }
     
     /**
@@ -206,6 +206,7 @@ class objectosLdap extends \Acceso\ldapAccess{
      * @return string
      */
     public function actualizarEntrada(){
+        print_r($this->conexionLdap);
         // Elimina los elementos vacíos (Asignados {empyt} por defecto) mediante self::elementosVacios
         $valores = array_filter($this->entrada, 'self::elementosVacios');
         // El primer índice es dn, pero ya no lo usaremos màs
@@ -220,18 +221,21 @@ class objectosLdap extends \Acceso\ldapAccess{
     public function crearEntrada($dn){
         // Elimina los elementos vacíos (Asignados {empyt} por defecto) mediante self::elementosVacios
         $valores = array_filter($this->entrada, 'self::elementosVacios');
-        print_r($this->objectClass);
+//        print_r($this->objectClass);
         // El primer índice es dn, pero ya no lo usaremos màs
-        print 'Este es el dn de esta entrada<br>';
-        print "$dn <br>";
+//        print '<br>Este es el dn de esta entrada<br>';
+//        print "$dn <br>";
+//        print "<pre>";
+//        print $dn . '<br>';
+//        print_r($this->entrada);
+//         $dnu = array_shift($valores);
         $valores['objectClass'] = $this->objectClass;
-        $valores['dn'] = $dn;
-        return $valores;
-       //$dn = array_shift($valores);
-       // if($this->nuevarEntrada($valores, $dn)){
-       //     return true;
-       // }else{
-       //     return false;
-       // }
+//        print_r($valores);
+//        print "</pre>";
+        if($this->nuevaEntrada($valores, $dn)){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

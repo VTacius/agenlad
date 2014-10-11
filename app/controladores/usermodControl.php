@@ -13,7 +13,7 @@ class usermodControl extends \controladores\usershowControl {
     
     /**
      * Lista todos los grupos que existen dentro del dominio dado
-     * 
+     * TODO: Hay una copia descarada en useraddControl
      * @param string $base
      * @return array
      */
@@ -164,6 +164,7 @@ class usermodControl extends \controladores\usershowControl {
         $usuario->setGidNumber($usuarioAttr['usuarioGrupo']);
         $usuario->configuraNombre($usuarioAttr['usuarioNombre'], $usuarioAttr['usuarioApellido']);
         $usuario->setTelephoneNumber($usuarioAttr['usuarioPhone']);
+        
         $configuracion = $this->getConfiguracionDominio();
         
         // ¿Debe moverse el usuario a un objeto ou de grupo bajo la rama ou=Users?        

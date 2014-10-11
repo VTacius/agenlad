@@ -107,12 +107,29 @@ function pmostrarMensaje(data){
  * @returns {undefined}
  */
 var procesarDatos = function(url, datos, funcion){
-    $.ajax({
-        type: 'POST',
+    $.ajax({ type: 'POST',
         url: url,
         dataType: 'json',
         data: datos,
         success: funcion,
         error: errorOnResponse
     });
+};
+
+var recogerDatos = function(){
+    var contenido = {};
+    $("input[type=text]").each(function(i,e){
+        contenido[$(e).attr('name')] = $(e).val();
+    });
+    $("input[type=hidden]").each(function(i,e){
+        contenido[$(e).attr('name')] = $(e).val();
+    });
+    $("input[type=radio]:checked").each(function(i,e){
+        contenido[$(e).attr('name')] = $(e).val();
+    });
+    $("select").each(function(i,e){
+        var nombre = $(e).attr('name');
+        contenido[nombre] = $("#" + nombre ).val();
+    });
+    return contenido;
 };

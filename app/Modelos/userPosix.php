@@ -32,8 +32,8 @@ class userPosix extends \Modelos\objectosLdap{
             'sn','telephoneNumber','title','uid','uidNumber',
             'userPassword');
         $this->objectClass = array('top', 'person', 'organizationalPerson', 'posixAccount', 'shadowAccount', 'inetOrgPerson');
-        // Configuracion desde donde sea que se guarde la configuracion para este tipo de cosas
-        $this->mailDomain = $this->index->get('maildomain');
+        // Configuracion leída desde la base de datos
+        $this->mailDomain = $this->config['mail_domain'];
     }
     
     public function getGidNumber() {
@@ -200,7 +200,9 @@ class userPosix extends \Modelos\objectosLdap{
      * @param string $nombre
      * @param string $apellido
      */
-    public function configuraNombre($nombre, $apellido){
+    public function configuraNombre($pre_nombre, $pre_apellido){
+        $nombre = rtrim ($pre_nombre);
+        $apellido = rtrim ($pre_apellido);
         $this->setCn($nombre . " " . $apellido);
         $this->setSn($apellido);
         $this->setGecos($nombre . " " .  $apellido);

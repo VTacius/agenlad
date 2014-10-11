@@ -22,7 +22,7 @@ class ldapAccess {
     /** @var array La configuración que trajimos desde la base de datos*/
     protected $config;
     /** @var $link_identifier La conexión estará a nivel de clase, y no se piensa usar fuera de acá */
-    private $conexionLdap;
+    protected $conexionLdap;
     /** @var  bool El enlace estará a nivel de clases */
     protected $enlaceLdap;
     /** @var  array Errores ocurridos durante las operaciones LDAP */
@@ -235,7 +235,7 @@ class ldapAccess {
             $dn = $this->dn;
         }
         try{
-            if (@ldap_modify($this->conexionLdap, $dn, $valores)) {
+            if (ldap_modify($this->conexionLdap, $dn, $valores)) {
                 return true;
             } else {
                 throw new Exception(ldap_error($this->conexionLdap));
@@ -246,11 +246,20 @@ class ldapAccess {
         }
     }
 
-    function nuevaEntrada( $valores, $entry ) {
+    /**
+     * 
+     * @param array $valores
+     * @param string $dn
+     * @return boolean
+     * @throws Exception
+     */
+    public function nuevaEntrada( $valores, $dn ) {
         try{
-            if (ldap_add($this->conexionLdap, $entry, $valores)) {
+            if (ldap_add($this->conexionLdap, $dn, $valores)) {
                 return true;
             } else {
+//                print_r($this->conexionLdap);
+//                print "Estoy ac{a sin razpn aparente";
                 throw new Exception(ldap_error($this->conexionLdap));
             }
         }catch(Exception $e){

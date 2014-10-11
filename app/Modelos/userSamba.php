@@ -21,10 +21,10 @@ class userSamba extends \Modelos\userPosix {
             'sambaLogonTime','sambaNTPassword','sambaPrimaryGroupSID','sambaPwdCanChange','sambaPwdLastSet',
             'sambaPwdMustChange','sambaSID',
             ));
-        $this->objectClass = array( 'top', 'person', 'organizationalPerson', 'posixAccount', 'shadowAccount', 'inetOrgPerson');
-        // Configuracion desde donde sea que se guarde la configuracion para este tipo de cosas
-        $this->sambaSID = $this->index->get('sambasid');
-        $this->netbiosName = $this->index->get('netbiosname'); 
+        $this->objectClass = array( 'top', 'person', 'organizationalPerson', 'posixAccount', 'shadowAccount', 'inetOrgPerson', 'sambaSamAccount');
+        // La siguiente configuracion se consigue en desde userPosix
+        $this->sambaSID = $this->config['sambaSID'];
+        $this->netbiosName = $this->config['netbiosName']; 
     }
 
     public function getSambaAcctFlags() {

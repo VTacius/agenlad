@@ -118,6 +118,12 @@ $index->route('POST @zimbra_modificar: /usermod/zimbra [ajax]',
 //Rutas hacia useradd
 $index->route('GET|POST @useradd: /useradd', 
         'controladores\useraddControl->display');
+$index->route('GET|POST @useradd_creacion: /useradd/creacion', 
+        'controladores\useraddControl->creacionUsuario');
+$index->route('GET|POST @useradd_creacion_test: /useradd/test', 
+        'controladores\useraddPrueba->display');
+$index->route('GET|POST @useradd_check_uid: /useradd/checkuid', 
+        'controladores\useraddControl->checkUid');
 // Estas son algunas rutas de pruebas, que espero que no sean muchas
 $index->route('GET|POST @prueba_user: /pruebas', 
         'controladores\pruebaControl->display');

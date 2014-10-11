@@ -1,5 +1,5 @@
 <?php
-namespace Pruebas;
+namespace controladores;
 
 /**
  * Controlador para manejo de pruebas
@@ -7,21 +7,10 @@ namespace Pruebas;
  * @author alortiz
  */
 class useraddPrueba extends \clases\sesion{
-    
-    public function mostrarEntrada($entrada){
-        foreach ($entrada as $attr => $valor){
-            if (gettype($valor)==="string"){ 
-                print "<b>$attr:</b> $valor <br>";
-            }else{
-                print "<b>$attr:</b> <br>";
-                print "<pre>";
-                print_r($valor);
-                print "</pre>";
-            }
-        }
-        
+    public function __construct() {
+        parent::__construct();
+        $this->pagina = "useradd";
     }
-    
     /**
      * Cuando los usuarios deban residir bajo la unidades organizativa del grupo 
      * TODO: Exactamente esto podría retonar un valor válido para usermodControl::moverEnGrupo
@@ -40,7 +29,7 @@ class useraddPrueba extends \clases\sesion{
     }
     
     private function listarAtributosUsuarios($atributo){
-        $usuarios = new \Pruebas\userPosix($this->dn, $this->pswd, 'central' );
+        $usuarios = new \Modelos\userPosix($this->dn, $this->pswd, 'central' );
         $filtro =array($atributo => '*');
         $datos = $usuarios->search($filtro);
         $lista = array();
@@ -72,81 +61,14 @@ class useraddPrueba extends \clases\sesion{
     }
 
 
-    public function display(){
-        $this->pagina = "main";
-        $this->comprobar($this->pagina);       
-
-        print "<br>Listamos usuarios<br>";
-        $lista = $this->listarAtributosUsuarios("uidNumber");
-        
-//        $user = "mcardenas";
-        $user = "alortiz";
-        print "<br><br>";
-        print "Este es el usuario $user en todo su esplendor<br>";
-        $claves = $this->getClaves();       
-        $usuario = new \Pruebas\userSamba($claves['dn'], $claves['pswd']);
-        $usuario->setUid($user);
-        print "<pre>";
-        print_r($usuario->getEntrada());
-        print "</pre>";
-//        print_r($usuario->crearEntrada());
-//        $entrada = $usuario->crearEntrada();
-//        $this->mostrarEntrada($entrada);
-
-        
-        
-        // Los siguiente valores vienen desde el formulario. 
-        // No tienen valor por defecto
-        $nombre = "Gabriela";
-        $apellido = "Henriquez Dimas";
-        // Pueden estar vacíos de hecho
-        $cargo = "Enfermera en Jefe";
-        $oficina = "Enfermería";
-        $localidad = "Dependencia Ejecutora";
-        // Los siguiente no pueden estar vacíos
-        // Necesitan algunas operaciones previas para configurarse
-        $uidNumber = $this->getUidNumber($lista); // Necesita verificarse que sea único y mayor que un numero dado, 
-        //para no confundirse con los locales
-        $gidNumber = '1002'; // Debe buscarse la correspondencia con un grupo real
-        // Pude tener valores por defecto
-        $loginShell = "/bin/bash"; // Es un select en el formulario
-        $sambaAcctFlags = "[U]"; //Es un select en el formulario, indica si esta activo o inactivo
-
-        
-        //Empezamos a configurar los valores del usuario de prueba
-        $user = "usuario" . rand(1,9) * date("Bis");
-        
-        /**
-         * Este será el procedimiento a usar para "Comprobar usuario"
-         */
-        $listaUidUsuarios = $this->listarAtributosUsuarios("uid");
-        if ($this->checkUid($listaUidUsuarios, $user)) {
-            print "<br>El usuario $user no existe<br>";
-        }else{
-            print "<br>$user existe<br>";
-        }
-        
-        /**
-         * Haremos esto para nuestra onda de crear dn
-         */
-        $configuracion = $this->getConfiguracionDominio();
-        $configuracion['rama_users'] = "ou=Users,dc=salud,dc=gob,dc=sv";
-        // ¿Debe moverse el usuario a un objeto ou de grupo bajo la rama ou=Users?        
-        if (!$configuracion['grupos_ou']) {
-            $dn = "uid=$user,{$this->obtenerDnGrupoOu($gidNumber)}";
-            print "<br>$dn<br>";
-        }else{
-            $dn = "uid=$user,{$configuracion['base_usuario']}";
-            print "<br>dn es igual a <br>$dn<br>";
-            
-        }
-        
-        print "<br><br>";
-        print "Creando un usuario Posix<br>";
-        $usuario = new \Pruebas\userSamba($claves['dn'], $claves['pswd']);
-        $usuario->setUid($user);
+    protected function configurarNuevoUsuario($dn, $claves, $uid, $nombre, 
+            $apellido, $localidad, $oficina, $cargo, $uidNumber, $loginShell,
+            $gidNumber,$sambaAcctFlags){
+        $usuario = new \Modelos\userSamba($claves['dn'], 'lector_ldap_hacienda');
+//        $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
+        $usuario->setUid($uid);
         $usuario->configuraNombre($nombre, $apellido);
-        $usuario->configuraPassword($user);
+        $usuario->configuraPassword($uid);
         
         //Estos son atributos definitorios
         $usuario->setO($localidad);
@@ -157,7 +79,6 @@ class useraddPrueba extends \clases\sesion{
         $usuario->setUidNumber($uidNumber);
         $usuario->setLoginShell($loginShell);
         $usuario->setGidNumber($gidNumber);
-        
         
         // Atributos administrativos Posix
         $usuario->setSambaAcctFlags($sambaAcctFlags);
@@ -177,10 +98,82 @@ class useraddPrueba extends \clases\sesion{
         //Este lo escojo al azar, porque no encuentro cero para nadie
         $usuario->setSambaPwdMustChange('2147483647');
         
-        $entrada = $usuario->crearEntrada($dn);
-        $this->mostrarEntrada($entrada);
-        
+        if ($usuario->crearEntrada($dn)) {
+            print "<br>Usuario $uid  Creado exitosamente<br>";
+        }else{
+            print "<br>Algo debió ocurrir y no nos dimos cuenta<br>";
+        }
+    }
+    public function display(){
+        $this->pagina = "main";
+        $this->comprobar($this->pagina);       
 
+        $lista = $this->listarAtributosUsuarios("uidNumber");
+        $claves = $this->getClaves();       
+        $valor = $this->index->get('POST.loginShell');
+        print "Este es el valor de $valor";
+        print_r($this->index->get('POST.loginShell'));
+        // Los siguiente valores vienen desde el formulario. 
+        // No tienen valor por defecto
+//        $nombre = "Gabriela";
+//        $apellido = "Henriquez Dimas";
+//        // Pueden estar vacíos de hecho
+//        $cargo = "Enfermera en Jefe";
+//        $oficina = "Enfermería";
+//        $localidad = "Dependencia Ejecutora";
+//        // Los siguiente no pueden estar vacíos
+//        // Necesitan algunas operaciones previas para configurarse
+//        // para no confundirse con los locales
+//        $gidNumber = '1005'; // Debe buscarse la correspondencia con un grupo real
+//        // Pude tener valores por defecto
+//        $loginShell = "/bin/bash"; // Es un select en el formulario
+//        $sambaAcctFlags = "[U]"; //Es un select en el formulario, indica si esta activo o inactivo
+        
+        
+        $nombre = "";
+        $apellido = "Henriquez Dimas";
+        // Pueden estar vacíos de hecho
+        $cargo = "Enfermera en Jefe";
+        $oficina = "Enfermería";
+        $localidad = "Dependencia Ejecutora";
+        // Los siguiente no pueden estar vacíos
+        // Necesitan algunas operaciones previas para configurarse
+        // para no confundirse con los locales
+        $gidNumber = '1005'; // Debe buscarse la correspondencia con un grupo real
+        // Pude tener valores por defecto
+        $loginShell = "/bin/bash"; // Es un select en el formulario
+        $sambaAcctFlags = "[U]"; //Es un select en el formulario, indica si esta activo o inactivo
+
+        
+        //Empezamos a configurar los valores del usuario de prueba
+        $uid = "usuario" . rand(1,9) * date("Bis");
+        
+        $uidNumber = $this->getUidNumber($lista); // Necesita verificarse que sea único y mayor que un numero dado, 
+        
+//        $uid = $this->index->get('POST.uid'). 'pre' . rand(1,9) * date("Bis");
+//        $nombre = $this->index->get('POST.nombre');
+//        $apellido = $this->index->get('POST.apellido');
+//        $cargo = $this->index->get('POST.title');
+//        $oficina = $this->index->get('POST.ou');
+//        $localidad = $this->index->get('POST.o');
+//        $gidNumber = $this->index->get('POST.gidNumber');
+//        $loginShell = $this->index->get('POST.loginShell');
+//        $sambaAcctFlags = $this->index->get('POST.sambaAcctFlags');
+
+        /**
+         * Haremos esto para nuestra onda de crear dn
+         */
+        $configuracion = $this->getConfiguracionDominio();
+        // ¿Debe moverse el usuario a un objeto ou de grupo bajo la rama ou=Users?        
+        if ($configuracion['grupos_ou']) {
+            $dn = "uid=$uid,{$this->obtenerDnGrupoOu($gidNumber)}";
+        }else{
+            $dn = "uid=$uid,{$configuracion['base_usuario']}";
+            
+        }
+        $this->configurarNuevoUsuario($dn, $claves, $uid, $nombre, 
+            $apellido, $localidad, $oficina, $cargo, $uidNumber, $loginShell,
+            $gidNumber,$sambaAcctFlags);        
 
 //        print "<br><br>";
 //        print "Creando un usuario Samba<br>";
@@ -219,28 +212,28 @@ class useraddPrueba extends \clases\sesion{
 //        
 //        $entrada = $usuario->crearEntrada();
 //        $this->mostrarEntrada($entrada);
-        
-    $resultado = <<<MAFI
-dn: uid=alortizd,ou=Users,dc=donaciones,dc=gob,dc=sv
-
-objectClass:
-
-Array
-(
-    [0] => top
-    [1] => person
-    [2] => organizationalPerson
-    [3] => posixAccount
-    [4] => shadowAccount
-    [5] => inetOrgPerson
-    [6] => sambaSamAccount
-)
-
-uid: alortizd
-
-
-MAFI;
-    print "<br> No te preocupes, sólo te hacen falta más o menos estos atributos";
-    print $resultado;
+//        
+//    $resultado = <<<MAFI
+//dn: uid=alortizd,ou=Users,dc=donaciones,dc=gob,dc=sv
+//
+//objectClass:
+//
+//Array
+//(
+//    [0] => top
+//    [1] => person
+//    [2] => organizationalPerson
+//    [3] => posixAccount
+//    [4] => shadowAccount
+//    [5] => inetOrgPerson
+//    [6] => sambaSamAccount
+//)
+//
+//uid: alortizd
+//
+//
+//MAFI;
+//    print "<br> No te preocupes, sólo te hacen falta más o menos estos atributos";
+//    print $resultado;
     }    
 }

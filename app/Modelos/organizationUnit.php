@@ -3,9 +3,10 @@ namespace Modelos;
 
 class organizationUnit extends \Modelos\objectosLdap{
     
-    public function __construct($rdnLDAP, $passLDAP) {
-        parent::__construct($rdnLDAP, $passLDAP);
+    public function __construct($rdnLDAP, $passLDAP, $destino="", $parametros = array()) {
+        parent::__construct($rdnLDAP, $passLDAP, $destino, $parametros);
         $this->objeto='organizationalUnit';
+        $this->objectClass = array('organizationalUnit');
         $this->atributos = array('objectClass', 'ou');
     }
     
