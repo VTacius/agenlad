@@ -62,10 +62,9 @@ class dominioControl extends \clases\sesion{
         $netbiosName = $this->index->get('POST.netbiosName');
         
         $attr = $this->configuracionDominio($base, $servidor, $puerto, $dn_administrador, $admin_zimbra, $grupos_ou, $sambaSID, $mail_domain, $netbiosName);
-        $cmds = "update configuracion set attr=:attr where clave=:clave";
-        $args = array('attr'=> $attr, 'clave'=> $clave);
+        $cmds = "update configuracion set attr=:atributo where clave=:clave";
+        $args = array('atributo'=> $attr, 'clave'=> $clave);
         $resultado = $this->db->exec($cmds, $args);
-        
         if ($resultado) {
             $this->mensaje[] = array("codigo" => "success", 'mensaje' => 'Cambios realizados exitosamente');
         }else{

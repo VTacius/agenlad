@@ -129,13 +129,14 @@ $index->route('GET|POST @prueba_user: /pruebas',
         'controladores\pruebaControl->display');
 $index->route('GET|POST @prueba_useradd: /pruebas/useradd', 
         'Pruebas\useraddPrueba->display');
-// Rutas para configuracion de usuarios
+// Rutas para configuracion de dominios
 $index->route('GET|POST @conf_dominios: /confdominios', 
         'controladores\configuracion\dominioControl->display');
 $index->route('GET|POST @conf_dominio_modificar: /confdominios/modificar', 
         'controladores\configuracion\dominioControl->modificarDominios');
 $index->route('GET|POST @conf_dominio_detalles: /confdominios/@clave', 
         'controladores\configuracion\dominioControl->mostrarDetalles');
+// Rutas para configuracion de usuarios
 $index->route('GET|POST @conf_usuario: /confpermisos', 
         'controladores\configuracion\usuarioControl->display');
 

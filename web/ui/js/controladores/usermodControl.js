@@ -202,7 +202,6 @@ var mostrarDatosBusqueda = function(data){
 var mostrarDatosModificar = (function(data){
     pmostrarError(data);
     pmostrarMensaje(data);
-    $('html, body').animate({scrollTop : 0},800);
     $("#espera").hide();
 });
 

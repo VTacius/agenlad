@@ -94,6 +94,7 @@ function pmostrarMensaje(data){
         });
         $("#mensaje").show();
         $("#mensaje").html(respuesta);
+        $('html, body').animate({scrollTop : 0},800);
     }
 };
 

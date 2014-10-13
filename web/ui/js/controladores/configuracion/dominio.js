@@ -14,13 +14,18 @@ $("#reset").click(function(e){
     e.preventDefault();
 });
 
+$("#reset_password_zimbra").click(function(){
+    e.stopPropagation();
+    e.preventDefault();
+});
+
 $("#show_admin_zimbra_password a").click(function(e){
     e.stopPropagation();
     e.preventDefault();
-    $("#div_admin_zimbra_password").show();    
-    $("#div_admin_zimbra_password").attr('hidden', false);    
     $("#admin_zimbra_password").show();    
+    $("#div_admin_zimbra_password").show();    
     $("#show_admin_zimbra_password").hide();
+    $("#div_admin_zimbra_password").attr('hidden', false);    
 });
 
 var mostrarRespuesta = function(data){
