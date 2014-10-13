@@ -203,10 +203,10 @@ class useraddControl extends \clases\sesion{
         $apellido = (empty($nombre) && empty($pre_apellido))? $uid : $pre_apellido;
         $cargo = $this->index->get('POST.title');
         $oficina = $this->index->get('POST.ou');
+        $telefono = $this->index->get('POST.telephoneNumber');
         $localidad = $this->index->get('POST.o');
         $gidNumber = $this->index->get('POST.gidNumber');
         $loginShell = $this->index->get('POST.loginShell');
-        $telefono = $this->index->get('POST.telephoneNumber');
         
         $listaUidNumberUsuarios = $this->listarAtributosUsuarios("uidNumber");
         
@@ -223,11 +223,13 @@ class useraddControl extends \clases\sesion{
             $dn = "uid=$uid,{$configuracion['base_usuario']}";
             
         }
-        
-        
-        $this->configurarNuevoUsuario($dn, $claves, $uid, $nombre, 
-            $apellido, $localidad, $oficina, $cargo, $uidNumber, $loginShell,
-            $gidNumber,$sambaAcctFlags, $telefono);
+        if ($this->checharUsuario($uid)) {
+            $this->configurarNuevoUsuario($dn, $claves, $uid, $nombre, 
+                $apellido, $localidad, $oficina, $cargo, $uidNumber, $loginShell,
+                $gidNumber,$sambaAcctFlags, $telefono);
+        } else {
+            $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "Ese usuario ya existe");
+        }
         $resultado = array(
             'mensaje' => $this->mensaje,
             'error' => $this->error

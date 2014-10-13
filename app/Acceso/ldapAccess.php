@@ -255,7 +255,7 @@ class ldapAccess {
      */
     public function nuevaEntrada( $valores, $dn ) {
         try{
-            if (ldap_add($this->conexionLdap, $dn, $valores)) {
+            if (@ldap_add($this->conexionLdap, $dn, $valores)) {
                 return true;
             } else {
 //                print_r($this->conexionLdap);
