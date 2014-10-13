@@ -15,7 +15,6 @@ $("#reset").click(function(e){
 });
 
 $("#show_admin_zimbra_password a").click(function(e){
-    console.log("Cambiemos a usuario zimbra");
     e.stopPropagation();
     e.preventDefault();
     $("#div_admin_zimbra_password").show();    

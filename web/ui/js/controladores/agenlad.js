@@ -22,8 +22,7 @@ function isEmpty(obj) {
  * @returns {undefined}
  */
 function errorOnResponse(data){
-    $("#advertencia").text("La aplicación ha fallado. Consulte con su técnico asociado");
-    console.log("Un error ha ocurrido");
+    $("#error").text("La aplicación ha fallado. Consulte con su técnico asociado");
     console.log(data.responseText);
 }
 
@@ -106,8 +105,9 @@ function pmostrarMensaje(data){
  * @param {callback} funcion
  * @returns {undefined}
  */
-var procesarDatos = function(url, datos, funcion){
-    $.ajax({ type: 'POST',
+function procesarDatos (url, datos, funcion){
+    $.ajax({ 
+        type: 'POST',
         url: url,
         dataType: 'json',
         data: datos,
@@ -116,7 +116,11 @@ var procesarDatos = function(url, datos, funcion){
     });
 };
 
-var recogerDatos = function(){
+/**
+ * 
+ * @returns {objetos}
+ */
+function recogerDatos (){
     var contenido = {};
     $("input[type=text]").each(function(i,e){
         contenido[$(e).attr('name')] = $(e).val();
