@@ -53,4 +53,9 @@ class objetosSoap extends \Acceso\zimbraSoapAccess{
         $this->modificarCuenta($cuenta, $this->cuenta);
     }
     
+    public function nuevaEntrada($dn_auth, $mail){
+        $password = "Falso_2025";
+        $this->crearMailbox($dn_auth, $mail, $password, $this->cuenta);
+    }
+    
 }

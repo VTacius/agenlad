@@ -197,13 +197,15 @@ class usermodControl extends \controladores\usershowControl {
             $userZimbra->actualizarEntrada();
             $mensaje = $userZimbra->getErrorSoap();
 
-            // Obtenemos los mensajes
+            // Configuramos los mensajes de la operacion
+            //TODO: Sigo pensando que debo cambiar esto
             if (empty($mensaje)) {
                 $this->mensaje[] = array("codigo" => "success", 'mensaje' => "Cambio exitoso para buzón de $correo");
             }else{
                 $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "Los cambios en el buzón para $correo han fallado");
                 $this->error[] = $mensaje;
             }
+            // Necesitamos un pequeño delay, para evitar que accidentalmente se envíen modificaciones demasiado frecuentes sobre el mismo objeto
             sleep(1);
         }else{
             $this->mensaje[] = array("codigo" => "warning", 'mensaje' => "No existe un buzón asociado a {$usuarioAttr['usuarioModificar']}");

@@ -6,7 +6,7 @@ $("#disponibilidad").click(function(e){
     e.preventDefault();
     e.stopPropagation();
     var datos = {'uid': $("#uid").val()}; 
-    procesarDatos ('/useradd/checkuid', datos, mostrarDisponibilidad)
+    procesarDatos ('/useradd/checkuid', datos, mostrarDisponibilidad);
 });
 
 $("#enviar").click(function(e){
@@ -18,11 +18,11 @@ $("#enviar").click(function(e){
 
 var mostrarDisponibilidad = function(data){
     if(data.clase) {
-        $("#comprobacion_usuario").children('p').removeClass('alert-danger').addClass('alert-success')
+        $("#comprobacion_usuario").children('p').removeClass('alert-danger').addClass('alert-success');
         $("#comprobacion_usuario").children('p').children('b').text(data.mensaje);
         $("#comprobacion_usuario").children('p').children('span').removeClass('glyphicon-remove').addClass('glyphicon-ok');
     } else {
-        $("#comprobacion_usuario").children('p').removeClass('alert-success').addClass('alert-danger')
+        $("#comprobacion_usuario").children('p').removeClass('alert-success').addClass('alert-danger');
         $("#comprobacion_usuario").children('p').children('b').text(data.mensaje);
         $("#comprobacion_usuario").children('p').children('span').removeClass('glyphicon-ok').addClass('glyphicon-remove');
     }

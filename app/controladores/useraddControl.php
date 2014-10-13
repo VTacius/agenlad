@@ -121,7 +121,7 @@ class useraddControl extends \clases\sesion{
     
     protected function configurarNuevoUsuario($dn, $claves, $uid, $nombre, 
             $apellido, $localidad, $oficina, $cargo, $uidNumber, $loginShell,
-            $gidNumber,$sambaAcctFlags){
+            $gidNumber,$sambaAcctFlags, $telefono){
         $usuario = new \Modelos\userSamba($claves['dn'], 'lector_ldap_hacienda');
 //        $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
         $usuario->setUid($uid);
@@ -158,11 +158,38 @@ class useraddControl extends \clases\sesion{
         
         if ($usuario->crearEntrada($dn)) {
             $this->mensaje[] = array("codigo" => "success", 'mensaje' => "Agregado usuario $uid");
+            // Solo si hemos creado al usuario con exito tiene sentido crear el buzón de correo
+            $clavez = $this->getClavez();
+            $this->configurarNuevoCorreo($clavez, $dn, $usuario->getMail(), $nombre, $apellido, $oficina, $cargo, $localidad, $telefono);
+            
         }else{
             $this->error[] = $usuario->getErrorLdap();
             $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "Error agregando al usuario $uid. Revise el mensaje de error asociado abajo");
         }
         
+    }
+    
+    protected function configurarNuevoCorreo($clavez, $dn, $mail, $nombre, $apellido, $ou, $title, $company, $telephoneNumber){
+        $correo = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
+        $correo->configuraNombre($nombre, $apellido);
+        $correo->setOu($ou);
+        $correo->setTitle($title);
+        $correo->setCompany($company);
+        $correo->setTelephoneNumber($telephoneNumber);
+        
+        $correo->nuevaEntrada($dn, $mail);
+        
+        $mensaje = $correo->getErrorSoap();
+            //TODO: Sigo pensando que debo cambiar esto
+            // Configuramos los mensajes de la operacion
+            if (empty($mensaje)) {
+                $this->mensaje[] = array("codigo" => "success", 'mensaje' => "Se ha creado el buzón $mail");
+            }else{
+                $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "La creación del buzón $mail han fallado");
+                $this->error[] = $mensaje;
+            }
+            // Necesitamos un pequeño delay, para evitar que accidentalmente se envíen modificaciones demasiado frecuentes sobre el mismo objeto
+            sleep(1);
     }
     
     public function creacionUsuario(){
@@ -179,6 +206,7 @@ class useraddControl extends \clases\sesion{
         $localidad = $this->index->get('POST.o');
         $gidNumber = $this->index->get('POST.gidNumber');
         $loginShell = $this->index->get('POST.loginShell');
+        $telefono = $this->index->get('POST.telephoneNumber');
         
         $listaUidNumberUsuarios = $this->listarAtributosUsuarios("uidNumber");
         
@@ -195,9 +223,11 @@ class useraddControl extends \clases\sesion{
             $dn = "uid=$uid,{$configuracion['base_usuario']}";
             
         }
+        
+        
         $this->configurarNuevoUsuario($dn, $claves, $uid, $nombre, 
             $apellido, $localidad, $oficina, $cargo, $uidNumber, $loginShell,
-            $gidNumber,$sambaAcctFlags);
+            $gidNumber,$sambaAcctFlags, $telefono);
         $resultado = array(
             'mensaje' => $this->mensaje,
             'error' => $this->error

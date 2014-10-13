@@ -189,24 +189,38 @@ class zimbraSoapAccess {
        
     }
 
-    public function crearMailbox($usuario){
+    public function crearMailbox($dn, $mail, $password, $usuario){
         $parametrosCreacionUsuario = array (
-            new SoapParam($usuario['mail'], 'name'),
-            new SoapParam($usuario['password'], 'password'),
+            new SoapParam($mail, 'name'),
+            new SoapParam($password, 'password'),
         );
-   
         // El atributo necesario para que se autentique
-        $parametrosCreacionUsuario[] = new SoapVar("<a n='zimbraAuthLdapExternalDn'>{$usuario["dn"]}</a>", XSD_ANYXML);
-
-        // Agregamos los datos de $usuario
-        foreach ($this->mapa as $attrSamba => $attrZimbra) {
-            if (array_key_exists($attrSamba, $usuario)){
-                $parametrosCreacionUsuario[] = new SoapVar("<a n='$attrZimbra'>{$usuario[$attrSamba]}</a>", XSD_ANYXML);
-            }
+        $parametrosCreacionUsuario[] = new SoapVar("<a n='zimbraAuthLdapExternalDn'>$dn</a>", XSD_ANYXML);
+        
+        foreach ($usuario as $attr => $valor) {
+            $parametrosCreacionUsuario[] = new SoapVar("<a n='$attr'>$valor</a>", XSD_ANYXML);
         }
         $this->llamada("CreateAccountRequest" , $parametrosCreacionUsuario, array ( 'uri' => 'urn:zimbraAdmin'));
 
     }
+//    public function crearMailbox($usuario){
+//        $parametrosCreacionUsuario = array (
+//            new SoapParam($usuario['mail'], 'name'),
+//            new SoapParam($usuario['password'], 'password'),
+//        );
+//   
+//        // El atributo necesario para que se autentique
+//        $parametrosCreacionUsuario[] = new SoapVar("<a n='zimbraAuthLdapExternalDn'>{$usuario["dn"]}</a>", XSD_ANYXML);
+//
+//        // Agregamos los datos de $usuario
+//        foreach ($this->mapa as $attrSamba => $attrZimbra) {
+//            if (array_key_exists($attrSamba, $usuario)){
+//                $parametrosCreacionUsuario[] = new SoapVar("<a n='$attrZimbra'>{$usuario[$attrSamba]}</a>", XSD_ANYXML);
+//            }
+//        }
+//        $this->llamada("CreateAccountRequest" , $parametrosCreacionUsuario, array ( 'uri' => 'urn:zimbraAdmin'));
+//
+//    }
     
     public function modificarMailbox($usuario, $cambios){
         $cuenta = $this->getAccount($usuario);
