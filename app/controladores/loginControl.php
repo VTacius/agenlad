@@ -61,52 +61,73 @@ class loginControl extends \clases\sesion{
     }
     
     /**
+     * $37 a que puede conjugarlo con cifrarFirmaz
+     * @param string $firmas
+     * @param string $password
+     * @param string $usuario
+     */
+    private function cifrarFirmas($firmas, $password, $usuario){
+        $base = $this->conectarDB();
+        $hashito = new \clases\cifrado();
+        $pwds = $hashito->encrypt($firmas, $password);
+        $cmds = "UPDATE user SET firmas=:firmas, bandera_firmas=:bandera_firmas where user=:user";
+        $args = array('firmas'=>$pwds, 'bandera_firmas'=> '2', 'user'=>$usuario);
+        $base->exec($cmds, $args);
+    }
+    
+    /**
+     * $37 a que puede conjugarlo con cifrarFirmas 
+     * @param string $firmaz
+     * @param string $password
+     * @param string $usuario
+     */
+    private function cifrarFirmaz($firmaz, $password, $usuario){
+        $base = $this->conectarDB();
+        $hashito = new \clases\cifrado();
+        $pwdz = $hashito->encrypt($firmaz, $password);
+        $cmds = "UPDATE user SET firmaz=:firmaz, bandera_firmaz=:bandera_firmaz where user=:user";
+        $args = array('firmaz'=>$pwdz, 'bandera_firmaz'=> '2', 'user'=>$usuario);
+        $base->exec($cmds, $args);
+    }
+    /**
      * Auxiliar de banderaAdmin.
-     * Cuando un usuario con nivel administrativo no se ha logueado antes, debe cifrarse las contraseñas que va a usar
+     * Cifra por separado cada contraseña si la bandera == 1
      * @param string $resultado
      * @param string $password
      * @param string $usuario
      */
     private function cifrarEnPrimerLogueo($resultado, $password, $usuario){
-            $base = $this->conectarDB();
-            $hashito = new \clases\cifrado();
-            $firmas = $resultado[0]['firmas'];
-            $firmaz = $resultado[0]['firmaz'];
-//            print "Original - firmas: $firmas<br>firmas: $firmaz<br>";
-            $pwds = $hashito->encrypt($firmas, $password);
-            $pwdz = $hashito->encrypt($firmaz, $password);
-//            print "Cifrado - firmas: $pwds<br>firmas: $pwdz<br>";
-            $claros = $hashito->descifrada ( $pwds, $password );
-            $claroz = $hashito->descifrada ( $pwdz, $password );
-//            print "Descifrado - firmas: $claros<br>firmas: $claroz<br>";
-            $cmds = "UPDATE user SET firmas=:firmas, firmaz=:firmaz, bandera=:bandera where user=:user";
-            $args = array('firmas'=>$pwds,'firmaz'=>$pwdz, 'bandera'=> '2', 'user'=>$usuario);
-            $base->exec($cmds, $args);
-//            exit();
-            return array('firmas'=>$pwds, 'firmaz' => $pwdz);
+        $firmas = $resultado[0]['firmas'];
+        $bandera_firmas = $resultado[0]['bandera_firmas'];
+        $firmaz = $resultado[0]['firmaz'];
+        $bandera_firmaz = $resultado[0]['bandera_firmaz'];
+
+        if ($bandera_firmas == 1) {
+            $this->cifrarFirmas($firmas, $password, $usuario);
+        }
+        if ($bandera_firmaz == 1) {
+            $this->cifrarFirmaz($firmaz, $password, $usuario);
+        }
     }
     
     /**
      * El usuario es administrador o no
-     * Si el usuario es administrador, comprueba si ya se logueado antes (bandera=2) 
-     * o nunca (bandera=1)
+     * Si el usuario es administrador, envia a cifrarEnPrimerLogueo para cifrar o no 
+     * las credenciales
      * @param string $usuario
      * @return string|array
      */
     protected function obtenerBandera($usuario, $password){
         $base = $this->conectarDB();
         // Operamos
-        $cmds = "select titulo, user.rol, permisos, firmas, firmaz, dominio, bandera from user join rol on user.rol=rol.rol where user=:user;";
+        $cmds = "select titulo, user.rol, permisos, firmas, bandera_firmas, firmaz, bandera_firmaz, dominio from user join rol on user.rol=rol.rol where user=:user;";
         $args = array('user'=>$usuario);
         $resultado = $base->exec($cmds, $args);
         if ($base->count() == 0){
-            $cmds = "select titulo, user.rol, permisos, dominio, firmas, firmaz from user join rol on user.rol=rol.rol where user='usuario';";
+            $cmds = "select titulo, user.rol, permisos, dominio from user join rol on user.rol=rol.rol where user='usuario';";
             return $base->exec($cmds, $args);
-        } elseif ($resultado[0]['bandera']==1) {
-            $claves = $this->cifrarEnPrimerLogueo($resultado, $password, $usuario);
-            $resultado[0]['firmas'] = $claves['firmas'];
-            $resultado[0]['firmaz'] = $claves['firmaz'];
         } 
+        $this->cifrarEnPrimerLogueo($resultado, $password, $usuario);
         return $resultado;
     }
 
@@ -139,7 +160,8 @@ class loginControl extends \clases\sesion{
     }
     
     /**
-     * Crea el dominio a asignar para los usuarios normales
+     * Si el valor ´dominio´ en la base de datos esta vacío, debe crear el dominio
+     * a partir de los domain component en el DN del usuario
      * @param string $dn
      * @param string $dominio
      * @return string
@@ -155,9 +177,7 @@ class loginControl extends \clases\sesion{
         }
         return rtrim($dominio, ".");
     }
-
-
-            
+          
     /**
      * Auxiliar de autenticar
      * Iniciamos la sesion con datos a guardar en la base de datos
@@ -179,9 +199,6 @@ class loginControl extends \clases\sesion{
         $this->index->set('SESSION.titulo', $roles[0]['titulo']);
         $this->index->set('SESSION.dominio', $this->dominioUser($login->getDN(), $roles[0]['dominio']));
         $this->index->set('SESSION.permisos', unserialize($roles[0]['permisos']));
-        // TODO: Recuerda que estas no deberían estar acá
-        $this->index->set('SESSION.firmaz', $roles[0]['firmaz']);
-        $this->index->set('SESSION.firmas', $roles[0]['firmas']);
     }
 
 
@@ -193,11 +210,11 @@ class loginControl extends \clases\sesion{
     public function autenticar(){
         $this->comprobarBloqueo($this->usuario);
         $login = new \clases\authentication('ldap', array(
-            'dc' => $this->server,
-            'pw' => $this->index->get('passwdldap'),
-            'rdn' => $this->index->get('lectorldap'),
-            'base_dn'=> $this->index->get('sbase')
-                )
+                'dc' => $this->server,
+                'pw' => $this->index->get('passwdldap'),
+                'rdn' => $this->index->get('lectorldap'),
+                'base_dn'=> $this->index->get('sbase')
+            )
         );
         if (@$login->login($this->usuario, $this->password)){
             $this->logueado($this->usuario);

@@ -1,29 +1,58 @@
-{# empty Twig template #}
-<div class="col-lg-11">
-    <form class="form-horizontal" role="form" method="POST" action="/directorio" id="cambiopass" name="cambiopass">
-        <div class="form-group">
-          <label for="passchangePrima" class="col-lg-3 control-label">Contraseña Nueva</label>
-            <div class="col-lg-8">
-                <input type="text" class="form-control" id="passchangeprima" name="passchangeprima" placeholder="Contraseña nueva" autofocus>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="passchangeConfirm" class="col-lg-3 control-label">Confirmar Contraseña Nueva</label>
-                <div class="col-lg-8">
-                    <input type="text" class="form-control" id="uid" name="uid" placeholder="Confirmar Contraseña">
+<script src="{{ activos('js/vendor/jquery.min.js') }}" type="text/javascript"></script>
+<script src="{{ activos('js/vendor/jquery-ui.min.js') }}" type="text/javascript"></script>
+<link href="{{ activos('css/vendor/jquery-ui.min.css') }}" rel="stylesheet">
+
+<script type="text/javascript">
+    var mensaje_modal = function(titulo, envio_datos){
+        $("#dialogo").dialog({
+            modal: true,
+            title: titulo,
+            draggable: false,
+            resizable: false,
+            buttons: [ 
+                { 
+                    text: "Cancelar", 
+                    click: function() { 
+                        $( this ).dialog( "close" ); 
+                    }
+                },
+                { 
+                    text: "Enviar", 
+                    click: envio_datos
+                }
+            ]
+        });
+    };
+    
+    var reset_password_zimbra = function(){
+        console.log($("#dialogo #password_set").val());
+        console.log($("#dialogo #password_confirm").val());
+    };
+    
+    $("#reset_password_zimbra").click(function(e){
+        mensaje_modal("Escribir algo bonito", reset_password_zimbra);
+        e.stopPropagation();
+        e.preventDefault();
+    });
+    
+</script>
+<div id="dialogo" style="display: none">
+    <div id="reset_password_div" title="Prueba">
+        <form class="form-horizontal" id="reset_password_form" name="reset_password_form" role="form" action="#" method="POST">
+            <div class="form-group">
+                <label for="password_set" class="col-xs-3 text-left">Contraseña</label>
+                <div class="col-xs-9">
+                    <input type="text" class="form-control input-sm" id="password_set" name="password_set" required placeholder="" autocomplete="off" >
                 </div>
-        </div>
-        <div class="form-group">
-            <div class="col-lg-offset-5 col-lg-12">
-                <button type="submit" class="btn btn-primary" id="enviar" name="enviar">Cambiar Contraseña</button>
             </div>
-        </div>
-        {% if mensajeError %}
-        <div class="col-lg-8 alert alert-error" id="advertencia">
-            <ul class="list-unstyled">
-                <li class="invalid"><strong>{{mensajeError}}</strong></li>
-            </ul>
-        </div>
-        {% endif %}                
-    </form>
-  </div>
+            <div class="form-group">
+                <label for="password_confirm" class="col-xs-3 text-left">Confirme Contraseña</label>
+                <div class="col-xs-9">
+                    <input type="text" class="form-control input-sm" id="password_confirm" name="password_confirm" required autocomplete="off" >
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<a href="#" name="reset_password_zimbra" id="reset_password_zimbra">Configurar / Resetear Contraseñas</a>

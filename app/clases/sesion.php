@@ -98,7 +98,8 @@ abstract class sesion {
     protected function getClaves(){
         // Recuperamos firmaz desde sesion y desciframos
         $hashito = new \clases\cifrado();
-        $firmas = $this->index->get('SESSION.firmas');
+        $configUser = $this->getConfiguracionUsuario();
+        $firmas = $configUser['firmas'];
         $claves = $hashito->descifrada($firmas, $this->pswd);
 
         // Obtenemos el DN del administrador desde la base de datos
@@ -132,7 +133,7 @@ abstract class sesion {
         $base = $this->index->get('dbconexion');
         $usuario = $this->index->get('SESSION.user');
         
-        $cmds = "select titulo, user.rol, permisos, firmas, firmaz, dominio, bandera from user join rol on user.rol=rol.rol where user=:user;";
+        $cmds = "select titulo, user.rol, permisos, firmas, firmaz, dominio from user join rol on user.rol=rol.rol where user=:user";
         $args = array('user'=>$usuario);
         $resultado = $base->exec($cmds, $args);
         

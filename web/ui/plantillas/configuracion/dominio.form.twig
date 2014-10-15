@@ -91,9 +91,9 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="reset_password_zimbra" class="col-xs-3 text-left">Dominio de Correo</label>
+            <label for="reset_password_zimbra" class="col-xs-3 text-left">Contraseña</label>
             <div class="col-xs-9">
-                <a href="#" name="reset_password_zimbra">Configurar / Resetear Contraseñas</a>
+                <a href="#" name="reset_password_zimbra" id="reset_password_zimbra">Configurar / Resetear Contraseñas</a>
             </div>
         </div>
         {#<div class="form-group" name="show_admin_zimbra_password" id="show_admin_zimbra_password">
@@ -114,7 +114,13 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="sambaSID" class="col-xs-3 text-left">Administrador Zimbra</label>
+            <label for="reset_password_samba" class="col-xs-3 text-left">Contraseña</label>
+            <div class="col-xs-9">
+                <a href="#" name="reset_password_samba" id="reset_password_samba">Configurar / Resetear Contraseñas</a>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="sambaSID" class="col-xs-3 text-left">SambaSID</label>
             <div class="col-xs-9">
                 <input type="text" class="form-control input-sm" id="sambaSID" name="sambaSID" required placeholder="SID del Dominio" autocomplete="off" value="{{datos.attr.sambaSID}}">
             </div>

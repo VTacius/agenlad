@@ -82,38 +82,39 @@ class pruebaControl extends \clases\sesion{
 //   #     
 //   # }
     public function display(){
-        $administrador = "admin@salud.gob.sv";
-	$contrasenia = "srv2025";
-
-	$usuario = array(
-            'sn' => "Guevara",
-            'dn' => "uid=alortiz,ou=Users,dc=salud,dc=gob,dc=sv",
-            'mail' => "virgini138@salud.gob.sv",
-            'password' => 'virginia134',
-            'givenName' => "Virginia"
-        );
-
-        $modificacionUsuario = array(
-            'givenName' => "Virginia Esmeralda",
-            'sn' => "Guevara Ochoa",
-        );
-
-        $mailbox = new \Modelos\mailbox("admin", "srv2025");
-        $mailbox->cuenta("mcardenas1");
-	foreach($mailbox->getCuenta() as $index => $attr){
-		print "$index: $attr <br>";
-	}
-	$mailbox->setZimbraAccountStatus("active");
-	$mailbox->actualizarEntrada();
-        print "<br><br>Devuelto el siguiente error<br>";
-        print_r($mailbox->getErrorSoap());
-//        print_r($mailbox->getLastResponse());
-        print "<br><br>Devuelto el siguiente mensaje<br>";
-        $mailbox = new \Modelos\mailbox("admin", "srv2025");
-        $mailbox->cuenta("mcardenas");
-	foreach($mailbox->getCuenta() as $index => $attr){
-		print "$index: $attr <br>";
-	}
+        echo $this->twig->render('pruebas.html.twig'); 
+//        $administrador = "admin@salud.gob.sv";
+//	$contrasenia = "srv2025";
+//
+//	$usuario = array(
+//            'sn' => "Guevara",
+//            'dn' => "uid=alortiz,ou=Users,dc=salud,dc=gob,dc=sv",
+//            'mail' => "virgini138@salud.gob.sv",
+//            'password' => 'virginia134',
+//            'givenName' => "Virginia"
+//        );
+//
+//        $modificacionUsuario = array(
+//            'givenName' => "Virginia Esmeralda",
+//            'sn' => "Guevara Ochoa",
+//        );
+//
+//        $mailbox = new \Modelos\mailbox("admin", "srv2025");
+//        $mailbox->cuenta("mcardenas1");
+//	foreach($mailbox->getCuenta() as $index => $attr){
+//		print "$index: $attr <br>";
+//	}
+//	$mailbox->setZimbraAccountStatus("active");
+//	$mailbox->actualizarEntrada();
+//        print "<br><br>Devuelto el siguiente error<br>";
+//        print_r($mailbox->getErrorSoap());
+////        print_r($mailbox->getLastResponse());
+//        print "<br><br>Devuelto el siguiente mensaje<br>";
+//        $mailbox = new \Modelos\mailbox("admin", "srv2025");
+//        $mailbox->cuenta("mcardenas");
+//	foreach($mailbox->getCuenta() as $index => $attr){
+//		print "$index: $attr <br>";
+//	}
 	
 	#var_dump($mailbox->getLastResponse());
 

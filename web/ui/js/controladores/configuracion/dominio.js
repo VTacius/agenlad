@@ -14,18 +14,27 @@ $("#reset").click(function(e){
     e.preventDefault();
 });
 
-$("#reset_password_zimbra").click(function(){
+$("#reset_password_zimbra").click(function(e){
+    $('#dialogo input[type=password]').val("");
     e.stopPropagation();
     e.preventDefault();
+    mensaje_modal("Configuracion Contraseña Zimbra", recoger_datos_popup);
+});
+
+$("#reset_password_samba").click(function(e){
+    $('#dialogo input[type=password]').val("");
+    e.stopPropagation();
+    e.preventDefault();
+    mensaje_modal("Configuracion Contraseña Samba", recoger_datos_popup);
 });
 
 $("#show_admin_zimbra_password a").click(function(e){
-    e.stopPropagation();
-    e.preventDefault();
-    $("#admin_zimbra_password").show();    
-    $("#div_admin_zimbra_password").show();    
-    $("#show_admin_zimbra_password").hide();
-    $("#div_admin_zimbra_password").attr('hidden', false);    
+//    e.stopPropagation();
+//    e.preventDefault();
+//    $("#admin_zimbra_password").show();    
+//    $("#div_admin_zimbra_password").show();    
+//    $("#show_admin_zimbra_password").hide();
+//    $("#div_admin_zimbra_password").attr('hidden', false);    
 });
 
 var mostrarRespuesta = function(data){
@@ -46,3 +55,27 @@ var recogerDatos = function(){
     });
     return contenido;
 };
+
+var recoger_datos_popup = function(){
+    console.log($("#dialogo #password_set").val());
+    console.log($("#dialogo #password_confirm").val());
+};
+
+var mensaje_modal = function(titulo, envio_datos){
+    $("#dialogo").dialog({
+        modal: true,
+        title: titulo,
+        draggable: false,
+        resizable: false,
+        buttons: [ 
+            { 
+                text: "Cancelar", 
+                click: function() { $( this ).dialog( "close" ); }
+            },
+            { 
+                text: "Enviar", 
+                click: envio_datos
+            }
+        ]
+    });
+    };

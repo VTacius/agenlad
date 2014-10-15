@@ -206,7 +206,6 @@ class objectosLdap extends \Acceso\ldapAccess{
      * @return string
      */
     public function actualizarEntrada(){
-        print_r($this->conexionLdap);
         // Elimina los elementos vacíos (Asignados {empyt} por defecto) mediante self::elementosVacios
         $valores = array_filter($this->entrada, 'self::elementosVacios');
         // El primer índice es dn, pero ya no lo usaremos màs
