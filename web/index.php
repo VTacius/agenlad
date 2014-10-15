@@ -19,7 +19,7 @@ $index->set('AUTOLOAD','../app/');
 /**
  * Nos encargamos de convocar el poder de Twig
  */
-$twig_loader = new Twig_Loader_Filesystem(__DIR__ . '/ui/plantillas');
+$twig_loader = new Twig_Loader_Filesystem(__DIR__ . '/../app/plantillas');
 
 $index->set('twig', 
     $twig = new Twig_Environment($twig_loader, array(
