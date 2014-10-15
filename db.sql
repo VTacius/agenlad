@@ -48,7 +48,6 @@ INSERT INTO `rol` VALUES ('admon','Administrador','a:3:{s:10:\"directorio\";s:22
 /*!40000 ALTER TABLE `rol` ENABLE KEYS */;
 UNLOCK TABLES;
 
-/*!40101 SET character_set_client = @
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -73,6 +72,13 @@ CREATE TABLE `user` (
   `firmaz` varchar(50) DEFAULT NULL,
   `bandera_firmaz` char(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+-- Dumping data for table `user`
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES ('usuario','usuario','',NULL,NULL,NULL,NULL),('default','sin_firma','',NULL,NULL,NULL,NULL);
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

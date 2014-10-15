@@ -53,6 +53,8 @@ class ldapAccess {
     
     /**
      * TODO: Estamos duplicados con \clases\sesion
+     * TODO: Sería bueno que de no haber nada en la base de datos, devolviera 
+     * los valores predeterminados
      * Retorna un array con la configuración para el dominio para el cual tiene
      * permisos el usuarios que ha abierto la sesion
      * @return array
@@ -235,7 +237,7 @@ class ldapAccess {
             $dn = $this->dn;
         }
         try{
-            if (ldap_modify($this->conexionLdap, $dn, $valores)) {
+            if (@ldap_modify($this->conexionLdap, $dn, $valores)) {
                 return true;
             } else {
                 throw new Exception(ldap_error($this->conexionLdap));

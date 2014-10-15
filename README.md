@@ -6,9 +6,14 @@ Latimos con el corazón de Fat Free Framework, y hacemos el intento por ser una 
 
 ### Pasos previos
 * La dependencia de terceros es manejada con [composer](https://gist.github.com/VTacius/4b9ed8b1deee1ecdfb04)
+* Los módulos para php pueden ser instalados en Debian con 
 
 ```shell 
 composer update
+```
+
+```shell 
+aptitude install php5-{mcrypt,mysql,ldap}
 ```
 
 * Cree un directorio temporal para que Twig cree las plantillas
@@ -47,29 +52,40 @@ dbbase = directorio
 dbserver = 
 dbusuario = 
 dbpassword = 
-[atributos-posix]
-maildomain = "dominio.com"
-objectClass[0] = "top"
-objectClass[1] = "person"
-objectClass[2] = "organizationalPerson"
-objectClass[3] = "inetOrgPerson"
-objectClass[4] = "posixAccount"
-objectClass[5] = "shadowAccount"
-objectClass[6] = "sambaSamAccount"
-shadowMin = "99999"
-shadowMax = "99999"
-[atributos-samba]
-sambasid = "S-1-5-21-37xxxxxxx-14xxxxxx-23xxxxxxxx"
-netbiosname = "NETBIOS"
+
+ * La mínima configuración requerida para que funcione en Apache es la siguiente
+
+```apacheconf
+<VirtualHost *:80>
+        ServerAdmin alortiz@salud.gob.sv
+
+        DocumentRoot /var/www/web
+        <Directory /var/www/web>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
+
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+
+        # Possible values include: debug, info, notice, warn, error, crit,
+        # alert, emerg.
+        LogLevel warn
+
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
 ```
- * Active el módulo Rewrite de Apache
+
+```
+ * Active el módulo Rewrite de Apache, luego de lo cual habrá que reiniciar el servidor Apache
 ```shell 
 a2enmod rewrite
 ```
 
 * Para no complicar las cosas, por ahora, copie los ficheros necesarios:
 ```shell
-cp vendor/components/jquery/ web/ui/js/vendor/
+mkdir web/ui/js/vendor
 cp vendor/components/jquery/jquery.min.js web/ui/js/vendor/
 cp vendor/components/jqueryui/jquery-ui.min.js web/ui/js/vendor/
 cp vendor/components/bootstrap/js/bootstrap.min.js web/ui/js/vendor/
