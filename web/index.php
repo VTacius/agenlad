@@ -101,29 +101,29 @@ $index->route('POST @cambiologin: /main/cambio [ajax]',
         'controladores\mainControl->cambioCredenciales');
 //Rutas hacia usershow
 $index->route('GET|POST @tecnico: /usershow', 
-        'controladores\usershowControl->display');
+        'controladores\usuario\usershowControl->display');
 $index->route('GET|POST @tecnicoDatos: /usershow/datos [ajax]', 
-        'controladores\usershowControl->datos');
+        'controladores\usuario\usershowControl->datos');
 //Rutas hacia usermod
 $index->route('GET|POST @usermod: /usermod', 
-        'controladores\usermodControl->display');
+        'controladores\usuario\usermodControl->display');
 $index->route('GET|POST @usermod_modificar: /usermod/envio', 
-        'controladores\usermodControl->mostrarUsuarioPost');
+        'controladores\usuario\usermodControl->mostrarUsuarioPost');
 $index->route('GET|POST @usermod_modificar: /usermod/@usuarioModificar', 
-        'controladores\usermodControl->mostrarUsuarioGet');
+        'controladores\usuario\usermodControl->mostrarUsuarioGet');
 $index->route('POST @usermod_modificar: /usermod/cambio [ajax]', 
-        'controladores\usermodControl->modificarUsuario');
+        'controladores\usuario\usermodControl->modificarUsuario');
 $index->route('POST @zimbra_modificar: /usermod/zimbra [ajax]', 
-        'controladores\usermodControl->modificarBuzon');
+        'controladores\usuario\usermodControl->modificarBuzon');
 //Rutas hacia useradd
 $index->route('GET|POST @useradd: /useradd', 
-        'controladores\useraddControl->display');
+        'controladores\usuario\useraddControl->display');
 $index->route('GET|POST @useradd_creacion: /useradd/creacion', 
-        'controladores\useraddControl->creacionUsuario');
+        'controladores\usuario\useraddControl->creacionUsuario');
 $index->route('GET|POST @useradd_creacion_test: /useradd/test', 
-        'controladores\useraddPrueba->display');
+        'controladores\usuario\useraddPrueba->display');
 $index->route('GET|POST @useradd_check_uid: /useradd/checkuid', 
-        'controladores\useraddControl->checkUid');
+        'controladores\usuario\useraddControl->checkUid');
 // Estas son algunas rutas de pruebas, que espero que no sean muchas
 $index->route('GET|POST @prueba_user: /pruebas', 
         'controladores\pruebaControl->display');

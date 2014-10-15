@@ -1,6 +1,6 @@
 <?php
-namespace controladores;
-class usermodControl extends \controladores\usershowControl { 
+namespace controladores\usuario;
+class usermodControl extends \controladores\usuario\usershowControl { 
     protected $error = array();
     protected $datos = array();
     protected $mensaje = array();

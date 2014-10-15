@@ -1,5 +1,5 @@
 <?php
-namespace controladores;
+namespace controladores\usuario;
 class useraddControl extends \clases\sesion{
     
     public function __construct() {

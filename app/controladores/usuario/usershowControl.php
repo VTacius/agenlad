@@ -1,5 +1,5 @@
 <?php
-namespace controladores;
+namespace controladores\usuario;
 /**
  * Controlador para revision de datos de usuario
  * 
