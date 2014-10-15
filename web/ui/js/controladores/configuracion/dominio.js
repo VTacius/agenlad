@@ -18,23 +18,15 @@ $("#reset_password_zimbra").click(function(e){
     $('#dialogo input[type=password]').val("");
     e.stopPropagation();
     e.preventDefault();
-    mensaje_modal("Configuracion Contraseña Zimbra", recoger_datos_popup);
+    mensaje_modal("Configuracion Contraseña Zimbra", set_password_zimbra);
 });
 
 $("#reset_password_samba").click(function(e){
+    console.log("A modificar para samba");
     $('#dialogo input[type=password]').val("");
     e.stopPropagation();
     e.preventDefault();
-    mensaje_modal("Configuracion Contraseña Samba", recoger_datos_popup);
-});
-
-$("#show_admin_zimbra_password a").click(function(e){
-//    e.stopPropagation();
-//    e.preventDefault();
-//    $("#admin_zimbra_password").show();    
-//    $("#div_admin_zimbra_password").show();    
-//    $("#show_admin_zimbra_password").hide();
-//    $("#div_admin_zimbra_password").attr('hidden', false);    
+    mensaje_modal("Configuracion Contraseña Samba", set_password_samba);
 });
 
 var mostrarRespuesta = function(data){
@@ -42,23 +34,45 @@ var mostrarRespuesta = function(data){
     pmostrarMensaje(data);
 };
 
-var recogerDatos = function(){
-    var contenido = {};
-    $("input[type=text]").each(function(i,e){
-        contenido[$(e).attr('name')] = $(e).val();
-    });
-    $("input[type=hidden]").each(function(i,e){
-        contenido[$(e).attr('name')] = $(e).val();
-    });
-    $("input[type=radio]:checked").each(function(i,e){
-        contenido[$(e).attr('name')] = $(e).val();
-    });
-    return contenido;
+var mostrarRespuestaPassword = function(data){
+    pmostrarError(data);
+    pmostrarMensaje(data);
+    cerrar_popup_modal();
+};
+
+var set_password_zimbra = function(){
+    datos = recoger_datos_popup();
+    if (datos !== false) {
+        $("#dialogo_mensaje").hide();
+        procesarDatos('/confdominios/password/zimbra', datos, mostrarRespuestaPassword);
+    }
+};
+
+var set_password_samba = function(){
+    console.log("A modificar para samba");
+    datos = recoger_datos_popup();
+    if (datos !== false) {
+        $("#dialogo_mensaje").hide();
+        procesarDatos('/confdominios/password/samba', datos, mostrarRespuestaPassword);
+    }
 };
 
 var recoger_datos_popup = function(){
-    console.log($("#dialogo #password_set").val());
-    console.log($("#dialogo #password_confirm").val());
+    var password = $("#dialogo #password_set").val();
+    var confirm = $("#dialogo #password_confirm").val();
+    if (password === confirm) {
+        $("#cargador").show();
+        return {'dominio': $("#dominio").val(), 'password': password};
+    }else{
+        $("#dialogo_mensaje").show().text("Las contraseñas no coinciden");
+        return false;
+    }
+};
+
+var cerrar_popup_modal = function(){
+    $("#cargador").hide();
+    $("#dialogo_mensaje").hide();
+    $("#dialogo").dialog( "close" );
 };
 
 var mensaje_modal = function(titulo, envio_datos){
@@ -67,10 +81,11 @@ var mensaje_modal = function(titulo, envio_datos){
         title: titulo,
         draggable: false,
         resizable: false,
+        width: 500,
         buttons: [ 
             { 
                 text: "Cancelar", 
-                click: function() { $( this ).dialog( "close" ); }
+                click: cerrar_popup_modal
             },
             { 
                 text: "Enviar", 

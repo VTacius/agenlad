@@ -134,6 +134,10 @@ $index->route('GET|POST @conf_dominios: /confdominios',
         'controladores\configuracion\dominioControl->display');
 $index->route('GET|POST @conf_dominio_modificar: /confdominios/modificar', 
         'controladores\configuracion\dominioControl->modificarDominios');
+$index->route('GET|POST @conf_dominio_set_password_samba: /confdominios/password/samba', 
+        'controladores\configuracion\dominioControl->setPasswordSamba');
+$index->route('GET|POST @conf_dominio_set_password_zimbra: /confdominios/password/zimbra', 
+        'controladores\configuracion\dominioControl->setPasswordZimbra');
 $index->route('GET|POST @conf_dominio_detalles: /confdominios/@clave', 
         'controladores\configuracion\dominioControl->mostrarDetalles');
 // Rutas para configuracion de usuarios

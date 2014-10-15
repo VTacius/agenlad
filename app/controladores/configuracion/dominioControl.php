@@ -48,6 +48,46 @@ class dominioControl extends \clases\sesion{
         $cmds = "insert into configuracion(clave, dominio, descripcion, attr) values(:clave)";
     }
     
+    public function setPasswordSamba(){
+        $dominio = $this->index->get('POST.dominio');
+        $password = $this->index->get('POST.password');
+        $cmds = 'update user set firmas=:argfirmas, bandera_firmas=1 where dominio=:argdominio';
+        $args = array('argfirmas'=>$password, 'argdominio'=>$dominio);
+        $resultado = $this->db->exec($cmds, $args);
+        if ($resultado) {
+            $this->mensaje[] = array("codigo" => "success", 'mensaje' => 'Cambios realizados exitosamente');
+        }else{
+             $this->mensaje[] = array("codigo" => "warning", 'mensaje' => 'No se han realizado cambios');
+        }
+        $retorno = array(
+                'error' => $this->error,
+                'datos' => $this->datos,
+                'mensaje'=> $this->mensaje
+        );
+        
+        print json_encode($retorno);
+    }
+    
+    public function setPasswordZimbra(){
+        $dominio = $this->index->get('POST.dominio');
+        $password = $this->index->get('POST.password');
+        $cmds = 'update user set firmaz=:argfirmaz, bandera_firmaz=1 where dominio=:argdominio';
+        $args = array('argfirmaz'=>$password, 'argdominio'=>$dominio);
+        $resultado = $this->db->exec($cmds, $args);
+        if ($resultado) {
+            $this->mensaje[] = array("codigo" => "success", 'mensaje' => 'Cambios realizados exitosamente');
+        }else{
+             $this->mensaje[] = array("codigo" => "warning", 'mensaje' => 'No se han realizado cambios');
+        }
+        $retorno = array(
+                'error' => $this->error,
+                'datos' => $this->datos,
+                'mensaje'=> $this->mensaje
+        );
+        
+        print json_encode($retorno);
+    }
+    
     public function modificarDominios(){
         $base = $this->index->get('POST.base');
         $clave = $this->index->get('POST.clave');
