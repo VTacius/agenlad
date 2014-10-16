@@ -32,10 +32,23 @@ class dominioControl extends \clases\sesion{
 //        print $this->twig->render('configuracion/configuracionDominio.html.twig', $this->parametros);
     }
     
+    protected function verificaDominioExiste($clave){
+        $cmds = 'select clave from configuracion where clave=:argclave';
+        $args = array('argclave'=>$clave);
+        $resultado = $this->db->exec($cmds, $args);
+        if ($this->db->count()== 0) {
+            return true;
+        }  else {
+            $this->mensaje[] = array('codigo' => 'danger', 'mensaje' => 'Ese dominio ya existe');
+            return false;
+        }
+    }
+
+
     public function crearDominio(){
         $base = $this->index->get('POST.base');
-        $clave = $this->index->get('POST.clave');
         $puerto = $this->index->get('POST.puerto');
+        $dominio = $this->index->get('POST.dominio');
         $servidor = $this->index->get('POST.servidor');
         $grupos_ou = $this->index->get('POST.grupos_ou');
         $base_grupo = $this->index->get('POST.base_grupo');
@@ -44,8 +57,35 @@ class dominioControl extends \clases\sesion{
         $admin_zimbra = $this->index->get('POST.admin_zimbra');
         $dn_administrador = $this->index->get('POST.dn_administrador');
         
-        $attr = $this->configuracionDominio($base, $servidor, $puerto, $dn_administrador, $admin_zimbra, $grupos_ou);
-        $cmds = "insert into configuracion(clave, dominio, descripcion, attr) values(:clave)";
+        $sambaSID = $this->index->get('POST.sambaSID');
+        $mail_domain = $this->index->get('POST.mail_domain');
+        $netbiosName = $this->index->get('POST.netbiosName');
+        
+        
+        // Se recomienda que clave sea el primer componente de dominio
+        $dc = explode(".",$dominio);
+        $clave = $dc[0];
+        
+        if($this->verificaDominioExiste($clave)){
+            $attr = $this->configuracionDominio($base, $servidor, $puerto, $dn_administrador, $admin_zimbra, $grupos_ou, $sambaSID, $mail_domain, $netbiosName);
+    //        $attr = $this->configuracionDominio($base, $servidor, $puerto, $dn_administrador, $admin_zimbra, $grupos_ou);
+            $cmds = "insert into configuracion(clave, dominio, descripcion, attr) values(:argclave, :argdominio, :argdescripcion, :argattr)";
+            $args = array('argclave'=>$clave, 'argdominio'=>$dominio, 'argdescripcion'=>$descripcion, 'argattr'=>$attr);
+            $resultado = $this->db->exec($cmds, $args);
+            if ($resultado) {
+                $this->mensaje[] = array("codigo" => "success", 'mensaje' => 'Cambios realizados exitosamente');
+            }else{
+                 $this->mensaje[] = array("codigo" => "warning", 'mensaje' => 'No se han realizado cambios');
+            }
+        }
+        
+        $retorno = array(
+                'error' => $this->error,
+                'datos' => $this->datos,
+                'mensaje'=> $this->mensaje
+        );
+        
+        print json_encode($retorno);
     }
     
     public function setPasswordSamba(){
@@ -154,6 +194,11 @@ class dominioControl extends \clases\sesion{
         $rest[0]['attr'] = unserialize($rest[0]['attr']);
         $this->parametros['datos'] = $rest[0];
         echo $this->twig->render('configuracion/dominioModificar.html.twig', $this->parametros);
+    }
+    
+    public function mostrarNuevoDominio(){
+        $this->comprobar($this->pagina);
+        echo $this->twig->render('configuracion/dominioNuevo.html.twig', $this->parametros);
     }
     
     public function display() {

@@ -11,6 +11,7 @@ $mail_domain = "salud.gob.sv";
 $admin_zimbra = "admin@salud.gob.sv";
 $dn_admin_ldap = 'cn=admin,dc=salud,dc=gob,dc=sv';
 
+// Esta funcion se encarga de crear la configuracion
 function configuracionDominio($dominio, $ip_server, $puerto, $dn_admin_ldap, $admin_zimbra, $grupos_ou, $sambaSID, $mail_domain, $netbiosName){
         $rdn = explode(".", $dominio);
         $dn = "";
@@ -35,19 +36,24 @@ function configuracionDominio($dominio, $ip_server, $puerto, $dn_admin_ldap, $ad
 
         return serialize($configuracion);
     }
+
+// Creamos la configuracion segun lo especificado arriba
 $attr = configuracionDominio(
-        $dominio,
-        $server,
-        $puerto,
-        $dn_admin_ldap,
-        $admin_zimbra,
-        $grupos_ou,
-        $sambaSID,
-        $mail_domain,
-        $netbiosName
+    $dominio,
+    $server,
+    $puerto,
+    $dn_admin_ldap,
+    $admin_zimbra,
+    $grupos_ou,
+    $sambaSID,
+    $mail_domain,
+    $netbiosName
 );
 
+// Se recomienda que clave sea el primer componente de dominio
 $dc = explode(".",$dominio);
 $clave = $dc[0];
 
-print "insert into configuracion values('$clave','$dominio', '$descripcion','$attr');\n";
+// Este es el resultado que agregamos a la base de datos
+print "Ejecutar manualmente esta setencia SQL\n";
+print "insert into configuracion values('$clave','$dominio', '$descripcion','$attr');\n\n";
