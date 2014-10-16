@@ -245,7 +245,7 @@ class useraddControl extends \clases\sesion{
         // ¿Tenemos en serio acceso a esta página?
         $this->comprobar($this->pagina);
         $this->parametros['datos']['grupos'] = $this->listarGrupos();
-        echo $this->twig->render('useradd.html.twig', $this->parametros);       
+        echo $this->twig->render('usuario/useradd.html.twig', $this->parametros);       
 
     }
 }

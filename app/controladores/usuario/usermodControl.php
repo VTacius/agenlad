@@ -271,7 +271,7 @@ class usermodControl extends \controladores\usuario\usershowControl {
         $this->mostrarUsuario($usuarioCliente);
         $this->parametros['datos'] = $this->datos;
         
-        echo $this->twig->render('usermod.html.twig', $this->parametros);       
+        echo $this->twig->render('usuario/usermod.html.twig', $this->parametros);       
     
     }
    
@@ -363,6 +363,6 @@ class usermodControl extends \controladores\usuario\usershowControl {
         $this->parametros['pagina'] = $this->pagina;
         // ¿Tenemos en serio acceso a esta página?
         $this->comprobar($this->pagina);     
-        echo $this->twig->render('usermod.html.twig', $this->parametros);       
+        echo $this->twig->render('usuario/usermod.html.twig', $this->parametros);       
     }
 }

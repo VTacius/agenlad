@@ -143,6 +143,6 @@ class usershowControl extends \clases\sesion {
         $this->comprobar($this->pagina); 
         
         // Obtenemos los datos que hemos de enviar a la vista
-        echo $this->twig->render('usershow.html.twig', $this->parametros); 
+        echo $this->twig->render('usuario/usershow.html.twig', $this->parametros); 
     }
 }

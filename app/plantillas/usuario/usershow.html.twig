@@ -48,7 +48,7 @@
         <dt id="buzonstatus">Estado del Buzón:</dt>
             <dd id="buzonstatus">{{datos.buzonstatus}}</dd>
     </dl>
-    {% if rol=="admon"%}
+    {% if rol == "admon" or rol == 'admin_general' %}
         <div class="form-group text-center" id="admon">
             <h4><a id="creacion" href="/useradd">¿Desea agregar al usuario?</a></h4>
             <h4><a id="modificacion" href="/usermod">¿Desea Modificar al usuario?</a></h4>
