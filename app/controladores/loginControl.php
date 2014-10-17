@@ -61,56 +61,6 @@ class loginControl extends \clases\sesion{
     }
     
     /**
-     * $37 a que puede conjugarlo con cifrarFirmaz
-     * @param string $firmas
-     * @param string $password
-     * @param string $usuario
-     */
-    private function cifrarFirmas($firmas, $password, $usuario){
-        $base = $this->conectarDB();
-        $hashito = new \clases\cifrado();
-        $pwds = $hashito->encrypt($firmas, $password);
-        $cmds = "UPDATE user SET firmas=:firmas, bandera_firmas=:bandera_firmas where user=:user";
-        $args = array('firmas'=>$pwds, 'bandera_firmas'=> '2', 'user'=>$usuario);
-        $base->exec($cmds, $args);
-    }
-    
-    /**
-     * $37 a que puede conjugarlo con cifrarFirmas 
-     * @param string $firmaz
-     * @param string $password
-     * @param string $usuario
-     */
-    private function cifrarFirmaz($firmaz, $password, $usuario){
-        $base = $this->conectarDB();
-        $hashito = new \clases\cifrado();
-        $pwdz = $hashito->encrypt($firmaz, $password);
-        $cmds = "UPDATE user SET firmaz=:firmaz, bandera_firmaz=:bandera_firmaz where user=:user";
-        $args = array('firmaz'=>$pwdz, 'bandera_firmaz'=> '2', 'user'=>$usuario);
-        $base->exec($cmds, $args);
-    }
-    /**
-     * Auxiliar de banderaAdmin.
-     * Cifra por separado cada contraseña si la bandera == 1
-     * @param string $resultado
-     * @param string $password
-     * @param string $usuario
-     */
-    private function cifrarEnPrimerLogueo($resultado, $password, $usuario){
-        $firmas = $resultado[0]['firmas'];
-        $bandera_firmas = $resultado[0]['bandera_firmas'];
-        $firmaz = $resultado[0]['firmaz'];
-        $bandera_firmaz = $resultado[0]['bandera_firmaz'];
-
-        if ($bandera_firmas == 1) {
-            $this->cifrarFirmas($firmas, $password, $usuario);
-        }
-        if ($bandera_firmaz == 1) {
-            $this->cifrarFirmaz($firmaz, $password, $usuario);
-        }
-    }
-    
-    /**
      * El usuario es administrador o no
      * Si el usuario es administrador, envia a cifrarEnPrimerLogueo para cifrar o no 
      * las credenciales
@@ -120,14 +70,14 @@ class loginControl extends \clases\sesion{
     protected function obtenerBandera($usuario, $password){
         $base = $this->conectarDB();
         // Operamos
-        $cmds = "select titulo, user.rol, permisos, firmas, bandera_firmas, firmaz, bandera_firmaz, dominio from user join rol on user.rol=rol.rol where user=:user;";
+        $cmds = "select titulo, user.rol, permisos, dominio from user join rol on user.rol=rol.rol where user=:user;";
         $args = array('user'=>$usuario);
         $resultado = $base->exec($cmds, $args);
         if ($base->count() == 0){
             $cmds = "select titulo, user.rol, permisos, dominio from user join rol on user.rol=rol.rol where user='usuario';";
             return $base->exec($cmds, $args);
         } 
-        $this->cifrarEnPrimerLogueo($resultado, $password, $usuario);
+//        $this->cifrarEnPrimerLogueo($resultado, $password, $usuario);
         return $resultado;
     }
 

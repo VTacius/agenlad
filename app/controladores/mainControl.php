@@ -29,7 +29,7 @@ class mainControl extends \clases\sesion {
      * @param string $password
      */
     private function changeLdapPassword($usuario, $password){
-        $this->usuario = new \Modelos\userPosix($this->dn, $this->pswd);
+        $this->usuario = new \Modelos\userSamba($this->dn, $this->pswd);
         $this->usuario->setUid($usuario);
         $this->usuario->configuraPassword($password);
         if ($this->usuario->actualizarEntrada()) {
@@ -43,68 +43,6 @@ class mainControl extends \clases\sesion {
         
     }
     
-    /**
-     * Auxiliar de cambiosFirmas
-     * Obtiene las firmas actuales de la base de datos para el usuario dado
-     * @param string $usuario
-     * @return array
-     */
-    private function obtenerFirma($usuario){
-        $cmds = 'select firmas, firmaz from user where user=:user';
-        $args = array('user'=>$usuario);
-        $resultado = $this->db->exec($cmds, $args);
-        return $resultado;
-    }
-    
-    /**
-     * Auxiliar de cambiosFirmas
-     * Configura las firmas nuevas en la base de datos para el usuario dado
-     * @param string $usuario
-     * @param string $claves
-     * @param string $clavez
-     */
-    private function configurarFirma($usuario, $claves, $clavez){
-        $cmds = "UPDATE user SET firmas=:firmas, firmaz=:firmaz where user=:user";
-        $args = array('firmas'=>$claves,'firmaz'=>$clavez, 'user'=>$usuario);
-        $this->db->exec($cmds, $args);
-    }
-
-    /**
-     * TODO: Hacer una comprobación de este proceso
-     * @param string $usuario
-     * @param string $password
-     */
-    private function cambiosFirmas($usuario, $password){
-            $input = $this->obtenerFirma($usuario);
-            // Desciframos las firmas con la contraseña actual
-            $firmas = $this->hashes->descifrada($input[0]['firmas'], $this->pswd);
-            $firmaz = $this->hashes->descifrada($input[0]['firmaz'], $this->pswd);
-            // Volvemos a cifrarlas con la contraseña nueva
-            $claves = $this->hashes->encrypt($firmas, $password);
-            $clavez = $this->hashes->encrypt($firmaz, $password);
-            // Ahora, que actualice la firma en la base de datos con la nueva contraseña
-            $this->configurarFirma($usuario, $claves, $clavez);
-            $this->mensaje[] = array("codigo" => "success", 'mensaje'=> "Cambio de Firmas exitoso");
-    }
-   
-    /**
-     * Auxiliar de cambioCredenciales
-     * Escoge el método para cambiar contraseña en base al $rol
-     * @param string $rol
-     * @param string $usuario
-     * @param string $password
-     * @return string
-     */
-    protected function credenciales($rol, $usuario, $password){
-        if ($rol=='usuario'){
-            $this->changeLdapPassword($usuario, $password);
-        }else{
-            if ($this->changeLdapPassword($usuario, $password)) {
-                $this->cambiosFirmas($usuario, $password);
-            }
-        }
-    }
-
     /**
      * Auxiliar de cambioCredenciales
      * Verifica la complejidad de las contraseñas dadas
@@ -127,14 +65,12 @@ class mainControl extends \clases\sesion {
     public function cambioCredenciales(){
         // Tenemos permiso para acceder a esta funcion contenida en este método
         $this->comprobar($this->pagina);
-        // ¿Que es lo que tenemos que hacer?
-        $rol = $this->index->get('SESSION.rol');
         $usuario = $this->index->get('SESSION.user');
         $passchangeprima = $this->index->get('POST.passchangeprima');
         $passchangeconfirm = $this->index->get('POST.passchangeconfirm');
         if ($passchangeconfirm == $passchangeprima){
             if ($this->complejidad($passchangeprima)) {
-                $this->credenciales($rol, $usuario, $passchangeprima);
+                $this->changeLdapPassword($usuario, $passchangeprima);
                 //Me encanta rehusar código de esta forma. Recuerda no hacer la redirección desde acá
                 $cierre = new \controladores\loginControl();
                 $cierre->cerrarSesion();

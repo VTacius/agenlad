@@ -14,37 +14,61 @@ class dominioControl extends \clases\sesion{
         $this->db = $this->index->get('dbconexion');
     }
     
-    public function configuracion() {
-        $hacienda = $this->configuracionDominio("hacienda.gob.sv", 
-                "192.168.2.10", 
-                "389", 
-                'cn=admin,dc=hacienda,dc=gob,dc=sv', 
-                "admin@salud.gob.sv",
-                TRUE);
-        $donaciones = $this->configuracionDominio("donaciones.gob.sv", 
-                "192.168.2.14", 
-                "389", 
-                'cn=admin,dc=donaciones,dc=gob,dc=sv', 
-                "admin@salud.gob.sv",
-                TRUE);
-        $datos = array ($donaciones, $hacienda);
-        $this->parametros['datos'] = $datos;
-//        print $this->twig->render('configuracion/configuracionDominio.html.twig', $this->parametros);
-    }
-    
-    protected function verificaDominioExiste($clave){
-        $cmds = 'select clave from configuracion where clave=:argclave';
-        $args = array('argclave'=>$clave);
+    protected function verificaDominioExiste($dominio){
+        $cmds = 'select clave from configuracion where dominio=:argclave';
+        $args = array('argclave'=>$dominio);
         $resultado = $this->db->exec($cmds, $args);
-        if ($this->db->count()== 0) {
+        $configuracion = $this->db->count();
+//        print_r($configuracion);
+        $cmdz = 'select dominio from credenciales where dominio=:argdominio';
+        $argz = array('argdominio'=>$dominio);
+        $result = $this->db->exec($cmdz, $argz);
+        $credenciales = $this->db->count();
+//        print_r($credenciales);
+        if (($configuracion + $credenciales ) == 0) {
             return true;
         }  else {
             $this->mensaje[] = array('codigo' => 'danger', 'mensaje' => 'Ese dominio ya existe');
             return false;
         }
     }
+    
+//    protected function configurarCredenciales($objeto, $dominio, $password){
+//        $semilla = $this->index->get('semilla');
+//        $dc =  explode(".", $dominio);
+//        $clave =  $semilla . $dc[0];
+//        $hashito = new \clases\cifrado();
+//        $marcado = $hashito->encrypt($password, $clave);
+//        $cmds = 'insert into credenciales(dominio, '.$objeto.') values(:argdominio, :arg'.$objeto.')';
+//        $args = array('argdominio'=>$dominio, 'arg'.$objeto.''=>$marcado);
+//        return $this->db->exec($cmds, $args);
+//    }
+    
+    protected function actualizarCredenciales($objeto, $dominio, $password){
+        $semilla = $this->index->get('semilla');
+        $dc =  explode(".", $dominio);
+        $clave =  $semilla . $dc[0];
+        $hashito = new \clases\cifrado();
+        $marcado = $hashito->encrypt($password, $clave);
+        $cmds = 'update credenciales set '.$objeto.' = :arg'.$objeto.' where dominio = :argdominio';
+        $args = array('argdominio'=>$dominio, 'arg'.$objeto.''=>$marcado);
+        return $this->db->exec($cmds, $args);
+    }
 
+    protected function nuevasCredencialesDominio($dominio, $password){
+        $cmds = 'insert into credenciales(dominio) values(:argdominio)';
+        $args = array('argdominio'=>$dominio);
+        $this->db->exec($cmds, $args);
+        $resultado = $this->actualizarCredenciales('firmas', $dominio, $password);
+        $resultado = $this->actualizarCredenciales('firmaz', $dominio, $password);
+    }
 
+    /**
+     * Pertenece a la ruta //
+     * Se encarga de agregar el dominio en la base de datos: 
+     * Agrega la entrada en tabla de configuracion 
+     * y en la tabla credenciales 
+     */
     public function crearDominio(){
         $base = $this->index->get('POST.base');
         $puerto = $this->index->get('POST.puerto');
@@ -61,17 +85,23 @@ class dominioControl extends \clases\sesion{
         $mail_domain = $this->index->get('POST.mail_domain');
         $netbiosName = $this->index->get('POST.netbiosName');
         
+        $firmas = $this->index->get('POST.passwordZimbra'); 
+        $firmaz = $this->index->get('POST.passwordSamba'); 
+        
         
         // Se recomienda que clave sea el primer componente de dominio
         $dc = explode(".",$dominio);
         $clave = $dc[0];
         
-        if($this->verificaDominioExiste($clave)){
+        if($this->verificaDominioExiste($dominio)){
             $attr = $this->configuracionDominio($base, $servidor, $puerto, $dn_administrador, $admin_zimbra, $grupos_ou, $sambaSID, $mail_domain, $netbiosName);
-    //        $attr = $this->configuracionDominio($base, $servidor, $puerto, $dn_administrador, $admin_zimbra, $grupos_ou);
             $cmds = "insert into configuracion(clave, dominio, descripcion, attr) values(:argclave, :argdominio, :argdescripcion, :argattr)";
             $args = array('argclave'=>$clave, 'argdominio'=>$dominio, 'argdescripcion'=>$descripcion, 'argattr'=>$attr);
+            
+            $this->nuevasCredencialesDominio($dominio, $firmas);
+            
             $resultado = $this->db->exec($cmds, $args);
+            
             if ($resultado) {
                 $this->mensaje[] = array("codigo" => "success", 'mensaje' => 'Cambios realizados exitosamente');
             }else{
@@ -91,9 +121,7 @@ class dominioControl extends \clases\sesion{
     public function setPasswordSamba(){
         $dominio = $this->index->get('POST.dominio');
         $password = $this->index->get('POST.password');
-        $cmds = 'update user set firmas=:argfirmas, bandera_firmas=1 where dominio=:argdominio';
-        $args = array('argfirmas'=>$password, 'argdominio'=>$dominio);
-        $resultado = $this->db->exec($cmds, $args);
+        $resultado = $this->actualizarCredenciales('firmas', $dominio, $password);
         if ($resultado) {
             $this->mensaje[] = array("codigo" => "success", 'mensaje' => 'Cambios realizados exitosamente');
         }else{
@@ -111,9 +139,7 @@ class dominioControl extends \clases\sesion{
     public function setPasswordZimbra(){
         $dominio = $this->index->get('POST.dominio');
         $password = $this->index->get('POST.password');
-        $cmds = 'update user set firmaz=:argfirmaz, bandera_firmaz=1 where dominio=:argdominio';
-        $args = array('argfirmaz'=>$password, 'argdominio'=>$dominio);
-        $resultado = $this->db->exec($cmds, $args);
+        $resultado = $this->actualizarCredenciales('firmaz', $dominio, $password);
         if ($resultado) {
             $this->mensaje[] = array("codigo" => "success", 'mensaje' => 'Cambios realizados exitosamente');
         }else{

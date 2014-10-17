@@ -79,9 +79,15 @@ abstract class sesion {
         // Recuperamos firmaz desde la base de datos
         $configUser = $this->getConfiguracionUsuario();
         $firmaz = $configUser['firmaz'];
+        
+        $semilla = $this->index->get('semilla');
+        $dominio = $configUser['dominio'];
+        $dc =  explode(".", $dominio);
+        $clave =  $semilla . $dc[0];
+        
         // Desciframos firmaz con password de usuario
         $hashito = new \clases\cifrado();
-        $clavez = $hashito->descifrada($firmaz, $this->pswd);
+        $clavez = $hashito->descifrada($firmaz, $clave);
          // Obtenemos el DN del administrador desde la base de datos
         $config = $this->getConfiguracionDominio();
         $adminDN = $config['admin_zimbra'];
@@ -94,13 +100,21 @@ abstract class sesion {
      * Retorna el RDN y contraseña del usuario para manipular datos 
      * en samba
      * @return array('dn','pswd')
+     * TODO: Modificar esta descripcion
+     * TODO: Me esta llevando a pensar que màs que el dominio, vengo necesitando la clave
      */
     protected function getClaves(){
         // Recuperamos firmaz desde sesion y desciframos
         $hashito = new \clases\cifrado();
         $configUser = $this->getConfiguracionUsuario();
         $firmas = $configUser['firmas'];
-        $claves = $hashito->descifrada($firmas, $this->pswd);
+        
+        $semilla = $this->index->get('semilla');
+        $dominio = $configUser['dominio'];
+        $dc =  explode(".", $dominio);
+        $clave =  $semilla . $dc[0];
+        
+        $claves = $hashito->descifrada($firmas, $clave);
 
         // Obtenemos el DN del administrador desde la base de datos
         $config = $this->getConfiguracionDominio();
@@ -129,11 +143,15 @@ abstract class sesion {
         }
     }
     
+    /**
+     * Obtiene datos del usuario de la base de datos relacionados con su rol
+     * @return array
+     */
     protected function getConfiguracionUsuario(){
         $base = $this->index->get('dbconexion');
         $usuario = $this->index->get('SESSION.user');
         
-        $cmds = "select titulo, user.rol, permisos, firmas, firmaz, dominio from user join rol on user.rol=rol.rol where user=:user";
+        $cmds = "select titulo, user.rol, permisos, credenciales.firmas, credenciales.firmaz, user.dominio from user join rol on user.rol=rol.rol join credenciales on user.dominio=credenciales.dominio  where user=:user";
         $args = array('user'=>$usuario);
         $resultado = $base->exec($cmds, $args);
         
