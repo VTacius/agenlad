@@ -1,6 +1,12 @@
 {% extends "base/layout.html.twig" %}
 {% block titulo -%}Listado de usuarios{% endblock %}
+{% block css -%}
+    <link href="{{ activos('css/vendor/jquery-ui.min.css') }}" rel="stylesheet">
+    
+{% endblock %}
 {% block javascript -%}
+{#    <script src="{{ activos('js/vendor/typeahead.bundle.js') }}" type="text/javascript"></script>#}
+    <script src="{{ activos('js/controladores/configuracion/modificarPermisos.js') }}" type="text/javascript"></script>
 {% endblock %}
 
 {# Configuramos las variables que la plantilla padre usa para formar el menu #}
@@ -11,6 +17,7 @@
     <h3>Configuracion</h3>
     Bienvenido <b>{{titulo}} {{usuario}}</b>
     <p>Puede configurar los usuarios de la lista, eliminar sus privilegios (Pero no el usuario) y agregar un nuevo usuario con funciones administrativas</p>
+    {%include 'configuracion/usuarioModificar.html.twig'%}
 {% endblock %}
 
 {% block contenido -%}
@@ -41,5 +48,4 @@
         {% endfor %}
         </tbody>
     </table>
-        {%include 'configuracion/usuarioModificar.html.twig'%}
 {% endblock %}

@@ -61,6 +61,8 @@ $("#userModForm #enviar").click(function(e){
  * @param {object} e
  */
 $("#busqueda #enviar").click(function(e){
+    cargador_modal();
+    
     datos = {
             usuarioModificar: $("#usuarioModificar").val()
         };
@@ -215,4 +217,12 @@ var mostrarModificarZimbra = function(data){
     pmostrarError(data);
     pmostrarMensaje(data);
     $("#cargador").hide();
+};
+
+var cargador_modal = function(){
+    $("#espera").dialog({
+        modal: true,
+        draggable: false,
+        resizable: false,
+    });
 };

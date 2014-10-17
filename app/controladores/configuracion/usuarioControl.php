@@ -42,16 +42,34 @@ class usuarioControl extends \clases\sesion{
         );       
     }
    
-        public function display() {
-            $this->comprobar($this->pagina);
-            $this->parametros['pagina'] = $this->pagina; 
-            $cmds = "select user, titulo, dominio from user inner join rol on user.rol=rol.rol";
-            $resultado = $this->db->exec($cmds);
-            $this->parametros['datos'] = $resultado;
-            
-            print $this->twig->render('configuracion/usuario.html.twig', $this->parametros);
-            
+    private function busquedaUsuarios($usuario) {
+        $usuarios = new \Modelos\userPosix($this->dn, $this->pswd, 'central' );
+        $filtro = array("cn"=>"NOT (root OR nobody)", 'uid'=> $usuario . "*");
+        $datos = $usuarios->search($filtro, false, "dc=sv");
+//        return $datos;
+        $resultado = array();
+        foreach ($datos as $user) {
+            $resultado[] =  $user['uid'];
         }
+        return $resultado;
+    }
+    
+    public function busqueda(){
+        $termino =  $this->index->get('PARAMS.term');    
+       $listado = $this->busquedaUsuarios($termino);
+       print json_encode($listado);
+    }
+    
+    public function display() {
+        $this->comprobar($this->pagina);
+        $this->parametros['pagina'] = $this->pagina; 
+        $cmds = "select user, titulo, dominio from user inner join rol on user.rol=rol.rol";
+        $resultado = $this->db->exec($cmds);
+        $this->parametros['datos'] = $resultado;
+
+        print $this->twig->render('configuracion/usuario.html.twig', $this->parametros);
+
+    }
     
     
     

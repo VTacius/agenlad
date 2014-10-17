@@ -17,6 +17,7 @@
 {% block contenido -%}
     {{ parent() }}#}
     <form class="form-horizontal" id="mailModForm" name="mailModForm" role="form" action="/usermod/cambio" method="POST">
+                    {% if not datos.cuentastaus == "{empty}" %}
         <legend>Estado del Buzón para <b id="usermod">{{datos.usermod}}</b></legend>
         <div class="form-group">
             <div class="col-xs-6">
@@ -60,6 +61,7 @@
         </div>
     </form>
                     
+                    {% endif %}
     <form class="form-horizontal" id="userModForm" name="userModForm" role="form" action="/usermod/cambio" method="POST">
         <legend>Modificación para usuario <b id="usermod">{{datos.usermod}}</b></legend>
         <div class="form-group">

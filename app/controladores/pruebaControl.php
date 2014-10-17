@@ -139,4 +139,26 @@ class pruebaControl extends \clases\sesion{
         //$login->crearMailbox($usuario);
         //$login->getMensaje();
     }
+    public function busqueda(){
+       $termino =  $this->index->get('PARAMS.term');
+       $listado = array(
+                $termino,
+                "ActionScript",
+                "C",
+                "C++",
+                "COBOL",
+                "Erlang",
+                "Fortran",
+                "Haskell",
+                "Java",
+                "JavaScript",
+                "Lisp",
+                "Perl",
+                "PHP",
+                "Python",
+                "Ruby",
+                "Scala",
+                "Scheme"); 
+       print json_encode($listado);
+    }
 }
