@@ -151,6 +151,8 @@ $index->route('GET|POST @conf_usuario: /confpermisos',
         'controladores\configuracion\usuarioControl->display');
 $index->route('GET|POST @conf_usuario_busqueda: /confpermisos/busqueda/@term', 
         'controladores\configuracion\usuarioControl->busqueda');
+$index->route('GET|POST @conf_usuario_busqueda_rol: /confpermisos/rol/', 
+        'controladores\configuracion\usuarioControl->datosRolUsuario');
 
 // Esta es la forma en que la aplicación empieza
 $index->run();

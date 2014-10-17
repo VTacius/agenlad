@@ -162,6 +162,7 @@ class loginControl extends \clases\sesion{
     /**
      * Si el valor ´dominio´ en la base de datos esta vacío, debe crear el dominio
      * a partir de los domain component en el DN del usuario
+     * TODO: Si este fuera static o algo por el estilo, usuarioControl lo habrìa cambiado
      * @param string $dn
      * @param string $dominio
      * @return string

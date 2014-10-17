@@ -42,11 +42,15 @@ class usuarioControl extends \clases\sesion{
         );       
     }
    
-    private function busquedaUsuarios($usuario) {
+    private function busquedaUsuariosLdap($usuario, $sufijo = "") {
         $usuarios = new \Modelos\userPosix($this->dn, $this->pswd, 'central' );
-        $filtro = array("cn"=>"NOT (root OR nobody)", 'uid'=> $usuario . "*");
+        $filtro = array("cn"=>"NOT (root OR nobody)", 'uid'=> $usuario . $sufijo);
         $datos = $usuarios->search($filtro, false, "dc=sv");
-//        return $datos;
+        return $datos;
+    }
+    
+    protected function busquedaUsuarios($usuario){
+        $datos = $this->busquedaUsuariosLdap($usuario, "*");
         $resultado = array();
         foreach ($datos as $user) {
             $resultado[] =  $user['uid'];
@@ -54,10 +58,34 @@ class usuarioControl extends \clases\sesion{
         return $resultado;
     }
     
+    /**
+     * Recuerda que si el usuario no existe, el dominio esta vacío
+     */
+    public function datosRolUsuario(){
+        $usuario =  $this->index->get('POST.usuario');  
+        $datos = $this->busquedaUsuariosLdap($usuario);
+        $dn = $datos[0]['dn'];
+        $pattern = "(dc=(?P<componentes>[A-Za-z]+))";
+        $matches = array();
+        $dc = "";
+        preg_match_all($pattern, $dn, $matches );
+        foreach ($matches['componentes'] as $componentes){
+                $dc .= $componentes . ".";
+        }
+        $dominio = rtrim($dc, ".");   
+        
+        $cmds = 'select rol from user where user=:arguser';
+        $args = array('arguser'=> $usuario);
+        $resultado = $this->db->exec($cmds, $args);
+        $resultado[0]['dn'] = $dominio;
+        print json_encode($resultado);
+    }
+
+
     public function busqueda(){
         $termino =  $this->index->get('PARAMS.term');    
-       $listado = $this->busquedaUsuarios($termino);
-       print json_encode($listado);
+        $listado = $this->busquedaUsuarios($termino);
+        print json_encode($listado);
     }
     
     public function display() {

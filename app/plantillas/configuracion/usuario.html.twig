@@ -35,11 +35,11 @@
                 <td>{{ usuario.dominio}}</td>
                 <td>{{ usuario.titulo}}</td>
                 <td>
-                    <button type="button" class="btn {#btn-default#} btn-xs alert-success">
+                    <button type="button" id="editar_usuario" name="editar_usuario" class="btn btn-xs alert-success" value="{{ usuario.user }}">
                         <span class="glyphicon glyphicon-edit"></span>
                         Editar
                     </button>
-                    <button type="button" class="btn btn-default btn-xs alert-danger">
+                    <button type="button" id="borrar_usuario" name="borrar_usuario" class="btn btn-default btn-xs alert-danger" value="{{ usuario.user }}">
                         <span class="glyphicon glyphicon-remove"></span>
                         Eliminar
                     </button>
