@@ -14,17 +14,24 @@ class dominioControl extends \clases\sesion{
         $this->db = $this->index->get('dbconexion');
     }
     
+    /**
+     * ¿Se han configurado los parametros de este dominio?
+     * ¿Existen credenciales asociadas a este dominio en la base de datos?
+     * Devuelve True si el dominio no existe
+     * @param string $dominio
+     * @return boolean
+     */
     protected function verificaDominioExiste($dominio){
         $cmds = 'select clave from configuracion where dominio=:argclave';
         $args = array('argclave'=>$dominio);
         $resultado = $this->db->exec($cmds, $args);
         $configuracion = $this->db->count();
-//        print_r($configuracion);
+        
         $cmdz = 'select dominio from credenciales where dominio=:argdominio';
         $argz = array('argdominio'=>$dominio);
         $result = $this->db->exec($cmdz, $argz);
         $credenciales = $this->db->count();
-//        print_r($credenciales);
+        
         if (($configuracion + $credenciales ) == 0) {
             return true;
         }  else {
@@ -33,17 +40,14 @@ class dominioControl extends \clases\sesion{
         }
     }
     
-//    protected function configurarCredenciales($objeto, $dominio, $password){
-//        $semilla = $this->index->get('semilla');
-//        $dc =  explode(".", $dominio);
-//        $clave =  $semilla . $dc[0];
-//        $hashito = new \clases\cifrado();
-//        $marcado = $hashito->encrypt($password, $clave);
-//        $cmds = 'insert into credenciales(dominio, '.$objeto.') values(:argdominio, :arg'.$objeto.')';
-//        $args = array('argdominio'=>$dominio, 'arg'.$objeto.''=>$marcado);
-//        return $this->db->exec($cmds, $args);
-//    }
-    
+    /**
+     * Actualiza $objeto (firmas|firmaz), cifrando con $dominio y la semila general 
+     * del proyecto que reside en la configuración a $password
+     * @param string $objeto
+     * @param string $dominio
+     * @param string $password
+     * @return Boolean?
+     */
     protected function actualizarCredenciales($objeto, $dominio, $password){
         $semilla = $this->index->get('semilla');
         $dc =  explode(".", $dominio);
@@ -185,14 +189,20 @@ class dominioControl extends \clases\sesion{
         
         print json_encode($retorno);
     }
-    
+    /**
+     * Serializa un array con todos los datos del dominio
+     * @param string $base
+     * @param string $ip_server
+     * @param string $puerto
+     * @param string $dn_admin_ldap
+     * @param string $admin_zimbra
+     * @param string $grupos_ou
+     * @param string $sambaSID
+     * @param string $mail_domain
+     * @param string $netbiosName
+     * @return Serialize String
+     */
     protected function configuracionDominio($base, $ip_server, $puerto, $dn_admin_ldap, $admin_zimbra, $grupos_ou, $sambaSID, $mail_domain, $netbiosName){
-//        $rdn = explode(".", $dominio);
-//        $dn = "";
-//        foreach ($rdn as $componente) {
-//            $dn .= "dc=$componente,";
-//        }
-//        $base = rtrim($dn, ",");
 
         $configuracion = array(
             'base' => $base,
@@ -211,6 +221,9 @@ class dominioControl extends \clases\sesion{
         return serialize($configuracion);
     }
     
+    /**
+     * Muestra los datos para el dominio dado
+     */
     public function mostrarDetalles(){
         $this->comprobar($this->pagina);
         $clave = $this->index->get('PARAMS.clave');

@@ -9,11 +9,11 @@ Latimos con el corazón de Fat Free Framework, y hacemos el intento por ser una 
 * Los módulos para php pueden ser instalados en Debian con 
 
 ```shell 
-composer update
+aptitude install php5-{mcrypt,mysql,ldap}
 ```
 
 ```shell 
-aptitude install php5-{mcrypt,mysql,ldap}
+composer update
 ```
 
 * Cree un directorio temporal para que Twig cree las plantillas
@@ -35,23 +35,22 @@ sbase="dc=dominio,dc=com"
 zserver=mail.dominio.com
 zpuerto=389
 zbase="dc=dominio,dc=com"
+[credenciales-samba]
 ; No usar un usuario administrador
-; Pero sus limites, tal como el administrador, debe ser infinito
-; No olvidar por ningún motivo las comillas
-lectorldap="cn=admin,dc=dominio,dc=com"
-passwdldap="lector_ldap_hacienda"
-; Este si debe ser un usuario administrador
-; No olvidar por ningún motivo las comillas
-; La contraseña esta en la base de datos, cifrada, para cada usuario que tenga rol admon
-adminldap="cn=admin,dc=dominio,dc=com"
-[credenciales-zimbra]
-; No usar un usuario administrador, pero darle permisos de lectura a este usuario para los atributos zimbraAccountStatus y zimbraMailStatus
-lectorzimbra="uid=zmlectura,cn=appaccts,cn=zimbra"
+; Este usuario no se usa para algo más que el simple logueo.
+lectorldap="cn=lector,dc=dominio,dc=com"
+passwdldap="lector_ldap_dominio"
+[seguridad]
+; Esta es parte de la clave a usar para cifrar las contraseñas. 
+; No la cambie nunca una vez configurada
+semilla="B4c10"
 [database]
 dbbase = directorio
-dbserver = 
-dbusuario = 
-dbpassword = 
+dbserver = mysql.dominio.com
+dbusuario = agenlad
+dbpassword = agenlad 
+
+```
 
  * La mínima configuración requerida para que funcione en Apache es la siguiente
 
