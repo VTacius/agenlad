@@ -76,7 +76,6 @@ dbpassword = agenlad
 </VirtualHost>
 ```
 
-```
  * Active el módulo Rewrite de Apache, luego de lo cual habrá que reiniciar el servidor Apache
 ```shell 
 a2enmod rewrite
