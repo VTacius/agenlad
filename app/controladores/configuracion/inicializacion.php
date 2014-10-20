@@ -29,7 +29,6 @@ class inicializacion extends \clases\sesion {
     }
 
     public function usuario(){
-        $this->comprobarSesion();
         $objetos = array(
             'select count(user) as dominio from user');
         $inicio = 0;
@@ -50,7 +49,6 @@ class inicializacion extends \clases\sesion {
     }
 
     public function display() {
-        $this->comprobarSesion();
         $objetos = array('select count(dominio) as dominio from configuracion',
                         'select count(dominio) as dominio from credenciales');
         $inicio = 0;
@@ -59,6 +57,10 @@ class inicializacion extends \clases\sesion {
             $inicio += $this->comprobarInicio($sentencia);
         }
         if ($inicio === 0){
+            $this->parametros['menu'] = array(
+                'inicializacion/'=>'Configuracion Dominio',
+                'inicializacion/usuario'=>'Configuracion de Roles'
+            );
             // No hay datos dentro de este lugar
             echo $this->twig->render('configuracion/dominioNuevo.html.twig', $this->parametros);   
         }else {

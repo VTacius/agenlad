@@ -64,8 +64,8 @@ CREATE TABLE `sessions` (
 CREATE TABLE `user` (
   `user` varchar(50) DEFAULT NULL,
   `rol` varchar(50) DEFAULT NULL,
-  `dominio` varchar(40) DEFAULT NULL,
+  `dominio` varchar(40) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO `user` VALUES ('usuario','usuario','',NULL,NULL,NULL,NULL),('default','sin_firma','',NULL,NULL,NULL,NULL);
+INSERT INTO `user` VALUES ('usuario','usuario',''),('default','sin_firma','');
 
