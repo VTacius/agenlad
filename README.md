@@ -76,6 +76,7 @@ dbpassword = agenlad
 </VirtualHost>
 ```
 
+```
  * Active el módulo Rewrite de Apache, luego de lo cual habrá que reiniciar el servidor Apache
 ```shell 
 a2enmod rewrite
@@ -88,6 +89,7 @@ mkdir web/ui/js/vendor
 cp vendor/components/jquery/jquery.min.js web/ui/js/vendor/
 cp vendor/components/jqueryui/jquery-ui.min.js web/ui/js/vendor/
 cp vendor/components/bootstrap/js/bootstrap.min.js web/ui/js/vendor/
+mkdir web/ui/css/vendor/
 cp vendor/components/jqueryui/themes/smoothness/*css web/ui/css/vendor/
 cp vendor/components/bootstrap/css/bootstrap.min.css web/ui/css/vendor/
 cp vendor/components/bootstrap/css/bootstrap-theme.min.css web/ui/css/vendor/
@@ -95,6 +97,7 @@ cp -r vendor/components/jqueryui/themes/smoothness/images/ web/ui/css/vendor/
 ```
 
 ### Configurando la aplicación por primera vez
-Dado agenlad.dominio.com como la URL de la aplicación, acceda a agenlad.dominio.com/inicializacion/ para empezar con la configuración. Continúe en agenlad.dominio.com/inicializacion/usuario
-No es un asistente al uso, pero facilitará mucho la configuración inicial
+No es un asistente al uso, pero facilitará mucho la configuración inicial:
+* Dado agenlad.dominio.com como la URL de la aplicación, acceda a agenlad.dominio.com/inicializacion/ para empezar con la configuración. 
+* Continúe en agenlad.dominio.com/inicializacion/usuario
 
