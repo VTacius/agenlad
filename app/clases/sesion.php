@@ -115,7 +115,7 @@ abstract class sesion {
         $clave =  $semilla . $dc[0];
         
         $claves = $hashito->descifrada($firmas, $clave);
-
+        
         // Obtenemos el DN del administrador desde la base de datos
         $config = $this->getConfiguracionDominio();
         $adminDN = $config['dn_administrador'];

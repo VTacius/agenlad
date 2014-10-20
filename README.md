@@ -94,6 +94,7 @@ cp vendor/components/jqueryui/themes/smoothness/*css web/ui/css/vendor/
 cp vendor/components/bootstrap/css/bootstrap.min.css web/ui/css/vendor/
 cp vendor/components/bootstrap/css/bootstrap-theme.min.css web/ui/css/vendor/
 cp -r vendor/components/jqueryui/themes/smoothness/images/ web/ui/css/vendor/
+cp -rv vendor/components/bootstrap/fonts/ web/ui/css/
 ```
 
 ### Configurando la aplicación por primera vez

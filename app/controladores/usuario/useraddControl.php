@@ -33,9 +33,10 @@ class useraddControl extends \clases\sesion{
      * @return type
      */
     private function listarAtributosUsuarios($atributo){
-        $usuarios = new \Modelos\userPosix($this->dn, $this->pswd, 'central' );
+        $claves = $this->getClaves();
+        $usuarios = new \Modelos\userPosix($claves['dn'], $claves['pswd'], 'central' );
         $filtro =array($atributo => '*');
-        $datos = $usuarios->search($filtro);
+        $datos = $usuarios->search($filtro, false, 'dc=sv');
         $lista = array();
         foreach ($datos as $valor) {
             $lista[] = $valor[$atributo];
@@ -60,7 +61,8 @@ class useraddControl extends \clases\sesion{
      * @return boolean
      */
     private function checkSamba($user){
-        $usuario = new \Modelos\userPosix($this->dn, $this->pswd, 'central' );
+        $claves = $this->getClaves();
+        $usuario = new \Modelos\userPosix($claves['dn'], $claves['pswd'], 'central' );
         $usuario->setUid($user);
         if ($usuario->getGidNumber() === "{empty}"){
             return true;
@@ -80,7 +82,6 @@ class useraddControl extends \clases\sesion{
     }
 
     protected function checharUsuario($user){
-        
         if ($this->checkSamba($user) && $this->checkZimbra($user)) {
             $retorno =  TRUE;
         }else{
@@ -109,21 +110,14 @@ class useraddControl extends \clases\sesion{
         $lastIndex = sizeof($listaUidNumberUsuarios) - 2;
         $lastElemento = $listaUidNumberUsuarios[$lastIndex];
         $elemento = $lastElemento + 1;
-//        for ($i=1000; $i<=$lastElemento; $i++){
-//            if (in_array($elemento, $listaUidUsuarios)) {
-//                print "<br>Elemento: $i";
-//            }else{
-//                print "<br>$i es nuevo, creo";
-//            }
-//        }
         return (string)$elemento;
     }
     
     protected function configurarNuevoUsuario($dn, $claves, $uid, $nombre, 
             $apellido, $localidad, $oficina, $cargo, $uidNumber, $loginShell,
             $gidNumber,$sambaAcctFlags, $telefono){
-        $usuario = new \Modelos\userSamba($claves['dn'], 'lector_ldap_hacienda');
-//        $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
+//        $usuario = new \Modelos\userSamba($claves['dn'], 'lector_ldap_hacienda');
+        $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
         $usuario->setUid($uid);
         $usuario->configuraNombre($nombre, $apellido);
         $usuario->configuraPassword($uid);
