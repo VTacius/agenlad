@@ -19,11 +19,10 @@ CREATE TABLE `configuracion` (
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `credenciales` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
   `dominio` varchar(30) DEFAULT NULL,
   `firmas` varchar(50) DEFAULT NULL,
   `firmaz` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`dominio`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -66,10 +65,6 @@ CREATE TABLE `user` (
   `user` varchar(50) DEFAULT NULL,
   `rol` varchar(50) DEFAULT NULL,
   `dominio` varchar(40) DEFAULT NULL,
-  `firmas` varchar(50) DEFAULT NULL,
-  `bandera_firmas` char(1) DEFAULT NULL,
-  `firmaz` varchar(50) DEFAULT NULL,
-  `bandera_firmaz` char(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 INSERT INTO `user` VALUES ('usuario','usuario','',NULL,NULL,NULL,NULL),('default','sin_firma','',NULL,NULL,NULL,NULL);

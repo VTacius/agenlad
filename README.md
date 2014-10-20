@@ -93,3 +93,7 @@ cp vendor/components/bootstrap/css/bootstrap.min.css web/ui/css/vendor/
 cp vendor/components/bootstrap/css/bootstrap-theme.min.css web/ui/css/vendor/
 cp -r vendor/components/jqueryui/themes/smoothness/images/ web/ui/css/vendor/
 ```
+
+### Configurando la aplicación por primera vez
+Dado agenlad.dominio.com como la URL de la aplicación, acceda a agenlad.dominio.com/inicializacion/ para empezar con la configuración. Continúe en agenlad.dominio.com/inicializacion/usuario
+No es un asistente al uso, pero facilitará mucho la configuración inicial

@@ -32,6 +32,21 @@ var usuario_modificar = function(usuario){
     $("#busqueda_usuario_input").val(usuario);
 };
 
+var procesar_modificar_usuario = function(){
+    // En lugar de usar obtener obtenerDatos por dos atributos y tener que agregar otro más
+    datos = {
+        usuario : $("#busqueda_usuario_input").val(),
+        dominio : $("#dominio_usuario").text(),
+        rol :   $("#rol_usuario_select").val()
+    };
+    procesarDatos('/confpermisos/configurarol', datos, mostrar_modificar_usuario)
+}
+
+var mostrar_modificar_usuario = function(data){
+    pmostrarError(data);
+    pmostrarMensaje(data);
+}
+
 $("#busqueda_usuario_input").autocomplete({
     minLength: 2,
     source: envio_busqueda,
@@ -54,4 +69,8 @@ $("button[id=borrar_usuario]").click(function(e){
     e.stopPropagation();
     e.preventDefault();
     console.log("Eliminar " + $(this).val());
+});
+
+$("#enviar").click(function(){
+    procesar_modificar_usuario();
 });
