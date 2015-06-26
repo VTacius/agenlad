@@ -1,0 +1,45 @@
+{% extends "base/layout.html.twig" %}
+{% block titulo -%}Listado de usuarios{% endblock %}
+{% block javascript -%}
+{% endblock %}
+
+{# Configuramos las variables que la plantilla padre usa para formar el menu #}
+{% set menu = menu %}
+{% set pagina = pagina %}
+
+{% block lateral %}
+    <h3>Configuracion</h3>
+    Bienvenido <b>{{titulo}} {{usuario}}</b>
+    <p>Puede configurar algunos de los dominios ya existentes, o <a href="/confdominios/nuevo">crear uno nuevo</a></p>
+{% endblock %}
+
+{% block contenido -%}
+  {{ parent() }}
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th>Dominio</th><th>Descripcion</th><th>Configuracion</th>
+        </tr>
+        </thead>
+        <tbody id=respuesta>
+        {% for dominio in datos %}
+            <tr>
+                <td><a href="/confdominios/{{dominio.clave}}" >{{ dominio.dominio }}</a></td>
+                <td>{{ dominio.descripcion}}</td>
+                <td>
+                    <ul>
+                        {% for key, valor in dominio.attr %}
+                            <li><b>{{key}} </b>: 
+                                {% if valor == true %}
+                                    {{ valor }}
+                                {% else %}
+                                    {{ valor }}
+                                {% endif %}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr> 
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

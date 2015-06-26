@@ -1,0 +1,76 @@
+{% extends "base/layout.html.twig" %}
+{% block titulo -%}Listado de usuarios{% endblock %}
+{% block css -%} 
+    <link href="{{ activos('css/jumbotron.css') }} " rel="stylesheet">
+    <link href="{{ activos('css/usershow.css') }} " rel="stylesheet">
+{% endblock %}
+{% block javascript %} 
+{#    <script src="{{ activos('js/controladores/directorioControl.js') }}" type="text/javascript"></script>#}
+    <script src="{{ activos('js/controladores/usershowControl.js') }}" type="text/javascript"></script>
+{% endblock %}
+{# Configuramos las variables que la plantilla padre usa para formar el menu #}
+{% set menu = menu %}
+{% set pagina = pagina %}
+
+{% block lateral %}
+    <h3>Revisión de usuarios</h3>
+    <p>Utilidades para primera linea de apoyo<br>
+    Bienvenido <b>{{titulo}} {{usuario}}</b></p>
+{% endblock %}
+
+{% block contenido -%}
+    {{ parent() }}
+    {#<form class="form-horizontal" role="form" id="usuarioform" tabindex="1" action="/usershow/datos" method="POST">
+
+        <div class="form-group">
+            <div class="col-lg-12">
+                <input class="form-control input-lg col-lg-9" id="usuarioCliente" autofocus name="usuarioCliente" placeholder="Nombre del Usuario">
+                <button class="btn btn-lg btn-primary col-lg-2" id="enviar" tabindex="1" role="button">Contraseña!</button> 
+            </div>
+        </div>
+    </form>#}
+<div class="row">
+   <div class="col-lg-12">
+    <div class="input-group input-group-lg">
+      <input type="text" class="form-control input-lg" id="usuarioCliente" autofocus name="usuarioCliente" placeholder="Nombre del Usuario">
+      <span class="input-group-btn">
+        <button class="btn btn-primary btn-lg" id="enviar" tabindex="1" role="button">Contraseña!</button>
+      </span>
+    </div><!-- /input-group -->
+  </div><!-- /.col-lg-6 -->
+</div><!-- /.row -->
+    <dl class="dl-horizontal" id="respuestaUsuario">
+        <dt id="psswduser">Contraseña:</dt>
+            <dd id="psswduser"></dd>
+        <dt id="nombrecompleto">Nombre de usuario:</dt>
+            <dd id="nombrecompleto">{{datos.nombrecompleto}}</dd>
+        <dt id="ubicacion">Localidad:</dt>
+            <dd id="ubicacion"><b id="oficina">{{datos.oficina}}</b> en <b id="localidad">{{datos.localidad}}</b></dd>
+        <dt id="grupouser">Grupo Principal:</dt>
+            <dd id="grupouser">{{datos.grupouser}}</dd>
+    </dl>
+    <dl class="dl-horizontal" id="respuestaMail">
+        <dt id="mailuser">Correo</dt>
+            <dd id="mailuser">{{datos.mailuser}}</dd>
+        <dt id="cuentastatus">Estado de la Cuenta:</dt>
+            <dd id="cuentastatus">{{datos.cuentastatus}}</dd>
+        <dt id="buzonstatus">Estado del Buzón:</dt>
+            <dd id="buzonstatus">{{datos.buzonstatus}}</dd>
+    </dl>
+    {% if rol == "admon" or rol == 'admin_general' %}
+        <div class="form-group text-center" id="admon">
+            <h4><a id="creacion" href="/useradd">¿Desea agregar al usuario?</a></h4>
+            <h4><a id="modificacion" href="/usermod">¿Desea Modificar al usuario?</a></h4>
+        </div>
+    {% endif %}
+    
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th>Nombre</th><th>Usuario Samba</th><th>Mail</th><th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id=respuesta>
+        </tbody>
+    </table>
+{% endblock %}

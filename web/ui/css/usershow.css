@@ -1,0 +1,6 @@
+    dt:first-of-type,dd:first-of-type{
+        font-size: xx-large
+    } 
+    dt, dd{
+        font-size: large
+    } 

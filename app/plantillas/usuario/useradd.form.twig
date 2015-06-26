@@ -1,0 +1,100 @@
+<form class="form-horizontal" id="userModForm" name="userModForm" role="form" action="/usermod/cambio" method="POST">
+        <legend>Datos Generales</legend>
+        <div class="form-group">
+            <label for="nombre" class="col-md-3 text-left">Nombres</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="nombre" name="nombre" required autofocus placeholder="Nombre" autocomplete="off" value="{{datos.nameuser}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="apellido" class="col-md-3 text-left">Apellidos</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="apellido" name="apellido" required placeholder="Apellido" autocomplete="off" value="{{datos.nameuser}}">
+            </div>
+        </div>
+        
+        <legend>Atributos administrativos</legend>
+        <div class="form-group">
+            <label for="o" class="col-md-3 text-left">Establecimiento</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="o" name="o" placeholder="Localidad" autocomplete="off" value="{{datos.nameuser}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ou" class="col-md-3 text-left">Oficina</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="ou" name="ou" placeholder="Oficina" autocomplete="off" value="{{datos.nameuser}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="title" class="col-md-3 text-left">Cargo</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="title" name="title" placeholder="Cargo" autocomplete="off" value="{{datos.nameuser}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="telephoneNumber" class="col-md-3 text-left">Telefono</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="telephoneNumber" name="telephoneNumber" placeholder="Telefono" autocomplete="off" value="{{datos.nameuser}}">
+            </div>
+        </div>
+        <legend>Atributos Posix y Samba</legend>
+        <div class="form-group">
+            <label for="ou" class="col-xs-3 text-left">Username</label>
+            <div class="col-xs-4">
+                <input type="text" class="form-control input-sm" id="uid" name="uid" required autocomplete="off" placeholder="username">
+            </div>
+            <div class="col-xs-2">
+                <button class="btn btn-sm btn-primary" id="disponibilidad" role="button">Comprobar</button> 
+            </div>
+           <div class="col-xs-3" id="comprobacion_usuario">
+                <p class="alert alert-success">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    <b><b>
+                </p>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="loginShell" class="col-md-3 text-left">Shell por defecto</label>
+            <div class="col-xs-9">
+                <select class="form-control input-sm col-xs-12" id="loginShell" name="loginShell">
+                    <option value="/bin/bash" selected>/bin/bash</option>
+                    <option value="/bin/false">/bin/false</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="sambaAcctFlags" class="col-md-3 text-left">Estado Cuenta</label>
+            <div class="col-xs-9">
+                <select class="form-control input-sm col-xs-12" id="sambaAcctFlags" name="sambaAcctFlags">
+                    <option value="[U]" selected>Habilitado</option>
+                    <option value="[DU]">Deshabilitado</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="ou" class="col-xs-12 text-left">Pertenencia a Grupos</label>
+            <div class="col-xs-6">
+                <label for="gidNumber" class="col-xs-12 text-left">Grupo Principal</label>
+                <select class="form-control input-sm col-xs-12" id="gidNumber" name="gidNumber">
+                    {% for elemento in datos.grupos %}
+                        <option value="{{elemento.gidNumber}}">{{elemento.cn}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-xs-6">
+                <label for="ou" class="col-xs-12 text-left">Grupos Adicionales</label>
+                <select multiple class="form-control input-sm col-xs-12" size="10" id="grupos" name="grupos">
+                    {% for elemento in datos.grupos %}
+                        <option value="{{elemento.cn}}">{{elemento.cn}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-group text-center">
+            <button class="btn btn-md btn-primary" id="enviar" tabindex="1" role="button">Crear Usuario</button> 
+            <button class="btn btn-md btn-default" id="reset" tabindex="1" role="button">Cancelar</button> 
+        </div>
+</form>

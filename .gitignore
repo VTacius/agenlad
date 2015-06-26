@@ -1,0 +1,18 @@
+#Librerias externas
+vendor
+#Twig
+app/herramientas
+# Si no enviamos vendor, entonces no necesitamos este
+composer.lock
+# Directorios temporales para Twig
+tmp
+# Configuración de la aplicación
+*.ini
+# El favicon es nuestro
+favicon.ico
+/nbproject/private/
+nbproject/
+web/ui/js/vendor
+web/ui/css/vendor
+#
+*.swp

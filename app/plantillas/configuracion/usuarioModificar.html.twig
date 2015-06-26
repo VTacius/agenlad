@@ -1,0 +1,18 @@
+<form role="form" id="busqueda_usuario_form">
+    <legend>Nuevo usuario administrativo</legend>
+    <div class="form-group">
+        <label for="busqueda_usuario_input">Usuario</label>
+        <input type="text" class="form-control input-sm" id="busqueda_usuario_input" name="busqueda_usuario_input" placeholder="Busque a un usuario existente">
+    </div>
+    <div class="form-group" id="rol_usuario" name="rol_usuario" style="display:none">
+        <label for="dominio_usuario">dominio</label>
+        <p class="form-control-static input-sm" id="dominio_usuario"></p>
+        <label for="busqueda_usuario_input">Rol</label>
+        <select class="form-control input-sm" id="rol_usuario_select" name="rol_usuario_select">
+            <option value="admin_general">Administrador Global</option>
+            <option value="admon">Administrador</option>
+            <option selected value="tecnico">Técnico de Atención</option>
+        </select>
+    </div>
+    <button class="btn btn-sm btn-primary" id="enviar" role="button" style="display:none">Modificar Usuario</button> 
+</form>
