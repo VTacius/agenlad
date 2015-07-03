@@ -24,8 +24,9 @@ class userPosix extends \Modelos\objectosLdap{
         // Usamos desde acá la clase cifrado. 
         $this->hashito = new \clases\cifrado();
         $this->objeto='shadowAccount';   
+        // Agrego y modifico atributos
         $this->atributos = array(    
-            'cn','displayName','dn','gecos','gidNumber',
+            'cn','description', 'st','displayName','dn','gecos','gidNumber',
             'givenName','homeDirectory','loginShell','mail','o',
             'objectClass','ou','postalAddress',
             'shadowLastChange','shadowMax','shadowMin',
@@ -46,6 +47,14 @@ class userPosix extends \Modelos\objectosLdap{
 
     public function getDisplayName() {
         return $this->entrada['displayName'];
+    }
+
+    public function getDescription() {
+        return $this->entrada['description'];
+    }
+    
+    public function getSt() {
+        return $this->entrada['st'];
     }
 
     public function getGecos() {
@@ -163,6 +172,14 @@ class userPosix extends \Modelos\objectosLdap{
 
     public function setTitle($title) {
         $this->configurarValor('title', $title);
+    }
+    
+    public function setDescription($description) {
+        $this->configurarValor('description', $description);
+    }
+    
+    public function setSt($st) {
+        $this->configurarValor('st', $st);
     }
     
     public function setUidNumber($uidNumber) {

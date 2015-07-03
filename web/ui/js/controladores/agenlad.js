@@ -22,6 +22,8 @@
          * @returns {undefined}
          */
         function errorOnResponse(data){
+            console.log(data);
+            console.log("La aplicacion ha fallado");
             $("#error").text("La aplicación ha fallado. Consulte con su técnico asociado");
         }
 
@@ -94,6 +96,9 @@ function pmostrarMensaje(data){
         $("#mensaje").show();
         $("#mensaje").html(respuesta);
         $('html, body').animate({scrollTop : 0},800);
+    }else{
+        console.log("No hay nada?");
+        console.log(data);
     }
 };
 

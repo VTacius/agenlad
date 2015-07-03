@@ -156,7 +156,7 @@ class usermodControl extends \controladores\usuario\usershowControl {
      * @param string $usuarioAttr
      * @return string
      */
-    private function modificarAttrUsuario($usuario, $usuarioAttr){
+    protected function modificarAttrUsuario($usuario, $usuarioAttr){
         $usuario->setUid($usuarioAttr['usuarioModificar']);
         $usuario->setO($usuarioAttr['usuarioLocalidad']);
         $usuario->setOu($usuarioAttr['usuarioOficina']);
@@ -164,7 +164,18 @@ class usermodControl extends \controladores\usuario\usershowControl {
         $usuario->setGidNumber($usuarioAttr['usuarioGrupo']);
         $usuario->configuraNombre($usuarioAttr['usuarioNombre'], $usuarioAttr['usuarioApellido']);
         $usuario->setTelephoneNumber($usuarioAttr['usuarioPhone']);
-        
+
+        // Agrego set condicionados a que ese atributo haya sido configurado, 
+        // manteniendo compatibilidad con la parte más legacy de la aplicacion
+        if ( array_key_exists('usuarioDescripcion', $usuarioAttr)){
+            $usuario->setDescription($usuarioAttr['usuarioDescripcion']);
+        }
+
+        // Agrego set condicionado a atributo usuarioNivel
+        if ( array_key_exists('usuarioNivel', $usuarioAttr)){
+            $usuario->setSt($usuarioAttr['usuarioNivel']);
+        }
+
         $configuracion = $this->getConfiguracionDominio();
         
         // ¿Debe moverse el usuario a un objeto ou de grupo bajo la rama ou=Users?        
@@ -180,17 +191,29 @@ class usermodControl extends \controladores\usuario\usershowControl {
         }
     }
     
-    private function modificarUsuarioZimbra($correo, $usuarioAttr){
+    protected function modificarUsuarioZimbra($correo, $usuarioAttr){
         $clavez = $this->getClavez();
         $userZimbra = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
         $userZimbra->cuenta($correo);
-        
+        $mensaje = $userZimbra->getErrorSoap(); 
         if ($userZimbra->getMail() !== "{empty}") {
             $userZimbra->setOu($usuarioAttr['usuarioOficina']);
             $userZimbra->setTitle($usuarioAttr['usuarioCargo']);
             $userZimbra->setCompany($usuarioAttr['usuarioLocalidad']);
             $userZimbra->configuraNombre($usuarioAttr['usuarioNombre'], $usuarioAttr['usuarioApellido']);
             $userZimbra->setTelephoneNumber($usuarioAttr['usuarioPhone']);
+
+            // Agrego set condicionados a que ese atributo haya sido configurado, 
+            // manteniendo compatibilidad con la parte más legacy de la aplicacion
+            if ( array_key_exists('usuarioDescripcion', $usuarioAttr)){
+                $userZimbra->setDescription($usuarioAttr['usuarioDescripcion']);
+            }
+
+            // Agrego set condicionado a atributo usuarioNivel
+            if ( array_key_exists('usuarioNivel', $usuarioAttr)){
+                $userZimbra->setSt($usuarioAttr['usuarioNivel']);
+            }
+
             //TODO: Tenés que hacer que este metodo se parezca al de usuario
             //NOTA: Posiblemente no sea del todo necesario si te fijas en el otro de 
             //allá abajo en modificarEstado Zimbra
@@ -209,6 +232,8 @@ class usermodControl extends \controladores\usuario\usershowControl {
             sleep(1);
         }else{
             $this->mensaje[] = array("codigo" => "warning", 'mensaje' => "No existe un buzón asociado a {$usuarioAttr['usuarioModificar']}");
+            // Te agradecería que comentaras esto cuando estes en produccion
+            $this->error[] = $mensaje;
         }
       
     }
@@ -231,6 +256,7 @@ class usermodControl extends \controladores\usuario\usershowControl {
         );
               
         $claves = $this->getClaves();       
+        print_r($claves);
         $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
         // Modificamos los atributos del usuario
         $this->modificarAttrUsuario($usuario, $usuarioAttr);

@@ -164,6 +164,14 @@ $index->route('GET|POST @conf_usuario_busqueda_rol: /inicializacion',
         'controladores\configuracion\inicializacion->display');
 $index->route('GET|POST @conf_usuario_busqueda_rol: /inicializacion/usuario', 
         'controladores\configuracion\inicializacion->usuario');
+// Agregado el 26/06/15 para que los usuarios puedan actualizar por si mismos sus datos
+$index->route('GET|POST @usuario_actualizacion: /actualizacion', 
+        'controladores\usuario\userActualizacion->display');
+$index->route('GET|POST @usuario_actualizacion_cambio: /actualizacion/cambio', 
+        'controladores\usuario\userActualizacion->actualizacionCambio');
+    
+$index->route('GET|POST @usuario_actualizacion_cambio: /actualizacion/usuario', 
+        'controladores\usuario\userActualizacion->getUsuario');
 
 // Esta es la forma en que la aplicación empieza
 $index->run();

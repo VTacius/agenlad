@@ -50,7 +50,7 @@ class objectosLdap extends \Acceso\ldapAccess{
     }
     
     /**
-     * Configurar atributos único con los cuales es posible buscar 
+      Configurar atributos único con los cuales es posible buscar 
      * entradas existente dentro del árbol LDAP
      * En caso 
      * @param string $atributo
@@ -207,9 +207,18 @@ class objectosLdap extends \Acceso\ldapAccess{
      */
     public function actualizarEntrada(){
         // Elimina los elementos vacíos (Asignados {empyt} por defecto) mediante self::elementosVacios
+        // print "<pre>";
+        // print_r($this->entrada);
+        // print "</pre>";
         $valores = array_filter($this->entrada, 'self::elementosVacios');
         // El primer índice es dn, pero ya no lo usaremos màs
+        // print "<pre>";
+        // print_r($valores);
+        // print "</pre>";
+        // print "Datos:";
         $dn = array_shift($valores);
+        // print "DN:";
+        // print $dn;
         if($this->modificarEntrada($valores, $dn)){
             return true;
         }else{

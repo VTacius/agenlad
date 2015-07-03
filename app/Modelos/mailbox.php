@@ -11,9 +11,10 @@ class mailbox extends \Modelos\objetosSoap {
         
     public function __construct($administrador, $password) {
         parent::__construct($administrador, $password);
+        // Agregados atributos como description
         $this->atributos = array('zimbraAccountStatus', 'zimbraMailStatus', 
-            'zimbraAuthLdapExternalDn', 'company ','mail', 'ou', 'sn', 'title', 
-            'givenName', 'displayName', 'telephoneNumber');
+            'zimbraAuthLdapExternalDn', 'company ','mail', 'l', 'sn', 'title', 
+            'givenName', 'displayName', 'telephoneNumber', 'description', 'st');
     }
     
     public function cuenta($usuario){
@@ -24,8 +25,16 @@ class mailbox extends \Modelos\objetosSoap {
         return $this->cuenta['company'];
     }
 
+    function getDescription() {
+        return $this->cuenta['description'];
+    }
+    
+    function getSt() {
+        return $this->cuenta['st'];
+    }
+
     function getOu() {
-        return $this->cuenta['ou'];
+        return $this->cuenta['l'];
     }
 
     function getSn() {
@@ -56,8 +65,16 @@ class mailbox extends \Modelos\objetosSoap {
         $this->cuenta['company'] = $company;
     }
 
+    function setDescription($description) {
+        $this->cuenta['description'] = $description;
+    }
+
+    function setSt($st) {
+        $this->cuenta['st'] = $st;
+    }
+
     function setOu($ou) {
-        $this->cuenta['ou'] = $ou;
+        $this->cuenta['l'] = $ou;
     }
 
     function setTitle($title) {

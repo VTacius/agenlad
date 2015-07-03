@@ -78,6 +78,10 @@ abstract class sesion {
     protected function getClavez(){
         // Recuperamos firmaz desde la base de datos
         $configUser = $this->getConfiguracionUsuario();
+        // Conseguimos datos por defecto para que usuarios normales puedan configurar sus propios valores
+        if (count($configUser)==0){
+            $configUser = $this->getConfiguracionUsuario('usuario');
+        }
         $firmaz = $configUser['firmaz'];
         
         $semilla = $this->index->get('semilla');
@@ -147,15 +151,17 @@ abstract class sesion {
      * Obtiene datos del usuario de la base de datos relacionados con su rol
      * @return array
      */
-    protected function getConfiguracionUsuario(){
+    protected function getConfiguracionUsuario($usuario=""){
         $base = $this->index->get('dbconexion');
-        $usuario = $this->index->get('SESSION.user');
+        $usuario = empty($usuario) ? $this->index->get('SESSION.user') : $usuario;
         
-        $cmds = "select titulo, user.rol, permisos, credenciales.firmas, credenciales.firmaz, user.dominio from user join rol on user.rol=rol.rol join credenciales on user.dominio=credenciales.dominio  where user=:user";
+        $cmds = "select titulo, user.rol, permisos, credenciales.firmas, credenciales.firmaz, user.dominio
+        from user join rol on user.rol=rol.rol join credenciales on user.dominio=credenciales.dominio  where user=:user";
         $args = array('user'=>$usuario);
         $resultado = $base->exec($cmds, $args);
-        
-        return $resultado[0];
+        if(count($resultado)>0){
+            return $resultado[0];
+        } 
     }
     
     /**

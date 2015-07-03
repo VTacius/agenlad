@@ -73,6 +73,7 @@ class loginControl extends \clases\sesion{
         $cmds = "select titulo, user.rol, permisos, dominio from user join rol on user.rol=rol.rol where user=:user;";
         $args = array('user'=>$usuario);
         $resultado = $base->exec($cmds, $args);
+        print_r($resultado);
         if ($base->count() == 0){
             $cmds = "select titulo, user.rol, permisos, dominio from user join rol on user.rol=rol.rol where user='usuario';";
             return $base->exec($cmds, $args);

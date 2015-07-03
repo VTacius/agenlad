@@ -29,6 +29,8 @@ class objetosSoap extends \Acceso\zimbraSoapAccess{
     // Por ahora, si será igual
     protected function configurarDatos($usuario){
         $cuenta = $this->getAccount($usuario, 'full');
+        // Siempre que la operación se haya realizado existosamente, pues esto retorna un hermoso array
+        // print_r($cuenta);
         if (array_key_exists('GETACCOUNTRESPONSE', $cuenta)) {
 	    $datos = $cuenta['GETACCOUNTRESPONSE']['ACCOUNT'];
 	    $this->cuenta['NAME'] = $datos['NAME'];
@@ -49,7 +51,7 @@ class objetosSoap extends \Acceso\zimbraSoapAccess{
         // De hecho, creo que algo así deberías ponerlo en objetosLdap
         unset($this->cuenta['mail']);
         // Odio no saber que es lo que quite de acá, pero me parece que es el DN
-	$cuenta = array_shift($this->cuenta);
+	    $cuenta = array_shift($this->cuenta);
         $this->modificarCuenta($cuenta, $this->cuenta);
     }
     

@@ -24,7 +24,9 @@ class zimbraSoapAccess {
     protected $lastResponse = array();
     
     /** @var array $mapa['atributo_samba'] = 'atributo_zimbra' */
+    // Agrego y modifico atributos
     protected $mapa = array (
+        'description' => 'description',
         'o' => 'company',
         'ou' => 'ou' ,
         'sn' => 'sn',
@@ -33,7 +35,12 @@ class zimbraSoapAccess {
         'displayName' => 'displayName',
         'telephoneNumber' => 'telephoneNumber'
     );
-
+    /**
+     * Para que esto funcione con selinux, permita las conexions al puerto 7071
+     * semanage port -a -t http_port_t -p tcp 7071
+     * Por otra parte, recordar por siempre que es necesario que el valor $servidor 
+     * sea un nombre DNS
+    */
     public function __construct( $administrador, $password){
         $this->index = \Base::instance();
         $servidor = $this->index->get('zserver');
@@ -110,6 +117,7 @@ class zimbraSoapAccess {
 	    unset($mensaje[$index]['XMLNS']);
             $this->setLastResponse($index, $mensaje[$index]);
         } catch (SoapFault $error) {
+                // print $error->faultstring;
                 $this->setErrorSoap($error->faultcode, $error->faultstring);
         }
 
@@ -184,6 +192,8 @@ class zimbraSoapAccess {
             new SoapParam($administrador, 'name'),
             new SoapParam($password, 'password')
         );
+        print "login";
+        print_r($parametrosAuth);
 
         $this->llamada("AuthRequest", $parametrosAuth, array('uri' => 'urn:zimbraAdmin'));
        
@@ -243,7 +253,11 @@ class zimbraSoapAccess {
             new SoapParam($zimbraId, 'id')
         );
         foreach ($cambios as $attrZimbra => $attrValue) {
-            $parametrosModificacionUsuario[] = new SoapVar("<a n='$attrZimbra'>$attrValue</a>", XSD_ANYXML);
+            // Asegura que no se incluya en la petición datos por defecto de formulario {empty} o ya de entrada vacíos, lo que generaría un error
+            // if (!(empty($attrValue) || $attrValue=="{empty}")){
+            if ( ! ($attrValue=="{empty}") ){
+                $parametrosModificacionUsuario[] = new SoapVar("<a n='$attrZimbra'>$attrValue</a>", XSD_ANYXML);
+            }
         }
         $this->llamada("ModifyAccountRequest" , $parametrosModificacionUsuario, array ( 'uri' => 'urn:zimbraAdmin'));
     }
