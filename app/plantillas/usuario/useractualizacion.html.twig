@@ -1,0 +1,20 @@
+{% extends "base/layout.html.twig" %}
+{% block titulo -%}Actualización de Datos{% endblock %}
+{% block javascript -%}
+    <script src="{{ activos('js/controladores/useractualizacion.js') }}" type="text/javascript"></script>
+{% endblock %}
+
+{# Configuramos las variables que la plantilla padre usa para formar el menu #}
+{% set menu = menu %}
+{% set pagina = pagina %}
+
+{% block lateral %}
+    <h3>Actualización de datos</h3>
+    <p>Actualización de datos institucionales<br>
+    Bienvenido <b>{{titulo}} {{usuario}}</b></p>
+{% endblock %}
+
+{% block contenido -%}
+    {{ parent() }}
+    {% include 'usuario/useractualizacion.form.twig' %}
+{% endblock %}

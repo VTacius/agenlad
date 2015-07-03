@@ -1,0 +1,93 @@
+<form class="form-horizontal" id="userModForm" name="userModForm" role="form" action="/actualizacion/cambio" method="POST">
+        <legend>Datos Generales para actualizar</legend>
+        <div class="form-group">
+            <label for="nombre" class="col-md-12 text-left">Completar los siguientes datos según aparezca en su DUI o documento</label>
+        </div>
+        <div class="form-group">
+            <label for="nombre" class="col-md-3 text-left">Nombres</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="nombre" name="nombre" required autofocus placeholder="Nombre" autocomplete="off" value="{{datos.nameuser}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="apellido" class="col-md-3 text-left">Apellidos</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="apellido" name="apellido" required placeholder="Apellido" autocomplete="off" value="{{datos.apelluser}}">
+            </div>
+        </div>
+        
+        <legend>Datos administrativos</legend>
+        <div class="form-group">
+            <label for="carrera" class="col-md-3 text-left">Carrera</label>
+            <div class="col-xs-9">
+                <select class="form-control input-sm col-xs-12" id="carrera" name="carrera">
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="nombre" class="col-md-12 text-left">Completar los siguientes datos según los datos de su contrato</label>
+        </div>
+        <div class="form-group">
+            <label for="st" class="col-md-3 text-left">Nivel</label>
+            <div class="col-xs-9">
+                <select class="form-control input-sm col-xs-12" id="st" name="st">
+                    <option value="" disabled selected>Escoja un Nivel Superior</option>
+                    <option value="CENTRAL">Nivel Central</option>
+                    <option value="DRSZMETRO">Dirección Regional de Salud Metropolitana</option>
+                    <option value="DRSZORIENTE">Dirección Regional de Salud Oriental</option>
+                    <option value="DRSZCENTRAL">Dirección Regional de Salud Central</option>
+                    <option value="DRSZOCCD">Dirección Regional de Salud Occidente</option>
+                    <option value="DRSZPARA">Dirección Regional de Salud Paracentral</option>
+                    <option value="HOSPITAL">Hospitales</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="o" class="col-md-3 text-left">Establecimiento</label>
+            <div class="col-xs-9">
+                <select class="form-control input-sm col-xs-12" id="o" name="o">
+                    <option selected disabled> Escoja el Nivel Superior Antes</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ou" class="col-md-3 text-left">Oficina</label>
+            <div class="col-xs-9" id="div_ou" name="div_ou">
+                <input type="text" class="form-control input-sm" id="ou" name="ou" placeholder="Oficina" autocomplete="off" value="{{datos.oficina}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="title" class="col-md-3 text-left">Cargo</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="title" name="title" placeholder="Cargo" autocomplete="off" value="{{datos.cargo}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="telephoneNumber" class="col-md-3 text-left">Telefono</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="telephoneNumber" name="telephoneNumber" placeholder="Telefono" autocomplete="off" value="{{datos.phone}}">
+            </div>
+        </div>
+        
+        <legend>Recuperación de contraseña</legend>
+        <div class="form-group">
+            <label for="nombre" class="col-md-12 text-left">Para facilitar el proceso de recuperación de contraseña, el técnico de nivel superior ha de preguntarle los siguientes datos</label>
+        </div>
+        <div class="form-group">
+            <label for="pregunta" class="col-md-3 text-left">Pregunta secreta</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="pregunta" name="pregunta" placeholder="Pregunta secreta" autocomplete="off" value="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="pregunta" class="col-md-3 text-left">Respuesta</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="respuesta" name="respuesta" placeholder="Respuesta a pregunta secreta" autocomplete="off" value="">
+            </div>
+        </div>
+        <div class="form-group text-center">
+            <button class="btn btn-md btn-primary" id="enviar" tabindex="1" role="button">Actualizar Datos</button> 
+            <button class="btn btn-md btn-default" id="reset" tabindex="1" role="reset">Cancelar</button> 
+        </div>
+</form>
+
