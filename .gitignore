@@ -1,5 +1,5 @@
 #Librerias externas
-vendor
+vendor/
 #Twig
 app/herramientas
 # Si no enviamos vendor, entonces no necesitamos este
