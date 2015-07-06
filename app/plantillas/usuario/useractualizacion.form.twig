@@ -1,18 +1,18 @@
-<form class="form-horizontal" id="userModForm" name="userModForm" role="form" action="/actualizacion/cambio" method="POST">
+<form class="form-horizontal" id="actualizacionDatos" name="actualizacionDatos" role="form" action="/actualizacion/cambio" method="POST">
         <legend>Datos Generales para actualizar</legend>
         <div class="form-group">
-            <label for="nombre" class="col-md-12 text-left">Completar los siguientes datos según aparezca en su DUI o documento</label>
+            <label class="col-md-12 text-left">Completar los siguientes datos según aparezca en su DUI o documento</label>
         </div>
         <div class="form-group">
             <label for="nombre" class="col-md-3 text-left">Nombres</label>
             <div class="col-xs-9">
-                <input type="text" class="form-control input-sm" id="nombre" name="nombre" required autofocus placeholder="Nombre" autocomplete="off" value="{{datos.nameuser}}">
+                <input type="text" class="form-control input-sm" id="nombre" name="nombre" autofocus placeholder="Nombre" autocomplete="off" value="{{datos.nameuser}}">
             </div>
         </div>
         <div class="form-group">
             <label for="apellido" class="col-md-3 text-left">Apellidos</label>
             <div class="col-xs-9">
-                <input type="text" class="form-control input-sm" id="apellido" name="apellido" required placeholder="Apellido" autocomplete="off" value="{{datos.apelluser}}">
+                <input type="text" class="form-control input-sm" id="apellido" name="apellido" placeholder="Apellido" autocomplete="off" value="{{datos.apelluser}}">
             </div>
         </div>
         
@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="nombre" class="col-md-12 text-left">Completar los siguientes datos según los datos de su contrato</label>
+            <label class="col-md-12 text-left">Completar los siguientes datos según los datos de su contrato</label>
         </div>
         <div class="form-group">
             <label for="st" class="col-md-3 text-left">Nivel</label>
@@ -71,7 +71,7 @@
         
         <legend>Recuperación de contraseña</legend>
         <div class="form-group">
-            <label for="nombre" class="col-md-12 text-left">Para facilitar el proceso de recuperación de contraseña, el técnico de nivel superior ha de preguntarle los siguientes datos</label>
+            <label class="col-md-12 text-left">Para facilitar el proceso de recuperación de contraseña, el técnico de nivel superior ha de preguntarle los siguientes datos</label>
         </div>
         <div class="form-group">
             <label for="pregunta" class="col-md-3 text-left">Pregunta secreta</label>
@@ -80,13 +80,13 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="pregunta" class="col-md-3 text-left">Respuesta</label>
+            <label for="respuesta" class="col-md-3 text-left">Respuesta</label>
             <div class="col-xs-9">
                 <input type="text" class="form-control input-sm" id="respuesta" name="respuesta" placeholder="Respuesta a pregunta secreta" autocomplete="off" value="">
             </div>
         </div>
         <div class="form-group text-center">
-            <button class="btn btn-md btn-primary" id="enviar" tabindex="1" role="button">Actualizar Datos</button> 
+            <input type="submit" class="btn btn-md btn-primary" id="enviar" tabindex="1" role="button" value="Actualizar Datos">
             <button class="btn btn-md btn-default" id="reset" tabindex="1" role="reset">Cancelar</button> 
         </div>
 </form>

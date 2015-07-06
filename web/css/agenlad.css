@@ -1,0 +1,55 @@
+/* Tomado del Jumbotron.css original para correcto funcionamiento de esto */
+body {
+  padding-top: 50px;
+  padding-bottom: 20px;
+}
+
+.form-horizontal {
+  padding-top: 15px;
+}
+
+.valid {
+  background:url(/resources/accept.png) no-repeat 0 50%;
+  padding-left:22px;
+  line-height:24px;
+  color:#3a7d34;
+}
+
+.valid:first-child {
+  padding-left:22px;
+  line-height:24px;
+}
+
+.invalid {
+  background:url(/resources/cross.png) no-repeat 0 50%;
+  padding-left:22px;
+  line-height:24px;
+  color:#ec3f41;
+}
+
+.invalid:first-child {
+  padding-left:22px;
+  line-height:24px;
+}
+
+select.error,input.error {
+  background:url(../resources/cross.png) no-repeat 0 50%;
+  background-position: 3px;
+  padding-left:22px;
+  line-height:24px;
+  color:#ec3f41;
+}
+
+label.error{
+  background-position: 3px;
+  padding-left:22px;
+  line-height:24px;
+  color:#ec3f41;
+}
+
+.alert{
+    padding: 8px;
+    margin-bottom: 2px;
+    font-size: 13px
+}
+

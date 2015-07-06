@@ -3,8 +3,9 @@
  * Esta es la forma en que iniciamos el framework. 
  * Parece estar bajo el patrón Singleton, por lo que esta es la variable que ha de comunicar a todos
  */
-$index = require(__DIR__ . '/../vendor/bcosca/fatfree/lib/base.php');
 include_once '../vendor/autoload.php';
+
+$index = \Base::instance();
 
 /**
  * Leemos el fichero de configuración y configuramos las variables para todo el proyecto
@@ -28,33 +29,11 @@ $index->set('twig',
     ))
 );
 
-//$index->set('ONERROR',
-//    function($f3) {
-//        // custom error handler code goes here
-//        // use this if you want to display errors in a
-//        // format consistent with your site's theme        
-//        while (ob_get_level()){
-//          ob_end_clean();
-//        }
-//        $twig = $f3->get('twig');
-//        $parametros = array(
-//            'status' => $f3->get('ERROR.status'),
-//            'title'=>$f3->get('ERROR.title'),
-//            'text'=>$f3->get('ERROR.text'),
-//                
-//        );
-//        if ($f3->get('DEBUG') == 3){
-//            $parametros['trace'] = $f3->get('ERROR.trace');
-//        }
-//        echo $twig->render('error.html.twig', $parametros);
-//    }
-//);
-
 /**
  * Esta función Twig permite usar archivos estáticos desde una ubicación fija
  */
 $function = new Twig_SimpleFunction('activos', function ($activos) {
-    return '/ui/' . $activos;
+    return '/' . $activos;
 });
 $twig->addFunction($function);
 $twig->addExtension(new Twig_Extension_Debug());
@@ -69,7 +48,7 @@ $dbserver = $index->get('dbserver');
 $dbusuario = $index->get('dbusuario');
 $dbpassword = $index->get('dbpassword');
 $dsn = "mysql:host=$dbserver;port=3306;dbname=$dbbase";
-$index->set('dbconexion',new DB\SQL($dsn, $dbusuario, $dbpassword));
+$index->set('dbconexion',new \DB\SQL($dsn, $dbusuario, $dbpassword));
 
 /**
  * Configuramos las rutas
