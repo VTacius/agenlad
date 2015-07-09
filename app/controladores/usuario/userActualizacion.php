@@ -8,9 +8,77 @@ class userActualizacion extends \controladores\usuario\usermodControl {
         $this->error = array();
         $this->mensaje = array();
     }
+    
+    public function pruebas(){
+        $jvs = "";
+        //$jvs = "123456";
+        $usuario = "alortiz";
+        $pregunta = "¿Esta es mi pregunta?";
+        $respuesta = "Definitivamente, esta es mi respuesta";
+        if (empty($jvs)){
+            $sentencia = array(
+                'update' => 'update datos_administrativos set pregunta=:pregunta, respuesta=:respuesta where usuario=:usuario',
+                'insert' => 'insert into datos_administrativos(usuario, pregunta, respuesta) values(:usuario, :pregunta, :respuesta)',
+                'valores' => array(':pregunta'=>$pregunta, 'respuesta'=>$respuesta, ':usuario'=> $usuario)
+            );
+        }else{
+            $sentencia = array(
+                'update' => 'update datos_administrativos set pregunta=:pregunta, respuesta=:respuesta, jvs=:jvs where usuario=:usuario',
+                'insert' => 'insert into datos_administrativos(usuario, pregunta, respuesta, jvs) values(:usuario, :pregunta, :respuesta, :jvs)',
+                'valores' => array(':usuario'=> $usuario, ':pregunta'=>$pregunta, 'respuesta'=>$respuesta, ':jvs'=>$jvs)
+            );
+        }
+        try{
+            $base = $this->index->get('dbconexion');
+            $entrada = $base->exec('select usuario, pregunta, respuesta, jvs from datos_administrativos where usuario=:usuario', array(':usuario' => $usuario));
+            print "Estos son los datos";
+            print_r($entrada);
+            if (count($entrada) > 0){
+                $entrada = $base->exec($sentencia['update'], $sentencia['valores']);
+                print $entrada;
+            }else{
+                $entrada = $base->exec($sentencia['insert'], $sentencia['valores']);
+                print $entrada;
+            }
+        }catch (\PDOException $e){
+            // Lo pones en el mensaje de error a enviar al servidor
+            print $e->getMessage();
+        }
+    }
+    
+    public function actualizarDatosAdministrativos($usuario, $pregunta, $respuesta, $jvs){
+        if (empty($jvs)){
+            $sentencia = array(
+                'update' => 'update datos_administrativos set pregunta=:pregunta, respuesta=:respuesta where usuario=:usuario',
+                'insert' => 'insert into datos_administrativos(usuario, pregunta, respuesta) values(:usuario, :pregunta, :respuesta)',
+                'valores' => array(':pregunta'=>$pregunta, 'respuesta'=>$respuesta, ':usuario'=> $usuario)
+            );
+        }else{
+            $sentencia = array(
+                'update' => 'update datos_administrativos set pregunta=:pregunta, respuesta=:respuesta, jvs=:jvs where usuario=:usuario',
+                'insert' => 'insert into datos_administrativos(usuario, pregunta, respuesta, jvs) values(:usuario, :pregunta, :respuesta, :jvs)',
+                'valores' => array(':usuario'=> $usuario, ':pregunta'=>$pregunta, 'respuesta'=>$respuesta, ':jvs'=>$jvs)
+            );
+        }
+        $entrada = $this->obtenerDatosAdministrativos($usuario);
+        try{
+            $base = $this->index->get('dbconexion');
+            if (count($entrada) > 0){
+                $entrada = $base->exec($sentencia['update'], $sentencia['valores']);
+                $this->mensaje[] = array("codigo" => "success", 'mensaje' => "Actualizados los datos administrativos para usuario " .  $usuario);
+            }else{
+                $entrada = $base->exec($sentencia['insert'], $sentencia['valores']);
+                $this->mensaje[] = array("codigo" => "success", 'mensaje' => "Agregados los datos administrativos para usuario " .  $usuario);
+            }
+        }catch (\PDOException $e){
+            // Lo pones en el mensaje de error a enviar al servidor
+            $this->mensaje[] = array("codigo" => "danger", 'mensaje' => 'Error agregando datos administrativos. Revise los mensajes asociados');
+            // $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: " . $e->getMessage() );
+            $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: ");
+        }
+    }
 
-    public function actualizacionCambio(){
-        $this->comprobar($this->pagina); 
+    public function actualizacionCambio(){ $this->comprobar($this->pagina); 
         $usuarioAttr = array(
             'usuarioCargo' => $this->index->get('POST.title'),
             'usuarioPhone' => $this->index->get('POST.telephoneNumber'),
@@ -22,20 +90,25 @@ class userActualizacion extends \controladores\usuario\usermodControl {
             'usuarioLocalidad' => $this->index->get('POST.o'),
             'usuarioNivel' => $this->index->get('POST.st')
         );
+
+        $pregunta = $this->index->get('POST.pregunta');
+        $respuesta = $this->index->get('POST.respuesta');
+        $jvs = $this->index->get('POST.jvs');
+
         // Añadimos una marca para saber que este usuario es bastante más personas de lo que pudiéramos suponer
         $usuarioAttr['usuarioDescripcion'] = "USERMODWEB";
 
-
         // Operaciones para samba
         $usuario = new \Modelos\userSamba($this->dn, $this->pswd);
-        // Modificamos los atributos del usuario
         $this->modificarAttrUsuario($usuario, $usuarioAttr);
 
         // Operaciones para correo
         $correo = $usuario->getMail();
-        
         $this->modificarUsuarioZimbra($correo, $usuarioAttr);
-       
+        
+        //Operaciones para distintos datos administrativos que meteremos en una base de datos, espero que a alguien le importen 
+        $this->actualizarDatosAdministrativos($usuarioAttr['usuarioModificar'], $pregunta, $respuesta, $jvs);
+
         $resultado = array(
             'mensaje' => $this->mensaje,
             'error' => $this->error

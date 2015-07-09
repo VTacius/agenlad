@@ -15,14 +15,24 @@
         
         <legend>Atributos administrativos</legend>
         <div class="form-group">
+            <label for="st" class="col-md-3 text-left">Tipo de Establecimiento</label>
+            <div class="col-xs-9">
+                <select class="form-control input-sm col-xs-12" id="st" name="st">
+                    <option value="" disabled selected>Escoja tipo de establecimiento</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
             <label for="o" class="col-md-3 text-left">Establecimiento</label>
             <div class="col-xs-9">
-                <input type="text" class="form-control input-sm" id="o" name="o" placeholder="Localidad" autocomplete="off" value="{{datos.nameuser}}">
+                <select class="form-control input-sm col-xs-12" id="o" name="o">
+                    <option selected disabled> Escoja el tipo de establecimiento antes</option>
+                </select>
             </div>
         </div>
         <div class="form-group">
             <label for="ou" class="col-md-3 text-left">Oficina</label>
-            <div class="col-xs-9">
+            <div class="col-xs-9" id="div_ou" name="div_ou">
                 <input type="text" class="form-control input-sm" id="ou" name="ou" placeholder="Oficina" autocomplete="off" value="{{datos.nameuser}}">
             </div>
         </div>

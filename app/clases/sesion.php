@@ -24,8 +24,15 @@ abstract class sesion {
      */
     public function __construct(){
         $this->index = \Base::instance();
-        $db = $this->index->get('dbconexion');
-        $sesion = new \DB\SQL\Session($db);
+        try{
+            $db = $this->index->get('dbconexion');
+            if ($db === null){
+                throw new \Exception('Error en la conexión a base de datos');
+            }
+            $sesion = new \DB\SQL\Session($db);
+        }catch (\Exception $e){
+            $this->index->reroute('@login_mensaje(@mensaje=Error general de la aplicación)');
+        }
         // El que descienda de acá, usará twig
         $this->twig = $this->index->get('twig');
         // Traemos las variables de sesión necesarias
@@ -33,15 +40,11 @@ abstract class sesion {
         $this->dn = $this->index->get('SESSION.dn');
         $this->pswd = $this->index->get('SESSION.pswd');
         // Solo los necesitamos para crear inicializar el array parametros
-        $rol = $this->index->get('SESSION.rol');
-        $user = $this->index->get('SESSION.user');
-        $titulo = $this->index->get('SESSION.titulo');
-        $permiso = $this->index->get('SESSION.permisos');
         $this->parametros = array(
-            'rol' => $rol,
-            'menu' => $permiso,
-            'titulo'=> $titulo,
-            'usuario' =>  $user
+            'rol' => $this->index->get('SESSION.rol'),
+            'menu' => $this->index->get('SESSION.permisos'),
+            'titulo'=> $this->index->get('SESSION.titulo'),
+            'usuario' => $this->index->get('SESSION.user')
         );
     }
     
@@ -155,7 +158,8 @@ abstract class sesion {
         $base = $this->index->get('dbconexion');
         $usuario = empty($usuario) ? $this->index->get('SESSION.user') : $usuario;
         
-        $cmds = "select titulo, user.rol, permisos, credenciales.firmas, credenciales.firmaz, user.dominio
+        $cmds = "
+        select titulo, user.rol, permisos, credenciales.firmas, credenciales.firmaz, user.dominio
         from user join rol on user.rol=rol.rol join credenciales on user.dominio=credenciales.dominio  where user=:user";
         $args = array('user'=>$usuario);
         $resultado = $base->exec($cmds, $args);

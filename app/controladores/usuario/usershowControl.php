@@ -75,7 +75,32 @@ class usershowControl extends \clases\sesion {
         $this->datos['phone'] = $usuario->getTelephoneNumber();
         $this->datos['psswduser'] = $usuario->getuserPassword();
         $this->datos['localidad'] = $usuario->getO();
+        // Agregados a posteridad, y pensaba incluso en agregarlos en otro grupo
+        $datos = $this->obtenerDatosAdministrativos($usuario->getUid());
+        $this->datos['pregunta'] = count($datos)>0 ? $datos[0]['pregunta'] : '{empty}';
+        $this->datos['respuesta'] = count($datos)>0 ? $datos[0]['respuesta'] : '{empty}';
+        $this->datos['jvs'] = count($datos)>0 ? $datos[0]['jvs'] : '{empty}';
+
+        $this->datos['localidad'] = $usuario->getO();
         return array('correo'=>$correo, 'grupo'=>$group);
+    }
+    
+    /**
+     * Devuelve los datos administrativos del usuario
+     * @param string $usuario
+     * @return array
+     */
+    protected function obtenerDatosAdministrativos($usuario){
+        try{
+            $base = $this->index->get('dbconexion');
+            $entrada = $base->exec('select usuario, pregunta, respuesta, jvs from datos_administrativos where usuario=:usuario', array(':usuario' => $usuario));
+            return $entrada;
+        }catch (\PDOException $e){
+            // Lo pones en el mensaje de error a enviar al servidor
+            $this->mensaje[] = array("codigo" => "danger", 'mensaje' => 'Error agregando datos administrativos. Revise los mensajes asociados');
+            // $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: " . $e->getMessage() );
+            $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: ");
+        }
     }
     
     /**

@@ -32,10 +32,21 @@ $index->set('twig',
 /**
  * Esta función Twig permite usar archivos estáticos desde una ubicación fija
  */
-$function = new Twig_SimpleFunction('activos', function ($activos) {
+$activos = new Twig_SimpleFunction('activos', function ($activos) {
     return '/' . $activos;
 });
-$twig->addFunction($function);
+
+
+$emptiador = new Twig_SimpleFilter('emptiador', function ($valor) {
+    return ($valor === "{empty}") ? "" : $valor ;
+});
+
+$twig->addFunction($activos);
+$twig->addFilter($emptiador);
+
+/**
+ * Agregamos la extensión debug para twig, pero en producción sería recomendable quitarla porque no se supone que la uses
+ */
 $twig->addExtension(new Twig_Extension_Debug());
 
 /**
@@ -48,7 +59,12 @@ $dbserver = $index->get('dbserver');
 $dbusuario = $index->get('dbusuario');
 $dbpassword = $index->get('dbpassword');
 $dsn = "mysql:host=$dbserver;port=3306;dbname=$dbbase";
-$index->set('dbconexion',new \DB\SQL($dsn, $dbusuario, $dbpassword));
+// Que pena que esto no tuviera un try como debiera ser, siendo que ejecuta el constructor en este lugar sin más
+try{
+    $index->set('dbconexion',new \DB\SQL($dsn, $dbusuario, $dbpassword, array( \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION , \PDO::ATTR_TIMEOUT => 5)));
+}catch (\PDOException $e){
+    $e->getMessage();
+}
 
 /**
  * Configuramos las rutas
@@ -114,6 +130,8 @@ $index->route('GET|POST @prueba_useradd: /pruebas/busqueda/@term',
         'controladores\pruebaControl->busqueda');
 $index->route('GET|POST @prueba_getdatos: /pruebas/getdatos', 
         'Pruebas\getdatos->display');
+$index->route('GET|POST @prueba_userupdate: /pruebas/userupdate', 
+        'controladores\usuario\userActualizacion->pruebas');
 // Rutas para configuracion de dominios
 $index->route('GET|POST @conf_dominios: /confdominios', 
         'controladores\configuracion\dominioControl->display');

@@ -249,10 +249,10 @@ class usermodControl extends \controladores\usuario\usershowControl {
             'usuarioPhone' => $this->index->get('POST.phone'),
             'usuarioGrupo' => $this->index->get('POST.grupouser'),
             'usuarioNombre' => $this->index->get('POST.nameuser'),
-            'usuarioOficina' => $this->index->get('POST.oficina'),
+            'usuarioOficina' => $this->index->get('POST.ou'),
             'usuarioApellido' => $this->index->get('POST.apelluser'),
             'usuarioModificar' => $this->index->get('POST.usermod'),
-            'usuarioLocalidad' => $this->index->get('POST.localidad')
+            'usuarioLocalidad' => $this->index->get('POST.o')
         );
               
         $claves = $this->getClaves();       

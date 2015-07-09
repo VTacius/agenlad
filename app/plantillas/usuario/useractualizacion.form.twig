@@ -1,44 +1,39 @@
 <form class="form-horizontal" id="actualizacionDatos" name="actualizacionDatos" role="form" action="/actualizacion/cambio" method="POST">
         <legend>Datos Generales para actualizar</legend>
         <div class="form-group">
-            <label class="col-md-12 text-left">Completar los siguientes datos según aparezca en su DUI o documento</label>
+            <label class="col-md-12 text-left">Completar los siguientes datos según aparezca en su DUI o documento de identidad</label>
         </div>
         <div class="form-group">
             <label for="nombre" class="col-md-3 text-left">Nombres</label>
             <div class="col-xs-9">
-                <input type="text" class="form-control input-sm" id="nombre" name="nombre" autofocus placeholder="Nombre" autocomplete="off" value="{{datos.nameuser}}">
+                <input type="text" class="form-control input-sm" id="nombre" name="nombre" autofocus placeholder="Nombre" autocomplete="off" value="{{datos.nameuser|emptiador}}">
             </div>
         </div>
         <div class="form-group">
             <label for="apellido" class="col-md-3 text-left">Apellidos</label>
             <div class="col-xs-9">
-                <input type="text" class="form-control input-sm" id="apellido" name="apellido" placeholder="Apellido" autocomplete="off" value="{{datos.apelluser}}">
+                <input type="text" class="form-control input-sm" id="apellido" name="apellido" placeholder="Apellido" autocomplete="off" value="{{datos.apelluser|emptiador}}">
             </div>
         </div>
         
         <legend>Datos administrativos</legend>
         <div class="form-group">
-            <label for="carrera" class="col-md-3 text-left">Carrera</label>
+               <label for="telephoneNumber" class="col-md-3 text-left">¿Posee número de Junta de Vigilancia Sanitaria?</label>
             <div class="col-xs-9">
-                <select class="form-control input-sm col-xs-12" id="carrera" name="carrera">
-                </select>
+            <label>
+                  <input type="checkbox" value="" name='hasJvs' id='hasJvs'>
+            </label>
+                <input type="text" class="form-control input-sm" id="jvs" name="jvs" placeholder="JVS" autocomplete="off" disabled value="{{datos.jvs|emptiador}}" data-rule-required="true" data-rule-digits="true">
             </div>
         </div>
         <div class="form-group">
-            <label class="col-md-12 text-left">Completar los siguientes datos según los datos de su contrato</label>
+            <label class="col-md-12 text-left">Completar los siguientes campos tomando como referencia lo estipulado por su contrato</label>
         </div>
         <div class="form-group">
-            <label for="st" class="col-md-3 text-left">Nivel</label>
+            <label for="st" class="col-md-3 text-left">Tipo de Establecimiento</label>
             <div class="col-xs-9">
                 <select class="form-control input-sm col-xs-12" id="st" name="st">
-                    <option value="" disabled selected>Escoja un Nivel Superior</option>
-                    <option value="CENTRAL">Nivel Central</option>
-                    <option value="DRSZMETRO">Dirección Regional de Salud Metropolitana</option>
-                    <option value="DRSZORIENTE">Dirección Regional de Salud Oriental</option>
-                    <option value="DRSZCENTRAL">Dirección Regional de Salud Central</option>
-                    <option value="DRSZOCCD">Dirección Regional de Salud Occidente</option>
-                    <option value="DRSZPARA">Dirección Regional de Salud Paracentral</option>
-                    <option value="HOSPITAL">Hospitales</option>
+                    <option value="" disabled selected>Escoja tipo de establecimiento</option>
                 </select>
             </div>
         </div>
@@ -46,43 +41,49 @@
             <label for="o" class="col-md-3 text-left">Establecimiento</label>
             <div class="col-xs-9">
                 <select class="form-control input-sm col-xs-12" id="o" name="o">
-                    <option selected disabled> Escoja el Nivel Superior Antes</option>
+                    <option selected disabled> Escoja el tipo de establecimiento antes</option>
                 </select>
             </div>
         </div>
         <div class="form-group">
             <label for="ou" class="col-md-3 text-left">Oficina</label>
             <div class="col-xs-9" id="div_ou" name="div_ou">
-                <input type="text" class="form-control input-sm" id="ou" name="ou" placeholder="Oficina" autocomplete="off" value="{{datos.oficina}}">
+                <input type="text" class="form-control input-sm" id="ou" name="ou" placeholder="Oficina" autocomplete="off" value="{{datos.oficina|emptiador}}">
             </div>
         </div>
         <div class="form-group">
             <label for="title" class="col-md-3 text-left">Cargo</label>
             <div class="col-xs-9">
-                <input type="text" class="form-control input-sm" id="title" name="title" placeholder="Cargo" autocomplete="off" value="{{datos.cargo}}">
+                <input type="text" class="form-control input-sm" id="title" name="title" placeholder="Cargo" autocomplete="off" value="{{datos.cargo|emptiador}}">
             </div>
         </div>
         <div class="form-group">
             <label for="telephoneNumber" class="col-md-3 text-left">Telefono</label>
             <div class="col-xs-9">
-                <input type="text" class="form-control input-sm" id="telephoneNumber" name="telephoneNumber" placeholder="Telefono" autocomplete="off" value="{{datos.phone}}">
+                <input type="text" class="form-control input-sm" id="telephoneNumber" name="telephoneNumber" placeholder="Telefono" autocomplete="off" value="{{datos.phone|emptiador}}">
             </div>
         </div>
         
         <legend>Recuperación de contraseña</legend>
         <div class="form-group">
-            <label class="col-md-12 text-left">Para facilitar el proceso de recuperación de contraseña, el técnico de nivel superior ha de preguntarle los siguientes datos</label>
+            <label class="col-md-12 text-left">Para facilitar el proceso de recuperación de contraseña, el técnico de nivel superior ha de solicitarle los siguientes datos</label>
         </div>
         <div class="form-group">
             <label for="pregunta" class="col-md-3 text-left">Pregunta secreta</label>
             <div class="col-xs-9">
-                <input type="text" class="form-control input-sm" id="pregunta" name="pregunta" placeholder="Pregunta secreta" autocomplete="off" value="">
+                <input type="text" class="form-control input-sm" id="pregunta" name="pregunta" placeholder="Pregunta secreta" autocomplete="off" value="{{datos.pregunta|emptiador}}">
             </div>
         </div>
         <div class="form-group">
             <label for="respuesta" class="col-md-3 text-left">Respuesta</label>
             <div class="col-xs-9">
-                <input type="text" class="form-control input-sm" id="respuesta" name="respuesta" placeholder="Respuesta a pregunta secreta" autocomplete="off" value="">
+                <input type="text" class="form-control input-sm" id="respuesta" name="respuesta" placeholder="Respuesta a pregunta secreta" autocomplete="off" value="{{datos.respuesta|emptiador}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="fecha" class="col-md-3 text-left">Fecha de nacimiento</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="fecha" name="fecha" placeholder="Fecha de nacimiento" autocomplete="off" value="{{datos.fecha|emptiador}}">
             </div>
         </div>
         <div class="form-group text-center">

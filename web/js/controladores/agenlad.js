@@ -23,9 +23,11 @@
          */
         function errorOnResponse(data){
             console.log(data);
-            console.log("La aplicacion ha fallado");
-            $("#error").text("La aplicación ha fallado. Consulte con su técnico asociado");
-        }
+            contenido = '<strong>Fallo en la aplicacion:</strong> La aplicación presenta un problema muy grave, del que es posible que usted no sea responsable. Contacte con un informático sobre este problema<br>';        
+            respuesta = '<div class="alert alert-danger alert-dismissible" role="alert"> <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>'+ contenido + '</div>'
+            $("#error").show();
+            $("#error").html(respuesta);
+        };
 
 function mostrarErrorConexion(data){
     var errores = ['errorLdap', 'errorGrupo', 'errorZimbra', 'mensajes'];

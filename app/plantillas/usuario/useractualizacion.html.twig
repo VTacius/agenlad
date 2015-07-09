@@ -1,7 +1,9 @@
 {% extends "base/layout.html.twig" %}
 {% block titulo -%}Actualización de Datos{% endblock %}
 {% block javascript -%}
+    <script src="{{ activos('js/controladores/controlesubicacion.js') }}" type="text/javascript"></script>
     <script src="{{ activos('js/controladores/useractualizacion.js') }}" type="text/javascript"></script>
+    <script src="{{ activos('js/data/datepicker-es.js') }}" type="text/javascript"></script>
 {% endblock %}
 
 {# Configuramos las variables que la plantilla padre usa para formar el menu #}

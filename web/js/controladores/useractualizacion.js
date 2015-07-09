@@ -3,55 +3,41 @@ $(document).ready(function(){
     $.establecimientos = new Object(); 
     $.oficinas = new Object();
     $.carreras = new Object();
+
+    /* Obtenemos datos del usuario y usamos a mostrarDatosUsuarios para colocar estos valores en los controles */
     $.ajax({
-        url: "/js/data/establecimientos.json",
+        url: "/actualizacion/usuario",
         dataType: 'json',
-        success: (function(data){
-            $.establecimientos = data;
-        })
+        success: mostrarDatosUsuario,
     });
-    $.ajax({
-        url: "/js/data/oficinas.json",
-        dataType: 'json',
-        success: (function(data){
-            $.oficinas = data;
-        })
-    });
-    $.ajax({
-        url: "/js/data/carreras.json",
-        dataType: 'json',
-        success: (function(data){
-            $.carreras = data;
-            $.each($.carreras, function(i,e){
-                $('#carrera').append($('<optgroup>', { 
-                    label: e.nombre,
-                    id: i
-                }));
-                $.each(e.lista, function(j,e){
-                    $('#' + i).append($('<option>', { 
-                        value:e,
-                        text: e
-                    }));
-                });
-            });
-        })
-    });
-    $('#carrera').select2();
-    // Empiezo el trabajo con la validación
+
+    /* Inicializo validator, con entre otras cosas, el método que ha de tratar el envío de la información cuando sea verdadero */
     $.validator.setDefaults({
         debug: true,
         submitHandler: envio,
     });
+
+    /*
+     * Creo el control para seleccionar fecha
+     **/
+     $( "#fecha" ).datepicker({
+        changeMonth: true,
+        changeYear: true,
+        maxDate: "+40Y",
+        minDate: "-40Y"
+     });
+
     $.validator.addMethod('regexador', function(valor, elemento, regex){
         return regex.test(valor);
     }, "El contenido no es una cadena válida");
+    
     $("#actualizacionDatos").validate({
         rules: {
             nombre: {
-                regexador: /^(([A-Z][a-záéíóú]+\s?(de\s)*)){2,3}$/
+                regexador: /^(([A-Z][a-záéíóú]+\s?(de\s)*)){1,3}$/
             },
             apellido: {
-                regexador: /^(([A-Z][a-záéíóú]+\s?(de\s)*)){2,3}$/
+                regexador: /^(([A-Z][a-záéíóú]+\s?(de\s)*)){1,3}$/
             },
             carrera: "required",
             st: "required",
@@ -77,54 +63,36 @@ $(document).ready(function(){
         messages: {
             nombre: "Revise la forma de sus nombres",
             apellido: "Revise la forma de sus apellidos ",
-            username: {
-                required: "Please enter a username",
-                minlength: "Your username must consist of at least 2 characters"
-            },
-            password: {
-                required: "Please provide a password",
-                minlength: "Your password must be at least 5 characters long"
-            },
-            confirm_password: {
-                required: "Please provide a password",
-                minlength: "Your password must be at least 5 characters long",
-                equalTo: "Please enter the same password as above"
-            },
-            email: "Please enter a valid email address",
-            agree: "Please accept our policy"
-        }
+        },
 
     });
 
 });
 
-var obtenerDatosUsuario = function(){
-    $.ajax({
-        url: "/actualizacion/usuario",
-        dataType: 'json',
-        success: mostrarDatosUsuario,
-    });
-}
-
+/* Con los datos del usuario, establecemos los controles según los datos válidos que el usuario tenga ya configurados */
 var mostrarDatosUsuario = function(data){
-    $.each($.establecimientos, function(i, e){
-        if($.inArray(data.localidad, e) === -1){
-            console.log("Habrá que actualizar de veras los datos");
-        }else{
-            $("#st [value=" + i + "]").prop("selected", 1);
-            configurarEstablecimiento(i); 
-            $("#o [value='" + data.localidad + "']").prop("selected", 1);
-            configurarOficina(data.localidad);
-            $("#ou [value='" + data.oficina + "']").prop("selected", 1);
-            return true;
-        }
-    });
+    tipo = buscarTipoEstablecimiento(data.localidad);
+    if (!isEmpty(tipo)){
+        $('#st option[value="' + tipo + '"]').attr('selected', true);
+        configurarEstablecimiento(tipo);
+        $('#o option[value="' + data.localidad + '"]').attr('selected', true);
+        configurarOficina(data.localidad);
+        $('#ou option[value="' + data.oficina + '"]').attr('selected', true);
+    }
 };
 
+/* Auxiliar que muestra errores y mensajes gracias a las funciones predichas en agenlad.js */
+var mostrarDatos = function(data){
+    pmostrarError(data);
+    pmostrarMensaje(data);
+};
+
+/* El envío de datos del formulario para su procesamiento y posterior mostraje se realiza 
+ * en este lugar gracias a las funciones que hacemos en agenlad.js
+ **/
 var envio = function(e){
-    //e.preventDefault();
-    //e.stopPropagation();
     datos = recogerDatos();
+    console.log(datos);
     procesarDatos('/actualizacion/cambio', datos, mostrarDatos);
 };
 
@@ -134,72 +102,13 @@ $("#reset").click(function(e){
     console.log("Todavía hay trabajo que hacer por acá");
 });
 
-/**
-var configurarEstablecimiento = function(valor){
-    establecimientos = $.establecimientos[valor];
-    $("#o option").remove();
-    $("#o").append("<option selected disabled>Escoja el Establecimiento</option>");
-    $.each(establecimientos, function(index, value){
-        $('#o').append($('<option>', { 
-            value: value,
-            text : value
-        }));
-    });
-}
-*/
 
-var configurarEstablecimiento = function(valor){
-    establecimientos = $.establecimientos[valor];
-    $("#o optgroup").remove();
-    $.each(establecimientos, function(i, e){
-        $("#o").append($('<optgroup>', {
-            label: i,
-        }));
-        $.each(e, function(j,k){
-            $("[label='" + i + "']").append($('<option>', {
-                value: k,
-                text: k
-            }));
-        });
-    });
-    $('#o').select2();
-}
-var configurarOficina = function(valor){
-    oficinas = $.oficinas[valor];
-    if(typeof oficinas === 'undefined') {
-        $("#div_ou #ou").each(function(i,e){
-            e.remove();
-        });
-        $("#div_ou").append('<input type="text" class="form-control input-sm" id="ou" name="ou" placeholder="Oficina" autocomplete="off">');
-    }else {
-        $("#div_ou input").each(function(i,e){
-            e.remove();
-        });
-        $("#div_ou").append('<select class="form-control input-sm col-xs-12" id="ou" name="ou">');
-        $("#ou").append("<option selected disabled>Escoja oficina</option>");
-        $.each(oficinas, function(index, value){
-            $('#ou').append($('<option>', { 
-                value: value,
-                text : value
-            }));
-        });
+
+$('#hasJvs').change(function(e){
+    if ($('#hasJvs').is(':checked')){
+        $('#jvs').attr('disabled', false); 
+    }else{
+        $('#jvs').attr('disabled', true); 
     }
-}
-
-$('#st').change(function(e){
-    valor = $('#st').val();
-    configurarEstablecimiento(valor); 
 });
 
-$('#o').change(function(e){
-    valor = $('#o').val();
-    configurarOficina(valor); 
-});
-
-
-var mostrarDatos = function(data){
-    console.log("Al menos estoy llegando?");
-    console.log(data);
-    pmostrarError(data);
-    pmostrarMensaje(data);
-};

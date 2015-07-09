@@ -23,9 +23,9 @@ $("#enviar").click(function(e){
  * @returns {undefined}
  */
 function llenarControl(datos, objeto) {
+    console.log(datos[objeto] );
     if (datos[objeto] === "{empty}") {
-        $("#" + objeto).hide();
-        $("dd#" + objeto).text("");
+        $("dd#" + objeto).text("-");
     }else{
         $("#" + objeto).show();
         $("dd#" + objeto).text(datos[objeto]);
@@ -36,8 +36,6 @@ function llenarControlUbicacion(datos){
     llenarControl(datos.localidad);
     llenarControl(datos.oficina);
     if (datos.localidad === "{empty}" && datos.oficina === "{empty}") {
-        console.log(datos.oficina);
-        console.log(datos.localidad);
         $("*#ubicacion").hide();
         $("b#oficina").text("");
         $("b#localidad").text("");
@@ -82,7 +80,7 @@ var mostrarDatos = function(data){
     pmostrarMensaje(data);
     
     // Llenamos los datos
-    elementos = ["psswduser", "nombrecompleto","psswduser","grupouser","mailuser","buzonstatus","cuentastatus"];
+    elementos = ["psswduser", "nombrecompleto","psswduser","grupouser","mailuser","buzonstatus","cuentastatus", 'pregunta', 'respuesta'];
     $(elementos).each(function(i, e){
         llenarControl(data.datos, e);
     });
@@ -127,10 +125,10 @@ var elementoAttr = function(attr){
 var mostrar = function(result){
     pmostrarError(result);
     pmostrarMensaje(result);
-    $("#respuesta tr").remove();
+    $("#usuarioslst tr").remove();
     $(result.datos).each(
         function(item, elemento){
-            $("#respuesta").append("<tr>" + elementoAttr(elemento.cn) +  elementoAttr(elemento.mail) + elementoAttr(elemento.title) + acciones(elemento.mail) + "</tr>");
+            $("#usuarioslst").append("<tr>" + elementoAttr(elemento.cn) +  elementoAttr(elemento.mail) + elementoAttr(elemento.title) + acciones(elemento.mail) + "</tr>");
         });
 };
 

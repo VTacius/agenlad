@@ -45,9 +45,15 @@
         <dt id="nombrecompleto">Nombre de usuario:</dt>
             <dd id="nombrecompleto">{{datos.nombrecompleto}}</dd>
         <dt id="ubicacion">Localidad:</dt>
-            <dd id="ubicacion"><b id="oficina">{{datos.oficina}}</b> en <b id="localidad">{{datos.localidad}}</b></dd>
+            <dd id="ubicacion"><b id="oficina">{{datos.oficina|emptiador}}</b> en <b id="localidad">{{datos.localidad|emptiador}}</b></dd>
         <dt id="grupouser">Grupo Principal:</dt>
             <dd id="grupouser">{{datos.grupouser}}</dd>
+        {% if rol == "admon" or rol == 'admin_general' %}
+            <dt id="cuentastatus">Pregunta Secreta:</dt>
+                <dd id="pregunta">{{datos.pregunta}}</dd>
+            <dt id="buzonstatus">Respuesta:</dt>
+                <dd id="respuesta">{{datos.respuesta}}</dd>
+        {% endif %}
     </dl>
     <dl class="dl-horizontal" id="respuestaMail">
         <dt id="mailuser">Correo</dt>
@@ -70,7 +76,7 @@
                 <th>Nombre</th><th>Usuario Samba</th><th>Mail</th><th>Acciones</th>
             </tr>
         </thead>
-        <tbody id=respuesta>
+        <tbody id=usuarioslst>
         </tbody>
     </table>
 {% endblock %}
