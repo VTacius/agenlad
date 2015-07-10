@@ -79,6 +79,15 @@ class usershowControl extends \clases\sesion {
         $datos = $this->obtenerDatosAdministrativos($usuario->getUid());
         $this->datos['pregunta'] = count($datos)>0 ? $datos[0]['pregunta'] : '{empty}';
         $this->datos['respuesta'] = count($datos)>0 ? $datos[0]['respuesta'] : '{empty}';
+        // El último agregado en 09/07
+        if (count($datos)>0){
+            $fecha =  is_null($datos[0]['fecha_nacimiento']) ? '1809-12-02' : $datos[0]['fecha_nacimiento'];
+        }else{
+            $fecha = '1809-12-02';
+        }
+        $date = \DateTime::createFromFormat('Y-d-m', $fecha);
+        $dato_fecha = $date->format('d/m/Y');
+        $this->datos['fecha'] = $dato_fecha;
         $this->datos['jvs'] = count($datos)>0 ? $datos[0]['jvs'] : '{empty}';
 
         $this->datos['localidad'] = $usuario->getO();
@@ -93,7 +102,7 @@ class usershowControl extends \clases\sesion {
     protected function obtenerDatosAdministrativos($usuario){
         try{
             $base = $this->index->get('dbconexion');
-            $entrada = $base->exec('select usuario, pregunta, respuesta, jvs from datos_administrativos where usuario=:usuario', array(':usuario' => $usuario));
+            $entrada = $base->exec('select usuario, pregunta, respuesta,fecha_nacimiento, jvs from datos_administrativos where usuario=:usuario', array(':usuario' => $usuario));
             return $entrada;
         }catch (\PDOException $e){
             // Lo pones en el mensaje de error a enviar al servidor

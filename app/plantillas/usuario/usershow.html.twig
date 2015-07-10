@@ -49,10 +49,12 @@
         <dt id="grupouser">Grupo Principal:</dt>
             <dd id="grupouser">{{datos.grupouser}}</dd>
         {% if rol == "admon" or rol == 'admin_general' %}
-            <dt id="cuentastatus">Pregunta Secreta:</dt>
+            <dt id="pregunta">Pregunta Secreta:</dt>
                 <dd id="pregunta">{{datos.pregunta}}</dd>
-            <dt id="buzonstatus">Respuesta:</dt>
+            <dt id="respuesta">Respuesta:</dt>
                 <dd id="respuesta">{{datos.respuesta}}</dd>
+            <dt id="fecha">Fecha de cumpleaños:</dt>
+                <dd id="fecha">{{datos.fecha}}</dd>
         {% endif %}
     </dl>
     <dl class="dl-horizontal" id="respuestaMail">

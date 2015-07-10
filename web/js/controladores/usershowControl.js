@@ -80,7 +80,7 @@ var mostrarDatos = function(data){
     pmostrarMensaje(data);
     
     // Llenamos los datos
-    elementos = ["psswduser", "nombrecompleto","psswduser","grupouser","mailuser","buzonstatus","cuentastatus", 'pregunta', 'respuesta'];
+    elementos = ["psswduser", "nombrecompleto","psswduser","grupouser","mailuser","buzonstatus","cuentastatus", 'pregunta', 'respuesta', 'fecha'];
     $(elementos).each(function(i, e){
         llenarControl(data.datos, e);
     });

@@ -79,16 +79,20 @@ var configurarOficina = function(valor){
 
 /*
  * Sos tan gracioso al perder una función  
+ * Buscamos el tipo de establecimiento para la localidad que el usuario posee, en caso de hallarse tal cosa
+ * significa que el establecimiento que tiene configurado es válido, podemos configurar los 
+ * controles para tipo, establecimiento y llenar adecuadamente oficinas donde las haya
  **/
 
 var buscarTipoEstablecimiento = function(lugar){
     var tipo;
     $.each($.establecimientos[1], function(i,e){
-        console.log(e);
-        if ($.inArray(lugar, e) === 1){
-            console.log(i);
+        if (!($.inArray(lugar, e) === -1)){
+            tipo = i;
+            return false;
         } 
-    });     
+    });    
+    return tipo; 
 }
 
 /** 

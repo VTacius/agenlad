@@ -1,6 +1,6 @@
 /* Tomado del Jumbotron.css original para correcto funcionamiento de esto */
 body {
-  padding-top: 50px;
+  padding-top: 55px;
   padding-bottom: 20px;
 }
 
@@ -53,3 +53,7 @@ label.error{
     font-size: 13px
 }
 
+#clateral .col-md-8{
+    padding-left: 0px;
+    padding-right: 0px;
+}

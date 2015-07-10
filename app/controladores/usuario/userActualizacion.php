@@ -46,18 +46,21 @@ class userActualizacion extends \controladores\usuario\usermodControl {
         }
     }
     
-    public function actualizarDatosAdministrativos($usuario, $pregunta, $respuesta, $jvs){
+    public function actualizarDatosAdministrativos($usuario, $pregunta, $respuesta, $jvs, $fecha_nacimiento){
+        $fecha = (empty($fecha_nacimiento)) ? '12/02/1809' : $fecha_nacimiento;
+        $date = \DateTime::createFromFormat('d/m/Y', $fecha);
+        $dato_fecha = $date->format('Y/d/m');
         if (empty($jvs)){
             $sentencia = array(
-                'update' => 'update datos_administrativos set pregunta=:pregunta, respuesta=:respuesta where usuario=:usuario',
-                'insert' => 'insert into datos_administrativos(usuario, pregunta, respuesta) values(:usuario, :pregunta, :respuesta)',
-                'valores' => array(':pregunta'=>$pregunta, 'respuesta'=>$respuesta, ':usuario'=> $usuario)
+                'update' => 'update datos_administrativos set pregunta=:pregunta, respuesta=:respuesta, fecha_nacimiento=:fecha_nacimiento where usuario=:usuario',
+                'insert' => 'insert into datos_administrativos(usuario, pregunta, respuesta, fecha_nacimiento) values(:usuario, :pregunta, :respuesta, :fecha_nacimiento)',
+                'valores' => array(':pregunta'=>$pregunta, 'respuesta'=>$respuesta, ':usuario'=> $usuario, ':fecha_nacimiento'=> $dato_fecha)
             );
         }else{
             $sentencia = array(
-                'update' => 'update datos_administrativos set pregunta=:pregunta, respuesta=:respuesta, jvs=:jvs where usuario=:usuario',
-                'insert' => 'insert into datos_administrativos(usuario, pregunta, respuesta, jvs) values(:usuario, :pregunta, :respuesta, :jvs)',
-                'valores' => array(':usuario'=> $usuario, ':pregunta'=>$pregunta, 'respuesta'=>$respuesta, ':jvs'=>$jvs)
+                'update' => 'update datos_administrativos set pregunta=:pregunta, respuesta=:respuesta, fecha_nacimiento=:fecha_nacimiento, jvs=:jvs where usuario=:usuario',
+                'insert' => 'insert into datos_administrativos(usuario, pregunta, respuesta, fecha_nacimiento, jvs) values(:usuario, :pregunta, :respuesta, :fecha_nacimiento, :jvs)',
+                'valores' => array(':usuario'=> $usuario, ':pregunta'=>$pregunta, 'respuesta'=>$respuesta, ':jvs'=>$jvs, ':fecha_nacimiento'=> $dato_fecha)
             );
         }
         $entrada = $this->obtenerDatosAdministrativos($usuario);
@@ -93,6 +96,7 @@ class userActualizacion extends \controladores\usuario\usermodControl {
 
         $pregunta = $this->index->get('POST.pregunta');
         $respuesta = $this->index->get('POST.respuesta');
+        $fecha = $this->index->get('POST.fecha');
         $jvs = $this->index->get('POST.jvs');
 
         // Añadimos una marca para saber que este usuario es bastante más personas de lo que pudiéramos suponer
@@ -107,7 +111,7 @@ class userActualizacion extends \controladores\usuario\usermodControl {
         $this->modificarUsuarioZimbra($correo, $usuarioAttr);
         
         //Operaciones para distintos datos administrativos que meteremos en una base de datos, espero que a alguien le importen 
-        $this->actualizarDatosAdministrativos($usuarioAttr['usuarioModificar'], $pregunta, $respuesta, $jvs);
+        $this->actualizarDatosAdministrativos($usuarioAttr['usuarioModificar'], $pregunta, $respuesta, $jvs, $fecha);
 
         $resultado = array(
             'mensaje' => $this->mensaje,

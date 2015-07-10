@@ -249,7 +249,7 @@ class userPosix extends \Modelos\objectosLdap{
     }
 
     protected function setGecos($gecos) {
-        $this->configurarValor('gecos', $gecos);
+        $this->configurarValor('gecos', \iconv('UTF-8', 'ASCII//TRANSLIT',$gecos));
     }
 
     protected function setGivenName($givenName) {

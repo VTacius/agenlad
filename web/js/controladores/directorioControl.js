@@ -3,7 +3,28 @@ $(document).ready(function(){
     busqueda(filtraje);
     $.directorioControl = new Object();
     $.directorioControl.pulsaciones = 0;
+    
+    $.directorioControl.establecimientos = [];
+    /* Buscare en todos los establecimientos */
+    $.ajax({
+        url: "/js/data/establecimientos.json",
+        dataType: 'json',
+        success: establecimientos 
+    });
 });
+
+/*
+ * Forma una sola lista con los establecimientos, luego configura el elemento #o para que 
+ * lo use en su autocompletado
+ **/
+var establecimientos = function(data){
+    $.each(data[1], function(i,e){
+        $.merge($.directorioControl.establecimientos, e);
+    });
+    $( "#o" ).autocomplete({
+      source: $.directorioControl.establecimientos,
+    });
+};
 
 /**
  * Si presiona enter, en lugar de enviar el formulario, ejecuta la busqueda con lo que tenga
@@ -25,13 +46,13 @@ $("input").keyup(function(e){
     verificaVacio();
     verificaEspacio($("#uid").val());
     if (!( e.which === 0)){
-   	 if ($.directorioControl.pulsaciones  >= 2) {
-   	     var filtraje = filtro();
-   	     busqueda(filtraje);
-   	     $.directorioControl.pulsaciones = 0;
-   	 }else{
-   	     $.directorioControl.pulsaciones++;
-   	 }
+   	    if ($.directorioControl.pulsaciones  >= 2) {
+   	        var filtraje = filtro();
+   	        busqueda(filtraje);
+   	        $.directorioControl.pulsaciones = 0;
+   	    }else{
+   	        $.directorioControl.pulsaciones++;
+   	    }
     }
 });
 
@@ -85,7 +106,6 @@ var filtro = function(){
     var filtro = {
         'o': preFiltro($("#o").val()),
         'ou': preFiltro($("#ou").val()),
-        'uid': preFiltro($("#uid").val())
     };
     return filtro;
 };
@@ -133,3 +153,6 @@ var mostrar = function(result){
         });
 };
 
+$('#o').focus(function(e){
+    console.log($.directorioControl.establecimientos);
+});

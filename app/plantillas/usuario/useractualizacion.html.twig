@@ -11,9 +11,17 @@
 {% set pagina = pagina %}
 
 {% block lateral %}
-    <h3>Actualización de datos</h3>
-    <p>Actualización de datos institucionales<br>
-    Bienvenido <b>{{titulo}} {{usuario}}</b></p>
+        <div class="col-lg-12 col-md-8" >
+            <h3>Actualización de datos personales</h4>
+            <p class="text-justify">Bienvenido <b>{{titulo}} {{usuario}}</b></p>
+            <p class="text-justify">A continuación, se dispone del siguiente formulario para actualizar información que define su relación con el <b>Ministerio de Salud de El Salvador</b>.<br>
+            Si cree que no puede completar sus datos con la información contenida, contácte con la <b>Unidad de Redes y Seguridad Informática</b> del <b>Ministerio de Salud</b> para solventar su inconveniente</br>
+            Siempre puede confirmar la legitimidad de este formulario con su informático más cercano, o directamente con <b>Dirección de Tecnología de Información y Comunicaciones</b> en <b>Ministerio de Salud</b></p>
+        </div>
+        <div class="col-lg-12 col-md-4" >
+            <p class="text-info text-justify small"><b>Este formulario cuenta con el aval del Ministerio de Salud de El Salvador.</b></p>
+            <center><img class="img-thumbnail" src="{{ activos('resources/logo_minsal-200px.png') }}" alt="Logo MINSAL"></center>
+        </div>
 {% endblock %}
 
 {% block contenido -%}

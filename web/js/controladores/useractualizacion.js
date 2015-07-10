@@ -23,8 +23,7 @@ $(document).ready(function(){
      $( "#fecha" ).datepicker({
         changeMonth: true,
         changeYear: true,
-        maxDate: "+40Y",
-        minDate: "-40Y"
+        yearRange: "-100Y:-18Y"
      });
 
     $.validator.addMethod('regexador', function(valor, elemento, regex){
@@ -59,6 +58,9 @@ $(document).ready(function(){
                 required: true,
                 minlength: 5
             },
+            fecha: {
+                regexador: /^((\w+\/*){3}$|$)/
+            }
         },
         messages: {
             nombre: "Revise la forma de sus nombres",
