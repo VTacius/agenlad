@@ -56,7 +56,7 @@ $(document).ready(function(){
             },
             respuesta: {
                 required: true,
-                minlength: 5
+                minlength: 2
             },
             fecha: {
                 regexador: /^((\w+\/*){3}$|$)/

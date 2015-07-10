@@ -12,7 +12,7 @@ tmp
 favicon.ico
 /nbproject/private/
 nbproject/
-web/ui/js/vendor
-web/ui/css/vendor
+web/js/vendor
+web/css/vendor
 #
 *.swp
