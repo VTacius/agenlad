@@ -6,16 +6,21 @@
     <div class="form-group">
         <label for="nombre" class="col-md-3 text-left">Nombres</label>
         <div class="col-xs-9">
-            <input type="text" class="form-control input-sm" id="nombre" name="nombre" autofocus placeholder="Nombre" autocomplete="off" value="{{datos.nameuser|emptiador}}">
+            <input type="text" class="form-control input-sm" id="nombre" name="nombre" placeholder="Nombre" autofocus autocomplete="off" value="{{nombre.oficina|emptiador}}" data-rule-required="true" data-rule-nombre="true">
         </div>
     </div>
     <div class="form-group">
         <label for="apellido" class="col-md-3 text-left">Apellidos</label>
         <div class="col-xs-9">
-            <input type="text" class="form-control input-sm" id="apellido" name="apellido" placeholder="Apellido" autocomplete="off" value="{{datos.apelluser|emptiador}}">
+            <input type="text" class="form-control input-sm" id="apellido" name="apellido" placeholder="Apellido" autocomplete="off" value="{{datos.apellido|emptiador}}" data-rule-required="true" data-rule-nombre="true">
         </div>
     </div>
-    
+    <div class="form-group">
+        <label for="nit" class="col-md-3 text-left">NIT</label>
+        <div class="col-xs-9">
+            <input type="text" class="form-control input-sm" id="nit" name="nit" autocomplete="off" value="{{datos.nit|emptiador}}" data-rule-required="true" data-mask="0000-000000-000-0" placeholder="____-______-___-_">
+        </div>
+    </div>
     <legend>Datos administrativos</legend>
     <div class="form-group">
            <label for="jvs" class="col-md-3 text-left">¿Posee número de Junta de Vigilancia Sanitaria?</label>
@@ -30,37 +35,29 @@
         <label class="col-md-12 text-left">Completar los siguientes campos tomando como referencia lo estipulado por su contrato</label>
     </div>
     <div class="form-group">
-        <label for="st" class="col-md-3 text-left">Tipo de Establecimiento</label>
-        <div class="col-xs-9">
-            <select class="form-control input-sm col-xs-12" id="st" name="st">
-                <option value="" disabled selected>Escoja tipo de establecimiento</option>
-            </select>
-        </div>
-    </div>
-    <div class="form-group">
         <label for="o" class="col-md-3 text-left">Establecimiento</label>
-        <div class="col-xs-9">
-            <select class="form-control input-sm col-xs-12" id="o" name="o">
-                <option selected disabled> Escoja el tipo de establecimiento antes</option>
+        <div class="col-xs-9" id="remote">
+            <select class="form-control input-sm col-xs-12" id="o" name="o" data-rule-required="true" >
+              <option></option>
             </select>
         </div>
     </div>
     <div class="form-group">
         <label for="ou" class="col-md-3 text-left">Oficina</label>
         <div class="col-xs-9" id="div_ou" name="div_ou">
-            <input type="text" class="form-control input-sm" id="ou" name="ou" placeholder="Oficina" autocomplete="off" value="{{datos.oficina|emptiador}}">
+            <input type="text" class="form-control input-sm" id="ou" name="ou" placeholder="Oficina" autocomplete="off" value="{{datos.oficina|emptiador}}" data-rule-required="true">
         </div>
     </div>
     <div class="form-group">
         <label for="title" class="col-md-3 text-left">Cargo</label>
         <div class="col-xs-9">
-            <input type="text" class="form-control input-sm" id="title" name="title" placeholder="Cargo" autocomplete="off" value="{{datos.cargo|emptiador}}">
+            <input type="text" class="form-control input-sm" id="title" name="title" placeholder="Cargo" autocomplete="off" value="{{datos.cargo|emptiador}}" data-rule-required="true">
         </div>
     </div>
     <div class="form-group">
         <label for="telephoneNumber" class="col-md-3 text-left">Teléfono</label>
         <div class="col-xs-9">
-            <input type="text" class="form-control input-sm" id="telephoneNumber" name="telephoneNumber" placeholder="Telefono" autocomplete="off" value="{{datos.phone|emptiador}}">
+            <input type="text" class="form-control input-sm" id="telephoneNumber" name="telephoneNumber" autocomplete="off" value="{{datos.phone|emptiador}}" data-rule-required="true" data-mask="0000-0000" placeholder="____-____">
         </div>
     </div>
     
@@ -71,19 +68,19 @@
     <div class="form-group">
         <label for="pregunta" class="col-md-3 text-left">Pregunta secreta</label>
         <div class="col-xs-9">
-            <input type="text" class="form-control input-sm" id="pregunta" name="pregunta" placeholder="Pregunta secreta" autocomplete="off" value="{{datos.pregunta|emptiador}}">
+            <input type="text" class="form-control input-sm" id="pregunta" name="pregunta" placeholder="Pregunta secreta" autocomplete="off" value="{{datos.pregunta|emptiador}}" data-rule-required="true" data-rule-minlength="6">
         </div>
     </div>
     <div class="form-group">
         <label for="respuesta" class="col-md-3 text-left">Respuesta</label>
         <div class="col-xs-9">
-            <input type="text" class="form-control input-sm" id="respuesta" name="respuesta" placeholder="Respuesta a pregunta secreta" autocomplete="off" value="{{datos.respuesta|emptiador}}">
+            <input type="text" class="form-control input-sm" id="respuesta" name="respuesta" placeholder="Respuesta a pregunta secreta" autocomplete="off" value="{{datos.respuesta|emptiador}}" data-rule-required="true" data-rule-minlength="2">
         </div>
     </div>
     <div class="form-group">
         <label for="fecha" class="col-md-3 text-left">Fecha de nacimiento</label>
         <div class="col-xs-9">
-            <input type="text" class="form-control input-sm" id="fecha" name="fecha" placeholder="Fecha de nacimiento" autocomplete="off" value="{{datos.fecha|emptiador}}">
+            <input type="text" class="form-control input-sm" id="fecha" name="fecha" autocomplete="off" value="{{datos.fecha|emptiador}}" data-rule-required="true" data-rule-fecha="true" data-mask="09/09/0000" placeholder="__/__/____">
         </div>
     </div>
     <div class="form-group text-center">

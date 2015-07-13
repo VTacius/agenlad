@@ -6,8 +6,6 @@
         "ext-mysql": ">=0.1",
         "ext-mcrypt": ">=0",
         "twig/twig": ">=1.16.0",
-        "bcosca/fatfree": ">=3.2.0",
-        "components/bootstrap":">=3.1.0",
-        "components/jqueryui":">=1.11.1"
+        "bcosca/fatfree": ">=3.2.0"
     }
 }

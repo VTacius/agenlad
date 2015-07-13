@@ -45,7 +45,7 @@ class loginControl extends \clases\sesion{
      * @return \DB\SQL
      */
     private function conectarDB(){
-        return $this->index->get('dbconexion');
+        return $this->index->get('dbsession');
     }
     
     /**
@@ -73,7 +73,6 @@ class loginControl extends \clases\sesion{
         $cmds = "select titulo, user.rol, permisos, dominio from user join rol on user.rol=rol.rol where user=:user;";
         $args = array('user'=>$usuario);
         $resultado = $base->exec($cmds, $args);
-        print_r($resultado);
         if ($base->count() == 0){
             $cmds = "select titulo, user.rol, permisos, dominio from user join rol on user.rol=rol.rol where user='usuario';";
             return $base->exec($cmds, $args);
@@ -136,7 +135,7 @@ class loginControl extends \clases\sesion{
      * @param \clases\authentication $login
      */
     protected function sesionar($login){
-        $db = $this->index->get('dbconexion');
+        $db = $this->index->get('dbsession');
         // Señores, he acá donde se inicia la puta sesión
         $sesion = new \DB\SQL\Session($db);
         $this->index->set('SESSION.dn', $login->getDN());
@@ -185,7 +184,7 @@ class loginControl extends \clases\sesion{
      * Acciones para el cierre de sesión
      */
     public function cerrarSesion(){
-        $db = $this->index->get('dbconexion');
+        $db = $this->index->get('dbsession');
         new \DB\SQL\Session($db);
         $this->index->clear('SESSION');
     }

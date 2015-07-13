@@ -49,7 +49,7 @@ class usershowControl extends \clases\sesion {
         $usuario = new \Modelos\userSamba($this->dn, $this->pswd);
         $usuario->setUid($usuarioCliente);
         // TODO: Hay uno bastante parecido en directorioControl
-         // TODO: Una copia descarada en usermodControl
+        // TODO: Una copia descarada en usermodControl
         if ($usuario->getEntrada()['dn'] === "{empty}") {
             // Por las nuevas formas en objetosLdap
             $usuario->setUid('{empty}');
@@ -107,8 +107,8 @@ class usershowControl extends \clases\sesion {
         }catch (\PDOException $e){
             // Lo pones en el mensaje de error a enviar al servidor
             $this->mensaje[] = array("codigo" => "danger", 'mensaje' => 'Error agregando datos administrativos. Revise los mensajes asociados');
-            // $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: " . $e->getMessage() );
-            $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: ");
+            $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: " . $e->getMessage() );
+            //$this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: ");
         }
     }
     

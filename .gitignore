@@ -1,5 +1,7 @@
 #Librerias externas
-vendor/
+vendor/*
+bower_components/*
+web/*/vendor/*
 #Twig
 app/herramientas
 # Si no enviamos vendor, entonces no necesitamos este

@@ -25,13 +25,16 @@ abstract class sesion {
     public function __construct(){
         $this->index = \Base::instance();
         try{
-            $db = $this->index->get('dbconexion');
+            $db = $this->index->get('dbsession');
             if ($db === null){
                 throw new \Exception('Error en la conexión a base de datos');
             }
             $sesion = new \DB\SQL\Session($db);
         }catch (\Exception $e){
-            $this->index->reroute('@login_mensaje(@mensaje=Error general de la aplicación)');
+            print $e->getMessage();
+            //TODO: Implementar esto
+            //$this->index->reroute('@login_mensaje(@mensaje=Error general de la aplicación)');
+            //exit();
         }
         // El que descienda de acá, usará twig
         $this->twig = $this->index->get('twig');
@@ -157,10 +160,9 @@ abstract class sesion {
     protected function getConfiguracionUsuario($usuario=""){
         $base = $this->index->get('dbconexion');
         $usuario = empty($usuario) ? $this->index->get('SESSION.user') : $usuario;
-        
         $cmds = "
-        select titulo, user.rol, permisos, credenciales.firmas, credenciales.firmaz, user.dominio
-        from user join rol on user.rol=rol.rol join credenciales on user.dominio=credenciales.dominio  where user=:user";
+        select titulo, usuario.rol, permisos, credenciales.firmas, credenciales.firmaz, usuario.dominio
+        from usuario join rol on usuario.rol=rol.rol join credenciales on usuario.dominio=credenciales.dominio  where usuario=:user";
         $args = array('user'=>$usuario);
         $resultado = $base->exec($cmds, $args);
         if(count($resultado)>0){

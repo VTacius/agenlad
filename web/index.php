@@ -54,16 +54,23 @@ $twig->addExtension(new Twig_Extension_Debug());
  * Supongo que abrirá una por ¿Cada equipo conectado?
  * En realidad, la suponen de tal forma para manejar sesiones
  */
-$dbbase = $index->get('dbbase');
-$dbserver = $index->get('dbserver');
-$dbusuario = $index->get('dbusuario');
-$dbpassword = $index->get('dbpassword');
-$dsn = "mysql:host=$dbserver;port=3306;dbname=$dbbase";
+$dbbase = $index->get('db_base');
+$dbusuario = $index->get('db_usuario');
+
+$db_s_server = $index->get('db_s_server');
+$db_d_server = $index->get('db_d_server');
+$db_s_password = $index->get('db_s_password');
+$db_d_password = $index->get('db_d_password');
+
+$dsn_sesion = "mysql:host=$db_s_server;port=3306;dbname=$dbbase";
+$dsn_datos = "pgsql:host=$db_d_server;port=5432;dbname=$dbbase";
+
 // Que pena que esto no tuviera un try como debiera ser, siendo que ejecuta el constructor en este lugar sin más
 try{
-    $index->set('dbconexion',new \DB\SQL($dsn, $dbusuario, $dbpassword, array( \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION , \PDO::ATTR_TIMEOUT => 5)));
+    $index->set('dbsession',new \DB\SQL($dsn_sesion, $dbusuario, $db_s_password, array( \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION , \PDO::ATTR_TIMEOUT => 5)));
+    $index->set('dbconexion',new \DB\SQL($dsn_datos, $dbusuario, $db_d_password, array( \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION , \PDO::ATTR_TIMEOUT => 5)));
 }catch (\PDOException $e){
-    $e->getMessage();
+    print $e->getMessage();
 }
 
 /**
@@ -132,6 +139,8 @@ $index->route('GET|POST @prueba_getdatos: /pruebas/getdatos',
         'Pruebas\getdatos->display');
 $index->route('GET|POST @prueba_userupdate: /pruebas/userupdate', 
         'controladores\usuario\userActualizacion->pruebas');
+$index->route('GET|POST @prueba_userupdate: /pruebas/formulario', 
+        'controladores\usuario\userActualizacion->formulario');
 // Rutas para configuracion de dominios
 $index->route('GET|POST @conf_dominios: /confdominios', 
         'controladores\configuracion\dominioControl->display');
@@ -166,9 +175,11 @@ $index->route('GET|POST @usuario_actualizacion: /actualizacion',
         'controladores\usuario\userActualizacion->display');
 $index->route('GET|POST @usuario_actualizacion_cambio: /actualizacion/cambio', 
         'controladores\usuario\userActualizacion->actualizacionCambio');
-    
 $index->route('GET|POST @usuario_actualizacion_cambio: /actualizacion/usuario', 
         'controladores\usuario\userActualizacion->getUsuario');
+// Rutas para obtención de datos
+$index->route('GET|POST @helpers_establecimientos: /helpers/establecimiento', 
+        'controladores\helpers->getEstablecimiento');
 
 // Esta es la forma en que la aplicación empieza
 $index->run();

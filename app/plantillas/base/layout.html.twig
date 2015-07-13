@@ -9,11 +9,7 @@
     <link href="{{ activos('css/vendor/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ activos('css/vendor/jquery-ui.min.css') }}" rel="stylesheet">
     <link href="{{ activos('css/agenlad.css') }}" rel="stylesheet">
-    <script src="{{ activos('js/vendor/jquery.min.js') }}" type="text/javascript"></script>
-    <script src="{{ activos('js/vendor/bootstrap.min.js') }}" type="text/javascript"></script>
-    <script src="{{ activos('js/vendor/jquery.validate.min.js') }}" type="text/javascript"></script>
-    <script src="{{ activos('js/vendor/messages_es.js') }}" type="text/javascript"></script>
-
+    {% block css %} {% endblock %}
   </head>
   <body>
     {% spaceless %}
@@ -66,9 +62,13 @@
     </div>
     {% endspaceless %}
   </body>
-    <script src="{{ activos('js/controladores/agenlad.js') }}" type="text/javascript"></script>
-    {% block css %} {% endblock %}
+    <script src="{{ activos('js/vendor/jquery.min.js') }}" type="text/javascript"></script>
     <script src="{{ activos('js/vendor/jquery-ui.min.js') }}" type="text/javascript"></script>
+    <script src="{{ activos('js/vendor/bootstrap.min.js') }}" type="text/javascript"></script>
+    <script src="{{ activos('js/vendor/jquery.validate.js') }}" type="text/javascript"></script>
+    <script src="{{ activos('js/vendor/messages_es.js') }}" type="text/javascript"></script>
+    <script src="{{ activos('js/vendor/jquery.mask.js') }}" type="text/javascript"></script>
+    <script src="{{ activos('js/controladores/agenlad.js') }}" type="text/javascript"></script>
     {% block javascript %} {% endblock %}
     
 </html>

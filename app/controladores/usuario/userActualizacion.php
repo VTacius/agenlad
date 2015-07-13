@@ -9,41 +9,16 @@ class userActualizacion extends \controladores\usuario\usermodControl {
         $this->mensaje = array();
     }
     
-    public function pruebas(){
-        $jvs = "";
-        //$jvs = "123456";
-        $usuario = "alortiz";
-        $pregunta = "¿Esta es mi pregunta?";
-        $respuesta = "Definitivamente, esta es mi respuesta";
-        if (empty($jvs)){
-            $sentencia = array(
-                'update' => 'update datos_administrativos set pregunta=:pregunta, respuesta=:respuesta where usuario=:usuario',
-                'insert' => 'insert into datos_administrativos(usuario, pregunta, respuesta) values(:usuario, :pregunta, :respuesta)',
-                'valores' => array(':pregunta'=>$pregunta, 'respuesta'=>$respuesta, ':usuario'=> $usuario)
-            );
-        }else{
-            $sentencia = array(
-                'update' => 'update datos_administrativos set pregunta=:pregunta, respuesta=:respuesta, jvs=:jvs where usuario=:usuario',
-                'insert' => 'insert into datos_administrativos(usuario, pregunta, respuesta, jvs) values(:usuario, :pregunta, :respuesta, :jvs)',
-                'valores' => array(':usuario'=> $usuario, ':pregunta'=>$pregunta, 'respuesta'=>$respuesta, ':jvs'=>$jvs)
-            );
-        }
-        try{
-            $base = $this->index->get('dbconexion');
-            $entrada = $base->exec('select usuario, pregunta, respuesta, jvs from datos_administrativos where usuario=:usuario', array(':usuario' => $usuario));
-            print "Estos son los datos";
-            print_r($entrada);
-            if (count($entrada) > 0){
-                $entrada = $base->exec($sentencia['update'], $sentencia['valores']);
-                print $entrada;
-            }else{
-                $entrada = $base->exec($sentencia['insert'], $sentencia['valores']);
-                print $entrada;
-            }
-        }catch (\PDOException $e){
-            // Lo pones en el mensaje de error a enviar al servidor
-            print $e->getMessage();
-        }
+    public function formulario() {
+        $this->comprobar($this->pagina); 
+        // Esto es importante en la vista
+        $this->parametros['pagina'] = $this->pagina;
+        // Empieza el procedimiento
+
+        $this->usuario = $this->index->get('SESSION.user');
+        // El siguiente método llena $this->datos, pero solo devuelve pocos datos
+        $user = $this->usuario($this->usuario);
+        echo $this->twig->render('usuario/usupdateprueba.html.twig', $this->parametros);       
     }
     
     public function actualizarDatosAdministrativos($usuario, $pregunta, $respuesta, $jvs, $fecha_nacimiento){
@@ -55,8 +30,7 @@ class userActualizacion extends \controladores\usuario\usermodControl {
                 'update' => 'update datos_administrativos set pregunta=:pregunta, respuesta=:respuesta, fecha_nacimiento=:fecha_nacimiento where usuario=:usuario',
                 'insert' => 'insert into datos_administrativos(usuario, pregunta, respuesta, fecha_nacimiento) values(:usuario, :pregunta, :respuesta, :fecha_nacimiento)',
                 'valores' => array(':pregunta'=>$pregunta, 'respuesta'=>$respuesta, ':usuario'=> $usuario, ':fecha_nacimiento'=> $dato_fecha)
-            );
-        }else{
+            ); }else{
             $sentencia = array(
                 'update' => 'update datos_administrativos set pregunta=:pregunta, respuesta=:respuesta, fecha_nacimiento=:fecha_nacimiento, jvs=:jvs where usuario=:usuario',
                 'insert' => 'insert into datos_administrativos(usuario, pregunta, respuesta, fecha_nacimiento, jvs) values(:usuario, :pregunta, :respuesta, :fecha_nacimiento, :jvs)',
