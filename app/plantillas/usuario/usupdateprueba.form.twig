@@ -37,9 +37,7 @@
     <div class="form-group">
         <label for="o" class="col-md-3 text-left">Establecimiento</label>
         <div class="col-xs-9" id="remote">
-            <select class="form-control input-sm col-xs-12" id="o" name="o" data-rule-required="true" >
-              <option></option>
-            </select>
+            <input type="text" class="form-control input-sm" id="o" name="o" placeholder="Ingrese un establecimiento" autocomplete="off" value="{{datos.establecimiento|emptiador}}" data-rule-required="true">
         </div>
     </div>
     <div class="form-group">

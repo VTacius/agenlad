@@ -10,6 +10,7 @@ body {
 
 .valid {
   background:url(/resources/accept.png) no-repeat 0 50%;
+  background-position: 3px;
   padding-left:22px;
   line-height:24px;
   color:#3a7d34;
@@ -31,6 +32,12 @@ body {
   padding-left:22px;
   line-height:24px;
 }
+
+.ui-autocomplete-loading {
+    background: white url("../resources/ajax-loader.gif") left center no-repeat;
+    padding-left:20px;
+}
+
 
 select.error,input.error {
   background:url(../resources/cross.png) no-repeat 0 50%;

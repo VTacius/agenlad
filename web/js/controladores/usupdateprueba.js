@@ -35,26 +35,26 @@ $(document).ready(function(){
         
     }
 
-    $("#o").select2({
-        placeholder: "Seleccione un Establecimiento",
-        theme: "classic", 
-        ajax: {
-            url: "/helpers/establecimiento",
-            type: 'POST',
-            dataType: 'json',
-            delay: 250,
-            cache: true,
-            data: function (parametros) {
-                return { busqueda: parametros.term };
-            },
-            processResults: function (data, page) {
-                return { results: data };
-            },
+    $("#o" ).autocomplete({
+        minLength: 2,
+        source: function( request, response ) {
+            $.ajax({
+                url: "/helpers/establecimiento",
+                type: 'POST',
+                dataType: "json",
+                data: {
+                  busqueda: request.term
+                },
+                success: function( data ) {
+                  response( data );
+                  console.log(data);
+                }
+            })
         },
-        escapeMarkup: function (markup) { return markup; }, 
-        minimumInputLength: 2,
-        templateResult: formatRepo, // omitted for brevity, see the source of this page
-        templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+        select: function( event, ui ) {
+            console.log(ui.item.id);
+            $(this).attr('data-codigo', ui.item.id);
+        },
     });
 
 });
@@ -65,6 +65,7 @@ $(document).ready(function(){
 
 var envio = function(){
     datos = recogerDatos();
+    datos['o'] = $('#o').data('codigo');
     console.log(datos);
 };
 
