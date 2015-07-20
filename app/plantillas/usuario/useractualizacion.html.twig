@@ -3,9 +3,14 @@
 {% block javascript -%}
     <script src="{{ activos('js/controladores/controlesubicacion.js') }}" type="text/javascript"></script>
     <script src="{{ activos('js/controladores/useractualizacion.js') }}" type="text/javascript"></script>
+    <script src="{{ activos('js/vendor/select2.min.js') }}" type="text/javascript"></script>
+    <script src="{{ activos('js/vendor/es.js') }}" type="text/javascript"></script>
     <script src="{{ activos('js/data/datepicker-es.js') }}" type="text/javascript"></script>
 {% endblock %}
-
+{% block css -%}
+    <link href="{{ activos('css/vendor/select2.min.css') }}" rel="stylesheet">
+    <link href="{{ activos('css/vendor/select2-bootstrap.css') }}" rel="stylesheet">
+{% endblock %}
 {# Configuramos las variables que la plantilla padre usa para formar el menu #}
 {% set menu = menu %}
 {% set pagina = pagina %}
@@ -13,10 +18,10 @@
 {% block lateral %}
         <div class="col-lg-12 col-md-8" >
             <h3>Actualización de datos personales</h4>
-            <p class="text-justify">Bienvenido <b>{{titulo}} {{usuario}}</b></p>
-            <p class="text-justify">A continuación, se dispone del siguiente formulario para actualizar información que define su relación con el <b>Ministerio de Salud de El Salvador</b>.<br>
-            Si cree que no puede completar sus datos con la información contenida, contácte con la <b>Unidad de Redes y Seguridad Informática</b> del <b>Ministerio de Salud</b> para solventar su inconveniente</br>
-            Siempre puede confirmar la legitimidad de este formulario con su informático más cercano, o directamente con <b>Dirección de Tecnología de Información y Comunicaciones</b> en <b>Ministerio de Salud</b></p>
+            <p>Bienvenido <b>{{titulo}} {{usuario}}</b></p>
+            <p>A continuación, se dispone del siguiente formulario para actualizar información que define su relación con el <b>Ministerio de Salud de El Salvador</b>.</p>
+            <p>Si cree que no puede completar sus datos con la información contenida, contácte con la <b>Unidad de Redes y Seguridad Informática</b> del <b>Ministerio de Salud</b> para solventar su inconveniente</p>
+            <p>Siempre puede confirmar la legitimidad de este formulario con su informático más cercano, o directamente con <b>Dirección de Tecnología de Información y Comunicaciones</b> en <b>Ministerio de Salud</b></p>
         </div>
         <div class="col-lg-12 col-md-4" >
             <p class="text-info text-justify small"><b>Este formulario cuenta con el aval del Ministerio de Salud de El Salvador.</b></p>

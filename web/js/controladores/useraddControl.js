@@ -1,20 +1,19 @@
 $(document).ready(function(){
     $("#comprobacion_usuario").hide();
+    
+    /* El formulario ha de validarse, si es correcto ejecutará envío */
+    $.validator.setDefaults({
+        submitHandler: envio,
+    });
+    
+    $('#userAddForm').validate();
 });
 
-$("#disponibilidad").click(function(e){
-    e.preventDefault();
-    e.stopPropagation();
-    var datos = {'uid': $("#uid").val()}; 
-    procesarDatos ('/useradd/checkuid', datos, mostrarDisponibilidad);
-});
-
-$("#enviar").click(function(e){
-    e.preventDefault();
-    e.stopPropagation();
+var envio = function(e){
     datos = recogerDatos();
-    procesarDatos('/useradd/creacion', datos, mostrarDatos);
-});
+    console.log(datos);
+    //procesarDatos('/useradd/creacion', datos, mostrarDatos);
+};
 
 var mostrarDisponibilidad = function(data){
     if(data.clase) {
@@ -33,3 +32,20 @@ var mostrarDatos = function(data){
     pmostrarError(data);
     pmostrarMensaje(data);
 };
+
+$("#disponibilidad").click(function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    var datos = {'uid': $("#uid").val()}; 
+    procesarDatos ('/useradd/checkuid', datos, mostrarDisponibilidad);
+});
+
+$("#reset").click(function(e){
+    e.preventDefault();
+    $('#actualizacionDatos').validate().resetForm();
+});
+
+$("#userAddForm").submit(function(e){
+    e.preventDefault();
+});
+

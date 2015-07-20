@@ -78,3 +78,9 @@ label.error{
 * html .ui-autocomplete {
     height: 100px;
 }
+
+/* Necesite que la columna acciones al menos se vea decente */
+#acciones {
+    width: 140px;
+}
+

@@ -75,7 +75,6 @@ function mostrarElementoError(error){
 
 function pmostrarError(data){
     console.log(data.error);
-    console.log(data);
     var respuesta = "";
     if(!isEmpty(data.error)){
         $(data.error).each(function(index, error){
@@ -99,9 +98,6 @@ function pmostrarMensaje(data){
         $("#mensaje").show();
         $("#mensaje").html(respuesta);
         $('html, body').animate({scrollTop : 0},800);
-    }else{
-        console.log("No hay nada?");
-        console.log(data);
     }
 };
 

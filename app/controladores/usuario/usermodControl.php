@@ -226,14 +226,14 @@ class usermodControl extends \controladores\usuario\usershowControl {
                 $this->mensaje[] = array("codigo" => "success", 'mensaje' => "Cambio exitoso para buzón de $correo");
             }else{
                 $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "Los cambios en el buzón para $correo han fallado");
-                $this->error[] = $mensaje;
+                $this->error[] = "Un error ha ocurrido al modificar datos en el servidor de correo " . $mensaje;
             }
             // Necesitamos un pequeño delay, para evitar que accidentalmente se envíen modificaciones demasiado frecuentes sobre el mismo objeto
             sleep(1);
         }else{
             $this->mensaje[] = array("codigo" => "warning", 'mensaje' => "No existe un buzón asociado a {$usuarioAttr['usuarioModificar']}");
+            $this->error[] = "Un error ha ocurrido al modificar datos en el servidor de correo " . $mensaje;
             // Te agradecería que comentaras esto cuando estes en produccion
-            $this->error[] = $mensaje;
         }
       
     }
@@ -256,7 +256,6 @@ class usermodControl extends \controladores\usuario\usershowControl {
         );
               
         $claves = $this->getClaves();       
-        print_r($claves);
         $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
         // Modificamos los atributos del usuario
         $this->modificarAttrUsuario($usuario, $usuarioAttr);
@@ -352,7 +351,6 @@ class usermodControl extends \controladores\usuario\usershowControl {
         }else{
             $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "La operacion ha fallado para $usuario");
         }
-        $this->error[] = $mensaje;
     }
     
     /**

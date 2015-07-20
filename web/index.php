@@ -139,8 +139,6 @@ $index->route('GET|POST @prueba_getdatos: /pruebas/getdatos',
         'Pruebas\getdatos->display');
 $index->route('GET|POST @prueba_userupdate: /pruebas/userupdate', 
         'controladores\usuario\userActualizacion->pruebas');
-$index->route('GET|POST @prueba_userupdate: /pruebas/formulario', 
-        'controladores\usuario\userActualizacion->formulario');
 $index->route('GET|POST @prueba_comprobar_establecimiento: /pruebas/establecimiento', 
         'controladores\usuario\usershowControl->comprobarEstablecimientoPrueba');
 // Rutas para configuracion de dominios

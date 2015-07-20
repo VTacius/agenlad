@@ -9,18 +9,6 @@ class userActualizacion extends \controladores\usuario\usermodControl {
         $this->mensaje = array();
     }
     
-    public function formulario() {
-        $this->comprobar($this->pagina); 
-        // Esto es importante en la vista
-        $this->parametros['pagina'] = $this->pagina;
-        // Empieza el procedimiento
-
-        $this->usuario = $this->index->get('SESSION.user');
-        // El siguiente método llena $this->datos, pero solo devuelve pocos datos
-        $user = $this->usuario($this->usuario);
-        echo $this->twig->render('usuario/usupdateprueba.html.twig', $this->parametros);       
-    }
-    
     public function actualizarDatosAdministrativos($usuario, $pregunta, $respuesta, $jvs, $fecha_nacimiento, $nit){
         $fecha = (empty($fecha_nacimiento)) ? '12/02/1809' : $fecha_nacimiento;
         $date = \DateTime::createFromFormat('d/m/Y', $fecha);
@@ -105,16 +93,11 @@ class userActualizacion extends \controladores\usuario\usermodControl {
         $this->usuario($this->usuario);
         print json_encode($this->datos);
     }
-
+    
     public function display() {
         $this->comprobar($this->pagina); 
         // Esto es importante en la vista
         $this->parametros['pagina'] = $this->pagina;
-        // Empieza el procedimiento
-        $this->usuario = $this->index->get('SESSION.user');
-        // El siguiente método llena $this->datos, pero solo devuelve pocos datos
-        $user = $this->usuario($this->usuario);
-        $this->parametros['datos'] = $this->datos;
         echo $this->twig->render('usuario/useractualizacion.html.twig', $this->parametros);       
     }
 }

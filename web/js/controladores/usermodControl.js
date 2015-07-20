@@ -8,80 +8,6 @@ $(document).ready(function(){
     $("#creacion").hide();
 });
 
-/**
- * Cuando se hace click en los botones de Estado de Buzon, se envia la peticion
- * para cambio de estado
- * @param {object} e
- */
-$('.btn-toggle').click(function(e) {
-    $("#cargador").show();
-    $(this).children('.btn').toggleClass('active btn-primary btn-default');  
-    var datos = {
-        textElemento: $(this).children(".active").text(),
-        idElemento: $(this).attr('id'),
-        usermod : $("#usermod").text()
-    };
-    procesarDatos('/usermod/zimbra', datos, mostrarModificarZimbra );
-    e.stopPropagation(); 
-    e.preventDefault();
-});
-
-/**
- * Una vez el formulario ha sido cargado con datos
- * nos arrepentimos y no hacemos nada  
- * Se parece a regresarInicio
- * @param {object} e
- */
-$("#userModForm #reset").click(function(e){
-    $("form").hide();
-    $("input").val("");
-    $("#busqueda").show();
-    crearSelectOption();
-    e.stopPropagation(); 
-    e.preventDefault();
-    
-});
-
-/**
- * Enviamos los datos del formulario para modificacion del usuario
- * @param {object} e
- */
-$("#userModForm #enviar").click(function(e){
-    var datos = obtenerDatos();
-    console.log(datos);
-    procesarDatos('/usermod/cambio', datos, mostrarDatosModificar);
-    e.stopPropagation(); 
-    e.preventDefault();
-});
-
-/**
- * Enviamos el nombre de usuario que queremos modificar para que obtenga los 
- * datos del mismo y luego los muestre
- * @param {object} e
- */
-$("#busqueda #enviar").click(function(e){
-    
-    datos = {
-            usuarioModificar: $("#usuarioModificar").val()
-        };
-    procesarDatos('/usermod/envio', datos, mostrarDatosBusqueda);
-    e.stopPropagation(); 
-    e.preventDefault();
-});
-
-/**
- * Una vez ha finalizado, da la opcion de volver a configurar otro usuario
- * Se parece a userModForm
- * @param {object} e
- */
-$("#regresarInicio").click(function(e){
-    $("form").hide();
-    $("input").val("");
-    $("#busqueda").show();
-    crearSelectOption();
-    e.stopPropagation(); 
-    e.preventDefault();
-});
 
 /**
  * Crea ambas listas de selección con el resultado devuelto desde el servidor
@@ -108,13 +34,13 @@ var crearSelectOption = function(lista){
  */
 var obtenerDatos = function(){
     var contenido = {
+        o : $("#o").data('o'),
+        ou : $("#ou").val(),
         phone : $("#phone").val(),
         cargo : $("#cargo").val(),
-        oficina : $("#oficina").val(),
         usermod : $("#usermod").text(),
         nameuser : $("#nameuser").val(),
         apelluser : $("#apelluser").val(),
-        localidad : $("#localidad").val(),
         grupouser : $("#grupouser option:selected").val(),
         grupos : $("#grupos").val() || []
     };
@@ -122,26 +48,32 @@ var obtenerDatos = function(){
 };
 
 /**
- * Usado por mostrarDatosBusqueda
- * @param {array} data
- * @param {string} objeto
- * @returns {undefined}
- */
-var llenarControl = function(data, objeto){
-    $("#" + objeto).val(data[objeto]);
-};
-
-/**
- * Llenemos todos los controles
+ * Llenamos todos los controles con los datos que nos ha devuelto sobre el usuario el servidor
  * @param {array} data
  * @returns {undefined}
  */
 var llenarControles = function(data){
     $("b#usermod").text(data.datos.usermod);
-    elementos = ['cargo', 'oficina', 'nameuser', 'phone', 'apelluser', 'localidad'];
-    $(elementos).each(function(item, elemento){
-        llenarControl(data.datos, elemento);
+    var equivalencias = {'#cargo': 'cargo', '#ou': 'oficina', '#nameuser':'nameuser', '#phone': 'phone', '#apelluser': 'apelluser'};
+    $.each(equivalencias, function(elem, indice){
+        var valor = data.datos[indice];
+        if (!isEmpty(valor)){
+            $(elem).val(valor);
+        }else{
+            $(elem).val('');
+        }
     });
+
+    /* El atributo o (localidad) necesita nuestro desfalco para que se comporte como un select sin serlo, y acá esta como, y necesita configurar 
+     */
+    if (!(isEmpty(data.datos.localidad))){
+        $('#o').val(data.datos.localidad.label);
+        $('#o').attr('data-o', data.datos.localidad.id);
+        ouAutocomplementar(data.datos.localidad.id);
+    }else{
+        $('#o').val('');
+    }
+    
     crearSelectOption(data.datos.grupos);
     
     $("#grupouser option:contains('" + data.datos.grupouser + "')").attr('selected','selected');
@@ -186,9 +118,7 @@ var mostrarDatosBusqueda = function(data){
         }
     }else if(data.datos.enlaces.creacion){
         $("#creacion").show();
-        $("a#creacion")
-            .show()
-            .attr( 'href', "/useradd/" + $("#usuarioModificar").val() );
+        $("a#creacion").show().attr( 'href', "/useradd/" + $("#usuarioModificar").val() );
     }
     
 };
@@ -217,10 +147,77 @@ var mostrarModificarZimbra = function(data){
     $("#cargador").hide();
 };
 
-//var cargador_modal = function(){
-//    $("#espera").dialog({
-//        modal: true,
-//        draggable: false,
-//        resizable: false
-//    });
-//};
+/* Asociación a controles */
+
+/**
+ * Cuando se hace click en los botones de Estado de Buzon, se envia la peticion
+ * para cambio de estado
+ * @param {object} e
+ */
+$('.btn-toggle').click(function(e) {
+    $("#cargador").show();
+    $(this).children('.btn').toggleClass('active btn-primary btn-default');  
+    var datos = {
+        textElemento: $(this).children(".active").text(),
+        idElemento: $(this).attr('id'),
+        usermod : $("#usermod").text()
+    };
+    procesarDatos('/usermod/zimbra', datos, mostrarModificarZimbra );
+    e.stopPropagation(); 
+    e.preventDefault();
+});
+
+/**
+ * Una vez el formulario ha sido cargado con datos nos arrepentimos y no hacemos nada  
+ * Se parece a regresarInicio
+ * @param {object} e
+ */
+$("#userModForm #reset").click(function(e){
+    $("form").hide();
+    $("input").val("");
+    $("#busqueda").show();
+    crearSelectOption();
+    e.stopPropagation(); 
+    e.preventDefault();
+    
+});
+
+/**
+ * Enviamos los datos del formulario para modificacion del usuario
+ * @param {object} e
+ */
+$("#userModForm #enviar").click(function(e){
+    var datos = obtenerDatos();
+    console.log(datos);
+    procesarDatos('/usermod/cambio', datos, mostrarDatosModificar);
+    e.stopPropagation(); 
+    e.preventDefault();
+});
+
+/**
+ * Enviamos el nombre de usuario que queremos modificar para que obtenga los 
+ * datos del mismo y luego los muestre
+ * @param {object} e
+ */
+$("#busqueda #enviar").click(function(e){
+    datos = {
+        usuarioModificar: $("#usuarioModificar").val()
+    };
+    procesarDatos('/usermod/envio', datos, mostrarDatosBusqueda);
+    e.stopPropagation(); 
+    e.preventDefault();
+});
+
+/**
+ * Una vez ha finalizado, da la opcion de volver a configurar otro usuario
+ * Se parece a userModForm
+ * @param {object} e
+ */
+$("#regresarInicio").click(function(e){
+    $("form").hide();
+    $("input").val("");
+    $("#busqueda").show();
+    crearSelectOption();
+    e.stopPropagation(); 
+    e.preventDefault();
+});
