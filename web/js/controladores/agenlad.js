@@ -1,33 +1,34 @@
-        $(document).ready(function(){
-            $("#error").hide();
-            $("#mensaje").hide();
-        });
+$(document).ready(function(){
+    $("#error").hide();
+    $("#mensaje").hide();
+});
 
-        /**
-         * Comprueba si el parametro pasado es nulo de varias formas posibles
-         * @param {var} obj
-         * @returns {Boolean}
-         */
-        function isEmpty(obj) {
-            if (typeof obj === 'undefined' || obj === null || obj === '') return true;
-            if (typeof obj === 'number' && isNaN(obj)) return true;
-            if (typeof obj === 'object' && obj.length === 0) return true;
-            if (obj instanceof Date && isNaN(Number(obj))) return true;
-            return false;
-        }
+/**
+ * Comprueba si el parametro pasado es nulo de varias formas posibles
+ * @param {var} obj
+ * @returns {Boolean}
+ */
+function isEmpty(obj) {
+    if (typeof obj === 'undefined' || obj === null || obj === '') return true;
+    if (typeof obj === 'number' && isNaN(obj)) return true;
+    if (typeof obj === 'object' && obj.length === 0) return true;
+    if (obj instanceof Date && isNaN(Number(obj))) return true;
+    if (obj == "{empty}") return true;
+    return false;
+}
 
-        /**
-         * Método a usar en procesarDatos cuando el servidor entre en estado de error
-         * @param {array} data
-         * @returns {undefined}
-         */
-        function errorOnResponse(data){
-            console.log(data);
-            contenido = '<strong>Fallo en la aplicacion:</strong> La aplicación presenta un problema muy grave, del que es posible que usted no sea responsable. Contacte con un informático sobre este problema<br>';        
-            respuesta = '<div class="alert alert-danger alert-dismissible" role="alert"> <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>'+ contenido + '</div>'
-            $("#error").show();
-            $("#error").html(respuesta);
-        };
+/**
+ * Método a usar en procesarDatos cuando el servidor entre en estado de error
+ * @param {array} data
+ * @returns {undefined}
+ */
+function errorOnResponse(data){
+    console.log(data);
+    contenido = '<strong>Fallo en la aplicacion:</strong> La aplicación presenta un problema muy grave, del que es posible que usted no sea responsable. Contacte con un informático sobre este problema<br>';        
+    respuesta = '<div class="alert alert-danger alert-dismissible" role="alert"> <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>'+ contenido + '</div>'
+    $("#error").show();
+    $("#error").html(respuesta);
+};
 
 function mostrarErrorConexion(data){
     var errores = ['errorLdap', 'errorGrupo', 'errorZimbra', 'mensajes'];
@@ -107,19 +108,25 @@ function pmostrarMensaje(data){
 /**
  * Envia una petición del tipo POST en espera de datos json
  * Cuide que de no agregar () al nombre de funcion
+ * Al empezar, muestra el cargador y se encarga de cerrarlo cuando la respuesta del servidor haya terminado
+ * gracias al evento complete
  * @param {string} url
  * @param {array} datos
  * @param {callback} funcion
  * @returns {undefined}
  */
 function procesarDatos (url, datos, funcion){
+    $('#espera').show()        
     $.ajax({ 
         type: 'POST',
         url: url,
         dataType: 'json',
         data: datos,
         success: funcion,
-        error: errorOnResponse
+        error: errorOnResponse,
+        complete: function(){
+            $('#espera').hide()        
+        }
     });
 };
 

@@ -6,6 +6,8 @@ web/*/vendor/*
 app/herramientas
 # Si no enviamos vendor, entonces no necesitamos este
 composer.lock
+# Directorios temporales para desarrollo
+database/*
 # Directorios temporales para Twig
 tmp
 # Configuración de la aplicación

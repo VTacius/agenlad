@@ -37,6 +37,56 @@ class usershowControl extends \clases\sesion {
             return true;
         }
     }
+    /**
+     * Prueba para comprobarEstablecimiento con el Ministerio de Salud
+     */
+    public function comprobarEstablecimientoPrueba(){
+        $establecimiento = $this->comprobarEstablecimiento('Secretaría de Estado SS Ministerio de Salud');
+        print_r($establecimiento);
+    }
+
+    /**
+     * Busca que el atributo O del usuario corresponda con un establecimiento válido
+     */
+    protected function comprobarEstablecimiento($establecimiento){
+        $busqueda = "select id, nombre as label from ctl_establecimiento where activo is True and ";
+        $busqueda .= is_numeric($establecimiento) ? "id=:establecimiento" : "nombre ilike ('%'|| :establecimiento || '%')"; 
+        if (empty($establecimiento)){
+            $busqueda = "estavlecimiento que no existe";
+        }
+        try{
+            $base = $this->index->get('dbconexion');
+            $entrada = $base->exec($busqueda, array(':establecimiento' => $establecimiento));
+            return $entrada[0];
+        }catch (\PDOException $e){
+            // Lo pones en el mensaje de error a enviar al servidor
+            $this->mensaje[] = array("codigo" => "danger", 'mensaje' => 'Error agregando datos administrativos. Revise los mensajes asociados');
+            //$this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: " . $e->getMessage() );
+            $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: ");
+        }
+    }
+    
+    /**
+     * Busca que el atributo O del usuario corresponda con un establecimiento válido
+     * TODO: Basáte en la búsqueda del helpers correspondiente
+     */
+    protected function comprobarOficina($oficina){
+        $busqueda = "select id, nombre as label from ctl_establecimiento where activo is True and ";
+        $busqueda .= is_numeric($establecimiento) ? "id=:establecimiento" : "nombre ilike ('%'|| :establecimiento || '%')"; 
+        if (empty($establecimiento)){
+            $busqueda = "estavlecimiento que no existe";
+        }
+        try{
+            $base = $this->index->get('dbconexion');
+            $entrada = $base->exec($busqueda, array(':establecimiento' => $establecimiento));
+            return $entrada[0];
+        }catch (\PDOException $e){
+            // Lo pones en el mensaje de error a enviar al servidor
+            $this->mensaje[] = array("codigo" => "danger", 'mensaje' => 'Error agregando datos administrativos. Revise los mensajes asociados');
+            //$this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: " . $e->getMessage() );
+            $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: ");
+        }
+    }
     
     /**
      * Devuelve los datos de usuario, y envia mensajes de error según el usuario
@@ -67,14 +117,16 @@ class usershowControl extends \clases\sesion {
         }
         $group = $usuario->getGidNumber();
         $this->datos['usermod'] = $usuario->getUid();
-        $this->datos['oficina'] = $usuario->getOu();
         $this->datos['nombrecompleto'] = $usuario->getCn();
         $this->datos['nameuser'] = $usuario->getGivenName();
         $this->datos['apelluser'] = $usuario->getSn();
         $this->datos['cargo'] = $usuario->getTitle();
         $this->datos['phone'] = $usuario->getTelephoneNumber();
         $this->datos['psswduser'] = $usuario->getuserPassword();
-        $this->datos['localidad'] = $usuario->getO();
+        // Para comprobar que localidad sea un dato válido, necesitamos buscar el valor de dicho atributo ldap en la base de datos
+        $this->datos['localidad'] = $this->comprobarEstablecimiento($usuario->getO());
+        // TODO: Hacerlo con oficina también
+        $this->datos['oficina'] = $usuario->getOu();
         // Agregados a posteridad, y pensaba incluso en agregarlos en otro grupo
         $datos = $this->obtenerDatosAdministrativos($usuario->getUid());
         $this->datos['pregunta'] = count($datos)>0 ? $datos[0]['pregunta'] : '{empty}';
@@ -89,8 +141,8 @@ class usershowControl extends \clases\sesion {
         $dato_fecha = $date->format('d/m/Y');
         $this->datos['fecha'] = $dato_fecha;
         $this->datos['jvs'] = count($datos)>0 ? $datos[0]['jvs'] : '{empty}';
+        $this->datos['nit'] = count($datos)>0 ? $datos[0]['nit'] : '{empty}';
 
-        $this->datos['localidad'] = $usuario->getO();
         return array('correo'=>$correo, 'grupo'=>$group);
     }
     
@@ -100,9 +152,10 @@ class usershowControl extends \clases\sesion {
      * @return array
      */
     protected function obtenerDatosAdministrativos($usuario){
+        $busqueda = 'select usuario, pregunta, respuesta, fecha_nacimiento, nit, jvs from datos_administrativos where usuario=:usuario';
         try{
             $base = $this->index->get('dbconexion');
-            $entrada = $base->exec('select usuario, pregunta, respuesta,fecha_nacimiento, jvs from datos_administrativos where usuario=:usuario', array(':usuario' => $usuario));
+            $entrada = $base->exec($busqueda, array(':usuario' => $usuario));
             return $entrada;
         }catch (\PDOException $e){
             // Lo pones en el mensaje de error a enviar al servidor

@@ -24,7 +24,7 @@ class userActualizacion extends \controladores\usuario\usermodControl {
     public function actualizarDatosAdministrativos($usuario, $pregunta, $respuesta, $jvs, $fecha_nacimiento, $nit){
         $fecha = (empty($fecha_nacimiento)) ? '12/02/1809' : $fecha_nacimiento;
         $date = \DateTime::createFromFormat('d/m/Y', $fecha);
-        $dato_fecha = $date->format('Y/d/m');
+        $dato_fecha = $date->format('Y/m/d');
         if (empty($jvs)){
             $sentencia = array(
                 'update' => 'update datos_administrativos set pregunta=:pregunta, respuesta=:respuesta, fecha_nacimiento=:fecha_nacimiento, nit=:nit where usuario=:usuario',
@@ -50,8 +50,8 @@ class userActualizacion extends \controladores\usuario\usermodControl {
         }catch (\PDOException $e){
             // Lo pones en el mensaje de error a enviar al servidor
             $this->mensaje[] = array("codigo" => "danger", 'mensaje' => 'Error agregando datos administrativos. Revise los mensajes asociados');
-            // $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: " . $e->getMessage() );
-            $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: ");
+            $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: " . $e->getMessage() . " " . $dato_fecha . " " . $fecha);
+            // $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: ");
         }
     }
 
@@ -111,7 +111,6 @@ class userActualizacion extends \controladores\usuario\usermodControl {
         // Esto es importante en la vista
         $this->parametros['pagina'] = $this->pagina;
         // Empieza el procedimiento
-
         $this->usuario = $this->index->get('SESSION.user');
         // El siguiente método llena $this->datos, pero solo devuelve pocos datos
         $user = $this->usuario($this->usuario);

@@ -55,7 +55,8 @@ label.error{
 }
 
 .alert{
-    padding: 8px;
+    padding-top: 8px;
+    padding-bottom: 8px;
     margin-bottom: 2px;
     font-size: 13px
 }
@@ -63,4 +64,17 @@ label.error{
 #clateral .col-md-8{
     padding-left: 0px;
     padding-right: 0px;
+}
+
+/* Hacemos que las opciones del autocomplete tenga barra espaciadora */
+
+.ui-autocomplete {
+    max-height: 100px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+}
+
+* html .ui-autocomplete {
+    height: 100px;
 }

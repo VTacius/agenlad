@@ -30,44 +30,6 @@ $(document).ready(function(){
         return regex.test(valor);
     }, "El contenido no es una cadena válida");
     
-    $("#actualizacionDatos").validate({
-        rules: {
-            nombre: {
-                regexador: /^(([A-Z][a-záéíóú]+\s?(de\s)*)){1,3}$/
-            },
-            apellido: {
-                regexador: /^(([A-Z][a-záéíóú]+\s?(de\s)*)){1,3}$/
-            },
-            carrera: "required",
-            st: "required",
-            o: "required", 
-            ou: "required",
-            title: "required",
-            pregunta: {
-                email: true,
-                minlength: 2
-            },
-            telephoneNumber:{
-                regexador: /^((\-*[0-9]{4}){1,2}$|$)/
-            },
-            pregunta: {
-                required: true,
-                minlength: 5
-            },
-            respuesta: {
-                required: true,
-                minlength: 2
-            },
-            fecha: {
-                regexador: /^((\w+\/*){3}$|$)/
-            }
-        },
-        messages: {
-            nombre: "Revise la forma de sus nombres",
-            apellido: "Revise la forma de sus apellidos ",
-        },
-
-    });
 
 });
 
@@ -98,19 +60,4 @@ var envio = function(e){
     procesarDatos('/actualizacion/cambio', datos, mostrarDatos);
 };
 
-$("#reset").click(function(e){
-    e.preventDefault();
-    e.stopPropagation();
-    console.log("Todavía hay trabajo que hacer por acá");
-});
-
-
-
-$('#hasJvs').change(function(e){
-    if ($('#hasJvs').is(':checked')){
-        $('#jvs').attr('disabled', false); 
-    }else{
-        $('#jvs').attr('disabled', true); 
-    }
-});
 

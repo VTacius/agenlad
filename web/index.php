@@ -141,6 +141,8 @@ $index->route('GET|POST @prueba_userupdate: /pruebas/userupdate',
         'controladores\usuario\userActualizacion->pruebas');
 $index->route('GET|POST @prueba_userupdate: /pruebas/formulario', 
         'controladores\usuario\userActualizacion->formulario');
+$index->route('GET|POST @prueba_comprobar_establecimiento: /pruebas/establecimiento', 
+        'controladores\usuario\usershowControl->comprobarEstablecimientoPrueba');
 // Rutas para configuracion de dominios
 $index->route('GET|POST @conf_dominios: /confdominios', 
         'controladores\configuracion\dominioControl->display');
@@ -177,9 +179,11 @@ $index->route('GET|POST @usuario_actualizacion_cambio: /actualizacion/cambio',
         'controladores\usuario\userActualizacion->actualizacionCambio');
 $index->route('GET|POST @usuario_actualizacion_cambio: /actualizacion/usuario', 
         'controladores\usuario\userActualizacion->getUsuario');
-// Rutas para obtención de datos
-$index->route('GET|POST @helpers_establecimientos: /helpers/establecimiento', 
+// Rutas para obtención de datos por parte de todas las partes de la aplicación
+$index->route('POST @helpers_establecimientos: /helpers/establecimiento [ajax]', 
         'controladores\helpers->getEstablecimiento');
+$index->route('POST @helpers_oficinas: /helpers/oficina [ajax]', 
+        'controladores\helpers->getOficinas');
 
 // Esta es la forma en que la aplicación empieza
 $index->run();
