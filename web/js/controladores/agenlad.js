@@ -74,9 +74,9 @@ function mostrarElementoError(error){
 }
 
 function pmostrarError(data){
-    console.log(data.error);
     var respuesta = "";
     if(!isEmpty(data.error)){
+        console.log(data.error);
         $(data.error).each(function(index, error){
             respuesta += mostrarElementoError(error);
         });

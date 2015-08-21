@@ -104,6 +104,7 @@ var preFiltro = function(valor){
  */
 var filtro = function(){
     var filtro = {
+        'uid': preFiltro($("#uid").val()),
         'o': preFiltro($("#o").val()),
         'ou': preFiltro($("#ou").val()),
     };
@@ -130,12 +131,8 @@ var busqueda = function(filtro){
  * @returns {String}
  */
 var elementoAttr = function(attr){
-    if (!isEmpty(attr)) {
-        return "<td>" + attr + "</td>";
-    }else{
-        return "<td> - </td>";
-    }
-    
+    var contenido = isEmpty(attr) ? "-" : attr;
+    return "<td>" + contenido + "</td>";
 };
 
 /**

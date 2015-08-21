@@ -12,7 +12,7 @@ $(document).ready(function(){
 var envio = function(e){
     datos = recogerDatos();
     console.log(datos);
-    //procesarDatos('/useradd/creacion', datos, mostrarDatos);
+    procesarDatos('/useradd/creacion', datos, mostrarDatos);
 };
 
 var mostrarDisponibilidad = function(data){

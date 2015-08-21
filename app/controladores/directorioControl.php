@@ -33,7 +33,7 @@ class directorioControl extends \clases\sesion {
     }
     
     /**
-     *TODO: Revisar con wireshark si en verdad el filtro creado corresponde con nuestras
+     * TODO: Revisar con wireshark si en verdad el filtro creado corresponde con nuestras
      * necesidades, aunque todo parezca indicar que es así tal 
      */    
     public function mostrarUsuario(){
@@ -41,22 +41,20 @@ class directorioControl extends \clases\sesion {
         // Usamos los valores enviados por POST para construir el filtro
         $parametros = $this->index->get('POST');
         $filtro = array();
-	if(isset($parametros['uid']) && $parametros['uid'] != "*" ){
-		$filtro["personalizado"] = "(|(uid={$parametros['uid']})(cn={$parametros['uid']}))";
-		unset($parametros['uid']);	
-	}elseif(strpos($parametros['uid'], " ")){
-		$filtro['uid'] = $parametros['uid'];
-		unset($parametros['uid']);	
-	}
+	    if(isset($parametros['uid']) && $parametros['uid'] != "*" ){
+	    	$filtro["personalizado"] = "(|(uid={$parametros['uid']})(cn={$parametros['uid']}))";
+	    	unset($parametros['uid']);	
+	    }elseif(strpos($parametros['uid'], " ")){
+	    	$filtro['uid'] = $parametros['uid'];
+	    	unset($parametros['uid']);	
+	    }
         foreach ($parametros as $key => $value) {
             if (  !(empty($value) || $value == "*") ) {
                 $filtro[$key] = $value;
             }
         }
         $datos['datos'] = $this->busquedaUsuarios($filtro);
-        // TODO: Esta es oficialmente la manera en que debe formarse la respuesta hacia ajax
         $resultado = array_merge($datos, array('errorLdap'=> $this->parametros['errorLdap']));
-	#print json_encode($filtro);
         print json_encode($resultado);
     }
     
