@@ -62,7 +62,11 @@
         <div class="form-group">
             <label for="o" class="col-md-3 text-left">Establecimiento</label>
             <div class="col-xs-9" id="remote">
-                <input type="text" class="form-control input-sm" id="o" name="o" placeholder="Ingrese un establecimiento" autocomplete="off" value="{{datos.establecimiento|emptiador}}" data-rule-required="true">
+                {% if datos %}
+                    <input type="text" class="form-control input-sm" id="o" name="o" placeholder="Ingrese un establecimiento" autocomplete="off" value="{{datos.localidad.label|emptiador}}" data-o="{{datos.localidad.id}}" data-rule-required="true">
+                {% else %}
+                    <input type="text" class="form-control input-sm" id="o" name="o" placeholder="Ingrese un establecimiento" autocomplete="off" value="{{datos.localidad.label|emptiador}}" data-rule-required="true">
+                {% endif %}
             </div>
         </div>
         <div class="form-group">
@@ -75,7 +79,7 @@
         <div class="form-group">
             <label for="cargo" class="col-xs-3 text-left">Cargo</label>
             <div class="col-xs-9">
-                <input type="text" class="form-control input-sm" id="cargo" name="cargo" placeholder="Cargo" autocomplete="off" value="{{datos.cargo}}">
+                <input type="text" class="form-control input-sm" id="cargo" name="cargo" placeholder="Cargo" autocomplete="off" value="{{datos.cargo|emptiador}}">
             </div>
         </div>
         <div class="form-group">

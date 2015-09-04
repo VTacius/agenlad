@@ -295,7 +295,6 @@ class usermodControl extends \controladores\usuario\usershowControl {
         $usuarioCliente = $this->index->get('PARAMS.usuarioModificar');
         $this->mostrarUsuario($usuarioCliente);
         $this->parametros['datos'] = $this->datos;
-        
         echo $this->twig->render('usuario/usermod.html.twig', $this->parametros);       
     
     }
