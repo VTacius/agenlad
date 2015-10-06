@@ -1,7 +1,6 @@
 #Librerias externas
 vendor/*
 bower_components/*
-web/*/vendor/*
 #Twig
 app/herramientas
 # Si no enviamos vendor, entonces no necesitamos este
@@ -16,7 +15,4 @@ tmp
 favicon.ico
 /nbproject/private/
 nbproject/
-web/js/vendor
-web/css/vendor
-#
 *.swp

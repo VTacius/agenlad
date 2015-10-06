@@ -5,7 +5,7 @@ Supuse que a alguien podrá interesarle.
 Latimos con el corazón de Fat Free Framework, y hacemos el intento por ser una aplicacion MVC
 
 ### Pasos previos
-* La dependencia de terceros es manejada con [composer](https://gist.github.com/VTacius/4b9ed8b1deee1ecdfb04)
+* La dependencia de terceros es manejada con [composer](https://gist.github.com/VTacius/4b9ed8b1deee1ecdfb04) y bower
 * Los módulos para php pueden ser instalados en Debian con 
 
 ```shell 
@@ -14,6 +14,7 @@ aptitude install php5-{mcrypt,mysql,ldap}
 
 ```shell 
 composer update
+bower update
 ```
 
 * Cree un directorio temporal para que Twig cree las plantillas
@@ -65,7 +66,7 @@ mysql -h 10.10.20.56 -u user_database -p database_name < db.sql
         DocumentRoot /var/www/web
         <Directory /var/www/web>
                 Options Indexes FollowSymLinks MultiViews
-                AllowOverride All
+                AllowOverride FileInfo
                 Order allow,deny
                 allow from all
         </Directory>
@@ -89,16 +90,21 @@ service apache2 restart
 
 * Copie los archivos CSS y Javascript de terceros a la ubicación de la aplicación:
 ```shell
-mkdir web/ui/js/vendor
-cp vendor/components/jquery/jquery.min.js web/ui/js/vendor/
-cp vendor/components/jqueryui/jquery-ui.min.js web/ui/js/vendor/
-cp vendor/components/bootstrap/js/bootstrap.min.js web/ui/js/vendor/
-mkdir web/ui/css/vendor/
-cp vendor/components/jqueryui/themes/smoothness/*css web/ui/css/vendor/
-cp vendor/components/bootstrap/css/bootstrap.min.css web/ui/css/vendor/
-cp vendor/components/bootstrap/css/bootstrap-theme.min.css web/ui/css/vendor/
-cp -r vendor/components/jqueryui/themes/smoothness/images/ web/ui/css/vendor/
-cp -r vendor/components/bootstrap/fonts/ web/ui/css/
+cp bower_components/jquery/dist/jquery.min.js web/js/vendor/
+cp bower_components/jquery-ui/jquery-ui.min.js web/js/vendor/
+cp bower_components/bootstrap/dist/js/bootstrap.min.js web/js/vendor/
+cp bower_components/jQuery-Mask-Plugin/dist/jquery.mask.min.js web/js/vendor/
+cp bower_components/jquery.validate/dist/jquery.validate.min.js web/js/vendor/
+cp bower_components/jquery.validate/src/localization/messages_es.js web/js/vendor/
+cp bower_components/select2/dist/js/select2.min.js web/js/vendor/
+
+cp bower_components/bootstrap/dist/css/bootstrap{,-theme}.min.css web/css/vendor/
+cp bower_components/jquery-ui/themes/smoothness/*css web/css/vendor/
+cp -r bower_components/jquery-ui/themes/smoothness/images/ web/css/vendor/
+cp bower_components/bootstrap/dist/fonts/* web/css/fonts/
+cp bower_components/select2/dist/css/select2.min.css web/css/vendor/
+cp bower_components/select2/dist/js/i18n/es.js web/js/vendor/
+cp bower_components/select2-bootstrap3-css/select2-bootstrap.min.css web/css/vendor/
 ```
 
 ### Configurando la aplicación por primera vez
