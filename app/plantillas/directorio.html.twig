@@ -9,8 +9,7 @@
 {% set pagina = pagina %}
 
 {% block lateral %}
-    <h3>Creación de usuarios</h3>
-    <p>Directorio Institucional<br>
+    <h3>Directorio Institucional</h3>
     Bienvenido <b>{{titulo}} {{usuario}}</b></p>
     <form class="form-horizontal" role="form" method="POST" id="formbusqueda" action="/directorio/busqueda">
         <div class="form-group">
@@ -22,13 +21,13 @@
         <div class="form-group">
                 <label for="o" class="col-md-12 text-left">Establecimiento</label>
             <div class="col-lg-12">
-                    <input type="text" class="form-control input-x" id="o" name="o" placeholder="Establecimiento" autocomplete="off">
+                <input type="text" class="form-control input-x" id="o" name="o" placeholder="Establecimiento" autocomplete="off">
             </div>
         </div>
         <div class="form-group">
-                <label for="ou" class="col-lg-12 text-left">Oficina</label>
+            <label for="ou" class="col-lg-12 text-left">Oficina</label>
             <div class="col-lg-12">
-                    <input type="text" class="form-control input-x" id="ou" name="ou" placeholder="Oficina" autocomplete="off">
+                <input type="text" class="form-control input-x" id="ou" name="ou" placeholder="Oficina" autocomplete="off">
             </div>
         </div>
         <div class="form-group">
@@ -38,19 +37,21 @@
 {% endblock %}
 
 {% block contenido -%}
-  {{ parent() }}
-    <table class="table table-condensed table-striped">
-        <thead>
-            <tr>
-                <th>Nombre</th><th>Mail</th><th>Cargo</th><th>Telefóno</th>
-            </tr>
-        </thead>
+    {{ parent() }}
+    <table name="usuarios" class="table table-condensed table-striped">
         <tbody id=respuesta>
-        {% for empleado in datos %}
-            <tr>
-                <td>{{ empleado.cn }}</td><td>{{ empleado.mail }}</td><td>{{ empleado.title }}</td><td>{{ empleado.telephoneNumber }}</td>
-            </tr> 
-        {% endfor %}
+            <script id="respuesta-template" type="text/x-custom-template">
+                {% verbatim %}
+                    {{#datos}}
+                        {{#.}}
+                            <tr id="{{uid}}"><td><p class="col-md-12"><b>{{ cn }}</b></p>    
+<p class="col-md-12 small">{{ #title }} {{ title }} en {{ /title }}{{ #ou }}{{ ou }} de {{ /ou }}{{ establecimiento }}<br></p>
+                            <p class="col-md-6 col-sm-12 small">{{ mail }}</p> 
+                            <p class="col-md-6 col-sm-12 small">{{ telephoneNumber }}</p></td></tr>
+                        {{/.}}
+                    {{/datos}}
+                {% endverbatim %}
+            </script>
         </tbody>
     </table>
 {% endblock %}

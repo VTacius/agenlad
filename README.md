@@ -97,6 +97,7 @@ cp bower_components/jQuery-Mask-Plugin/dist/jquery.mask.min.js web/js/vendor/
 cp bower_components/jquery.validate/dist/jquery.validate.min.js web/js/vendor/
 cp bower_components/jquery.validate/src/localization/messages_es.js web/js/vendor/
 cp bower_components/select2/dist/js/select2.min.js web/js/vendor/
+cp bower_components/mustache/mustache.min.js web/js/vendor/
 
 cp bower_components/bootstrap/dist/css/bootstrap{,-theme}.min.css web/css/vendor/
 cp bower_components/jquery-ui/themes/smoothness/*css web/css/vendor/

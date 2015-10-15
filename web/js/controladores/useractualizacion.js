@@ -73,7 +73,7 @@ var llenarControlesDatosUsuario = function(data){
         }
     });
 
-    /* El atributo o (localidad) necesita nuestro desfalco para que se comporte como un select sin serlo, y acá esta como, y necesita configurar 
+    /* El atributo o (localidad) necesita nuestro desfalco para que se comporte como un select sin serlo, y acá esta como, y neceita configurar 
      */
     if (!(isEmpty(data.localidad))){
         $('#o').val(data.localidad.label);

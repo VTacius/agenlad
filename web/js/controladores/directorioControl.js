@@ -5,6 +5,7 @@ $(document).ready(function(){
     $.directorioControl.pulsaciones = 0;
     
     $.directorioControl.establecimientos = [];
+    $.directorioControl.lugares = [];
     /* Buscare en todos los establecimientos */
     $.ajax({
         url: "/js/data/establecimientos.json",
@@ -18,11 +19,15 @@ $(document).ready(function(){
  * lo use en su autocompletado
  **/
 var establecimientos = function(data){
-    $.each(data[1], function(i,e){
-        $.merge($.directorioControl.establecimientos, e);
+    $.each(data, function(i,e){
+        console.log(i);
+        console.log(e);
+        $.merge($.directorioControl.lugares, e);
+        $.directorioControl.establecimientos[i] = e;
     });
+    console.log($.directorioControl.establecimientos);
     $( "#o" ).autocomplete({
-      source: $.directorioControl.establecimientos,
+        source: $.directorioControl.lugares
     });
 };
 
@@ -126,30 +131,25 @@ var busqueda = function(filtro){
 };
 
 /**
- * Para un string vac√≠o, devuelve un -
- * @param {String} attr
- * @returns {String}
- */
-var elementoAttr = function(attr){
-    var contenido = isEmpty(attr) ? "-" : attr;
-    return "<td>" + contenido + "</td>";
-};
-
-/**
  * Sea cual sea la informacion que reciba, la muestra en pantalla
- * @param {array} result
+ * @param {array} respuesta
  * @returns {undefined}
  */
-var mostrar = function(result){
-    pmostrarError(result);
-    pmostrarMensaje(result);
+var mostrar = function(respuesta){
+    /* Agrego esta funci√≥n a nuestro objeto json para que sea capaz de limpiar los atributos "empty", adem√s de asignarle un
+        establecimiento real en base al identificador n√merico que algunos ya tienen asignados */
+    respuesta.establecimiento = function(){
+        if ($.isNumeric(this.o)){
+            return $.directorioControl.establecimientos[this.o];
+        }else{
+            return this.o === "empty" ? "" : this.o
+        }
+    };
+    var template = $('#respuesta-template').html();
+    var contenido = Mustache.render(template, respuesta);
+    pmostrarError(respuesta);
+    pmostrarMensaje(respuesta);
     $("#respuesta tr").remove();
-    $(result.datos).each(
-        function(item, elemento){
-            $("#respuesta").append("<tr>" + elementoAttr(elemento.cn) +  elementoAttr(elemento.mail) + elementoAttr(elemento.title) + elementoAttr(elemento.telephoneNumber) + "</tr>");
-        });
+    $("#respuesta").append(contenido);
 };
 
-$('#o').focus(function(e){
-    console.log($.directorioControl.establecimientos);
-});

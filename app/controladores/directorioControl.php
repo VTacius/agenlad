@@ -13,7 +13,6 @@ class directorioControl extends \clases\sesion {
         parent::__construct();
         // Nombramos la página que hemos de producir
         $this->pagina = 'directorio';
-        // Objetos que hemos de usar
     }
     
     
@@ -26,7 +25,6 @@ class directorioControl extends \clases\sesion {
         $usuarios = new \Modelos\userPosix($this->dn, $this->pswd, 'central' );
         $atributos = array('uid','cn','title','o', 'ou','mail', 'telephoneNumber');
         $filtro = empty($filter) ? array("cn"=>"NOT (root OR nobody)") : array_merge($filter, array("cn"=>"NOT (root OR nobody)"));
-//        $filtro = array("cn"=>"NOT (root OR nobody)") ;
         $datos = $usuarios->search($filtro, $atributos, "dc=sv");
         $this->parametros['errorLdap'] = $usuarios->getErrorLdap();
         return $datos;   
