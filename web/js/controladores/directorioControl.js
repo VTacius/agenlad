@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    $("#espera").show();
     var filtraje = filtro();
     busqueda(filtraje);
     $.directorioControl = new Object();
@@ -20,12 +21,9 @@ $(document).ready(function(){
  **/
 var establecimientos = function(data){
     $.each(data, function(i,e){
-        console.log(i);
-        console.log(e);
         $.merge($.directorioControl.lugares, e);
         $.directorioControl.establecimientos[i] = e;
     });
-    console.log($.directorioControl.establecimientos);
     $( "#o" ).autocomplete({
         source: $.directorioControl.lugares
     });
@@ -146,6 +144,7 @@ var mostrar = function(respuesta){
         }
     };
     var template = $('#respuesta-template').html();
+    Mustache.parse(template);
     var contenido = Mustache.render(template, respuesta);
     pmostrarError(respuesta);
     pmostrarMensaje(respuesta);

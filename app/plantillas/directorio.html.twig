@@ -45,9 +45,9 @@
                     {{#datos}}
                         {{#.}}
                             <tr id="{{uid}}"><td><p class="col-md-12"><b>{{ cn }}</b></p>    
-<p class="col-md-12 small">{{ #title }} {{ title }} en {{ /title }}{{ #ou }}{{ ou }} de {{ /ou }}{{ establecimiento }}<br></p>
-                            <p class="col-md-6 col-sm-12 small">{{ mail }}</p> 
-                            <p class="col-md-6 col-sm-12 small">{{ telephoneNumber }}</p></td></tr>
+<p class="col-md-12 col-sm-12 small"><img class="ico_espaciado" src="/resources/ic_gps_fixed_black_18dp.png">{{ #title }} {{ title }} en {{ /title }}{{ #ou }}{{ ou }} de {{ /ou }}{{ establecimiento }}</p>
+<p class="col-md-6 col-sm-12 small"><img class="ico_espaciado" src="/resources/ic_local_post_office_black_18dp.png">{{ mail }}</p> 
+<p class="col-md-6 col-sm-12 small"><img class="ico_espaciado" src="/resources/ic_phone_in_talk_black_18dp.png">{{ telephoneNumber }}</p></td></tr>
                         {{/.}}
                     {{/datos}}
                 {% endverbatim %}

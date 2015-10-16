@@ -79,6 +79,9 @@ label.error{
     height: 100px;
 }
 
+.ico_espaciado {
+    padding-right: 5px;
+}
 /* Necesite que la columna acciones al menos se vea decente */
 #acciones {
     width: 140px;
