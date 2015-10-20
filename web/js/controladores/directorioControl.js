@@ -134,7 +134,7 @@ var busqueda = function(filtro){
  * @returns {undefined}
  */
 var mostrar = function(respuesta){
-    /* Agrego esta funci√≥n a nuestro objeto json para que sea capaz de limpiar los atributos "empty", adem√s de asignarle un
+/* Agrego esta funci√≥n a nuestro objeto json para que sea capaz de limpiar los atributos "empty", adem√s de asignarle un
         establecimiento real en base al identificador n√merico que algunos ya tienen asignados */
     respuesta.establecimiento = function(){
         if ($.isNumeric(this.o)){
