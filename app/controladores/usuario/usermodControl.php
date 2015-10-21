@@ -231,9 +231,9 @@ class usermodControl extends \controladores\usuario\usershowControl {
             // Necesitamos un pequeño delay, para evitar que accidentalmente se envíen modificaciones demasiado frecuentes sobre el mismo objeto
             sleep(1);
         }else{
-            $this->mensaje[] = array("codigo" => "warning", 'mensaje' => "No existe un buzón asociado a {$usuarioAttr['usuarioModificar']}");
-            $this->error[] = "Un error ha ocurrido al modificar datos en el servidor de correo " . $mensaje;
             // Te agradecería que comentaras esto cuando estes en produccion
+            $this->mensaje[] = array("codigo" => "warning", 'mensaje' => "No existe un buzón asociado a {$usuarioAttr['usuarioModificar']}");
+            $this->error[] = array('mensaje' => "Un error ha ocurrido al modificar datos en el servidor de correo " . $mensaje);
         }
       
     }

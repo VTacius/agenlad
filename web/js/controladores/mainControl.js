@@ -95,7 +95,6 @@ var confirmar = function(texto, objeto, regex){
 
 var mostrarResultado = function(data){
     mostrarErrorConexion(data);
-//    console.log(data);
     pmostrarError(data);
     pmostrarMensaje(data);
     if(isEmpty(data.error)){

@@ -1,6 +1,4 @@
 $(document).ready(function(){
-    $("#error").hide();
-    $("#mensaje").hide();
 });
 
 /**
@@ -18,18 +16,7 @@ function isEmpty(obj) {
 }
 
 /**
- * Método a usar en procesarDatos cuando el servidor entre en estado de error
- * @param {array} data
- * @returns {undefined}
- */
-function errorOnResponse(data){
-    console.log(data);
-    contenido = '<strong>Fallo en la aplicacion:</strong> La aplicación presenta un problema muy grave, del que es posible que usted no sea responsable. Contacte con un informático sobre este problema<br>';        
-    respuesta = '<div class="alert alert-danger alert-dismissible" role="alert"> <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>'+ contenido + '</div>'
-    $("#error").show();
-    $("#error").html(respuesta);
-};
-
+ * Creo que se sigue enviando este mensaje de error, pero si siquiera existe el div asociado a esta altura de la vida
 function mostrarErrorConexion(data){
     var errores = ['errorLdap', 'errorGrupo', 'errorZimbra', 'mensajes'];
     var respuesta = "";
@@ -53,50 +40,54 @@ function mostrarErrorLabel(data){
     });
     return respuesta;
 }
+*/
 
-function crearAlerta(codigo, contenido){
-    var clase = "alert-" + codigo;
-    alerta = '<div class="alert ' + clase +  ' alert-dismissible" role="alert"> <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span>        <span class="sr-only">Cerrar</span></button><strong>' + contenido + '</strong> </div>';
-    return alerta;
-}
+/**
+ * Método a usar en procesarDatos cuando el servidor entre en estado de error
+ * En realidad, se aconseja su uso para toda funcion de petici�n tipo ajax pueda manejar los errores que recibe
+ * @param {array} data
+ * @returns {undefined}
+ */
+function errorOnResponse(data){
+    console.log(data.responseJSON);
+    var template = $('#errorOnResponse-template').html();
+    Mustache.parse(template);
+    var mensaje = {'mensaje':[{'titulo': 'Fallo en la aplicacion', 'mensaje':'La aplicación presenta un problema muy grav. Contacte con un informático sobre estproblema'}]};
+    var contenido = Mustache.render(template, mensaje.mensaje);
+    $('#error').show();
+    $('#error .alert-dismissible').remove();
+    $("#error").append(contenido);
+    $('#espera').hide();        
+};
 
-function crearAlertaError(contenido){
-    alerta = '<div class="alert alert-danger alert-dismissible" role="alert"> <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>'+ contenido + '</div>';
-    return alerta;
-}
-
-function mostrarElementoError(error){
-    var objetivo = "";
-    $(error).each(function(i,j ){
-        objetivo += '<strong>' + j.titulo + ":</strong> " + j.mensaje + "<br>";        
-    });
-    return crearAlertaError(objetivo);
-}
-
+/**
+ * Mediante el uso de Mustache, hago uso del template #errorOnResponse-template para 
+ * formar las cajas de control con lo que puedo crear los mensajes de error
+ *
+ */
 function pmostrarError(data){
-    var respuesta = "";
     if(!isEmpty(data.error)){
         console.log(data.error);
-        $(data.error).each(function(index, error){
-            respuesta += mostrarElementoError(error);
-        });
-        $("#error").show();
-        $("#error").html(respuesta);
+        var template = $('#errorOnResponse-template').html();
+        Mustache.parse(template);
+        var contenido = Mustache.render(template, data.error);
+        $('#error').show();
+        $('#error .alert-dismissible').remove();
+        $("#error").append(contenido);
+        $('#espera').hide();        
     }
 };
 
 function pmostrarMensaje(data){
-    var respuesta = "";
     if(!isEmpty(data.mensaje)){
-        $(data.mensaje).each(function(index, mensaje){
-            if($.isNumeric(index)){
-                respuesta += crearAlerta(mensaje.codigo, mensaje.mensaje);
-            }else{
-                respuesta += index + ": " + mensaje + "<br>";
-            }
-        });
-        $("#mensaje").show();
-        $("#mensaje").html(respuesta);
+        console.log(data.mensaje);
+        var template = $('#errorOnResponse-template').html();
+        Mustache.parse(template);
+        var contenido = Mustache.render(template, data.mensaje);
+        $('#mensaje').show();
+        $('#mensaje .alert-dismissible').remove();
+        $("#mensaje").append(contenido);
+        $('#espera').hide();        
         $('html, body').animate({scrollTop : 0},800);
     }
 };
@@ -127,7 +118,8 @@ function procesarDatos (url, datos, funcion){
 };
 
 /**
- * 
+ * Crea un array listo para enviar por medio de una consulta JSON al servidor en 
+ * base al tipo de objeto que sea que encuentre en el formulario 
  * @returns {objetos}
  */
 function recogerDatos (){

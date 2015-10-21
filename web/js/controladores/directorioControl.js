@@ -1,7 +1,7 @@
 $(document).ready(function(){
     $("#espera").show();
     var filtraje = filtro();
-    busqueda(filtraje);
+    procesarDatos("/directorio/busqueda", filtraje, tabularUsuarios);
     $.directorioControl = new Object();
     $.directorioControl.pulsaciones = 0;
     
@@ -36,7 +36,7 @@ var establecimientos = function(data){
 $("input").keypress(function(e){
     if ( e.which === 13 ) {
         var filtraje = filtro();
-        busqueda(filtraje);
+        procesarDatos("/directorio/busqueda", filtraje, tabularUsuarios);
         e.preventDefault();
     } 
 });
@@ -51,7 +51,7 @@ $("input").keyup(function(e){
     if (!( e.which === 0)){
    	    if ($.directorioControl.pulsaciones  >= 2) {
    	        var filtraje = filtro();
-   	        busqueda(filtraje);
+            procesarDatos("/directorio/busqueda", filtraje, tabularUsuarios);
    	        $.directorioControl.pulsaciones = 0;
    	    }else{
    	        $.directorioControl.pulsaciones++;
@@ -68,7 +68,7 @@ $("input").keyup(function(e){
 var verificaVacio = function(){
     if (isEmpty($("#o").val()) && isEmpty($("#ou").val()) && isEmpty($("#uid").val())) {
         var filtraje = filtro();
-        busqueda(filtraje);
+        procesarDatos("/directorio/busqueda", filtraje, tabularUsuarios);
     }
 };
 
@@ -83,7 +83,7 @@ var verificaVacio = function(){
 var verificaEspacio = function(valor){
     if (valor.indexOf(" ")!==-1){
         var filtraje = filtro();
-        busqueda(filtraje);
+        procesarDatos("/directorio/busqueda", filtraje, tabularUsuarios);
     }
 };
 
@@ -114,26 +114,12 @@ var filtro = function(){
     return filtro;
 };
 
-var busqueda = function(filtro){
-    $.ajax({
-        url: "/directorio/busqueda",
-        type: "POST",
-        data: filtro,
-        dataType: 'json',
-        success: mostrar,
-        error: function(data){
-            console.log("Algo malo ha sucedido");
-            console.log(data.responseText);
-        }
-    });
-};
-
 /**
  * Sea cual sea la informacion que reciba, la muestra en pantalla
  * @param {array} respuesta
  * @returns {undefined}
  */
-var mostrar = function(respuesta){
+var tabularUsuarios = function(respuesta){
 /* Agrego esta funci√≥n a nuestro objeto json para que sea capaz de limpiar los atributos "empty", adem√s de asignarle un
         establecimiento real en base al identificador n√merico que algunos ya tienen asignados */
     respuesta.establecimiento = function(){
