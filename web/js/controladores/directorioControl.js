@@ -75,7 +75,7 @@ var verificaVacio = function(){
 /**
  * Realiza una consulta cuando se ingresa un espacio, suponemos que es posible 
  * que el nombre de alguien se parezca al usuario de muchos
- * TODO: Esto debería estar en el keyup del #uid, pero no sé que tal se llevara 
+ * TODO: Esto debería estar en el keyup del #uid, pero no sÃ© que tal se llevara 
  * con dos metodos enlazados al mismo evento
  * @param {String} valor
  * @returns {undefined}
@@ -120,8 +120,8 @@ var filtro = function(){
  * @returns {undefined}
  */
 var tabularUsuarios = function(respuesta){
-/* Agrego esta función a nuestro objeto json para que sea capaz de limpiar los atributos "empty", adem�s de asignarle un
-        establecimiento real en base al identificador n�merico que algunos ya tienen asignados */
+/* Agrego esta funciÃ³n a nuestro objeto json para que sea capaz de limpiar los atributos "empty", ademÃs de asignarle un
+        establecimiento real en base al identificador númerico que algunos ya tienen asignados */
     respuesta.establecimiento = function(){
         if ($.isNumeric(this.o)){
             return $.directorioControl.establecimientos[this.o];

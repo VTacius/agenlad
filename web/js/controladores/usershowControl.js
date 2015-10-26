@@ -5,6 +5,9 @@ $(document).ready(function(){
     procesarDatos('/directorio/busqueda', filtraje, mostrar);
 });
 
+/**
+    Configuramos la acción de buscar los datos de tal usuario con Contraseña!
+*/
 $("#enviar").click(function(e){
     e.stopPropagation(); 
     e.preventDefault();
@@ -16,15 +19,19 @@ $("#enviar").click(function(e){
 });
 
 /**
- * Sea cual sea la informacion que reciba, la muestra en pantalla
- * @param {array} result
+ * Creamos la tabla con algunos usuarios, tabla que si bien incluye hasta unos botones bien bonitos 
+ * por el momento más bien están nada más como un adorno
+ * @param {array} respuesta
  * @returns {undefined}
  */
-var mostrar = function(result){
+var mostrar = function(respuesta){
+    var template = $('#usuarioslst-template').html();
+    Mustache.parse(template);
+    var contenido = Mustache.render(template, respuesta);
+    pmostrarError(respuesta);
+    pmostrarMensaje(respuesta);
     $("#usuarioslst tr").remove();
-    $(result.datos).each(function(item, elemento){
-        $("#usuarioslst").append("<tr>" + elementoAttr(elemento.cn) +  elementoAttr(elemento.mail) + elementoAttr(elemento.title) + acciones(elemento.mail) + "</tr>");
-    });
+    $("#usuarioslst").append(contenido);
 };
 
 /**
@@ -105,29 +112,3 @@ function llenarControlUbicacion(datos){
         }
     }
 }
-
-var acciones = function(usuario){
-    var acciones = '<td>\n\
-        <button type="button" id="editar_usuario" name="editar_usuario" class="btn btn-xs alert-success" value="'+usuario+'">\n\
-            <span class="glyphicon glyphicon-edit"></span>Editar\n\
-        </button>\n\
-        <button type="button" id="borrar_usuario" name="borrar_usuario" class="btn btn-default btn-xs alert-danger" value="'+usuario+'">\n\
-            <span class="glyphicon glyphicon-remove"></span>Eliminar\n\
-        </button></td>';
-    return acciones;
-};
-
-/**
- * Para un string vacío, devuelve un -
- * @param {String} attr
- * @returns {String}
- */
-var elementoAttr = function(attr){
-    if (!isEmpty(attr)) {
-        return "<td>" + attr + "</td>";
-    }else{
-        return "<td> - </td>";
-    }
-    
-};
-

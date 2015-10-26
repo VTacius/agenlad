@@ -16,35 +16,8 @@ function isEmpty(obj) {
 }
 
 /**
- * Creo que se sigue enviando este mensaje de error, pero si siquiera existe el div asociado a esta altura de la vida
-function mostrarErrorConexion(data){
-    var errores = ['errorLdap', 'errorGrupo', 'errorZimbra', 'mensajes'];
-    var respuesta = "";
-    $(errores).each(function(index, elemento){
-        if (!isEmpty(data[elemento])) {
-            respuesta += mostrarErrorLabel(data[elemento]);
-        }
-    });
-    if (!isEmpty(respuesta)) {
-        console.log(respuesta);
-        $("#errorLdap").show();
-    }
-    $("#errorLdap").html(respuesta);
-    
-}
-
-function mostrarErrorLabel(data){
-    var respuesta = "";
-    $(data).each(function(index, elemento){
-        respuesta += elemento.titulo + ": " + elemento.mensaje + "<br> ";
-    });
-    return respuesta;
-}
-*/
-
-/**
  * Método a usar en procesarDatos cuando el servidor entre en estado de error
- * En realidad, se aconseja su uso para toda funcion de petici�n tipo ajax pueda manejar los errores que recibe
+ * En realidad, se aconseja su uso para toda funcion de petición tipo ajax pueda manejar los errores que recibe
  * @param {array} data
  * @returns {undefined}
  */
@@ -52,7 +25,7 @@ function errorOnResponse(data){
     console.log(data.responseJSON);
     var template = $('#errorOnResponse-template').html();
     Mustache.parse(template);
-    var mensaje = {'mensaje':[{'titulo': 'Fallo en la aplicacion', 'mensaje':'La aplicación presenta un problema muy grav. Contacte con un informático sobre estproblema'}]};
+    var mensaje = {'mensaje':[{'titulo': 'Fallo en la aplicacion', 'mensaje':'La aplicación presenta un problema muy grave. Contacte con un informático sobre este problema'}]};
     var contenido = Mustache.render(template, mensaje.mensaje);
     $('#error').show();
     $('#error .alert-dismissible').remove();

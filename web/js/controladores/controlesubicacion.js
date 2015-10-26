@@ -1,3 +1,6 @@
+/**
+Contrucción de controles
+*/
 $(document).ready(function(){
     $("#o" ).autocomplete({
         minLength: 2,

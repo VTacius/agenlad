@@ -82,8 +82,12 @@ label.error{
 .ico_espaciado {
     padding-right: 5px;
 }
-/* Necesite que la columna acciones al menos se vea decente */
+
+/* La columna Acciones de la tabla en usershow necesita tener un ancho fijo */
 #acciones {
     width: 140px;
 }
-
+/* El butón editar_usuario de la columna Acciones en usershow necesita un margen derecho fijo */
+#editar_usuario{
+    margin-right: 2px;
+}
