@@ -22,7 +22,6 @@ class usershowControl extends \clases\sesion {
     
     /**
      * TODO: Hay uno bastante parecido en directorioControl
-     * TODO: Una copia descarada en usermodControl
      * @param type $filter
      * @return type
      */
@@ -37,6 +36,7 @@ class usershowControl extends \clases\sesion {
             return true;
         }
     }
+
     /**
      * Prueba para comprobarEstablecimiento con el Ministerio de Salud
      */
@@ -124,9 +124,9 @@ class usershowControl extends \clases\sesion {
         $this->datos['phone'] = $usuario->getTelephoneNumber();
         $this->datos['psswduser'] = $usuario->getuserPassword();
         // Para comprobar que localidad sea un dato válido, necesitamos buscar el valor de dicho atributo ldap en la base de datos
-        $this->datos['localidad'] = $this->comprobarEstablecimiento($usuario->getO());
+        $this->datos['o'] = $this->comprobarEstablecimiento($usuario->getO());
         // TODO: Hacerlo con oficina también
-        $this->datos['oficina'] = $usuario->getOu();
+        $this->datos['ou'] = $usuario->getOu();
         // Agregados a posteridad, y pensaba incluso en agregarlos en otro grupo
         $datos = $this->obtenerDatosAdministrativos($usuario->getUid());
         $this->datos['pregunta'] = count($datos)>0 ? $datos[0]['pregunta'] : '{empty}';

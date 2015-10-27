@@ -24,6 +24,7 @@ var establecimientos = function(data){
         $.merge($.directorioControl.lugares, e);
         $.directorioControl.establecimientos[i] = e;
     });
+
     $( "#o" ).autocomplete({
         source: $.directorioControl.lugares
     });
@@ -120,18 +121,10 @@ var filtro = function(){
  * @returns {undefined}
  */
 var tabularUsuarios = function(respuesta){
-/* Agrego esta funciÃ³n a nuestro objeto json para que sea capaz de limpiar los atributos "empty", ademÃs de asignarle un
-        establecimiento real en base al identificador númerico que algunos ya tienen asignados */
-    respuesta.establecimiento = function(){
-        if ($.isNumeric(this.o)){
-            return $.directorioControl.establecimientos[this.o];
-        }else{
-            return this.o === "empty" ? "" : this.o
-        }
-    };
-    var template = $('#respuesta-template').html();
-    Mustache.parse(template);
-    var contenido = Mustache.render(template, respuesta);
+    var source = $('#respuesta-template').html();
+    var template = Handlebars.compile(source);
+    var contenido = template(respuesta);
+
     pmostrarError(respuesta);
     pmostrarMensaje(respuesta);
     $("#respuesta tr").remove();

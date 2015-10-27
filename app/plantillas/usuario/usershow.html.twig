@@ -5,7 +5,6 @@
     <link href="{{ activos('css/usershow.css') }} " rel="stylesheet">
 {% endblock %}
 {% block javascript %} 
-{#    <script src="{{ activos('js/controladores/directorioControl.js') }}" type="text/javascript"></script>#}
     <script src="{{ activos('js/controladores/usershowControl.js') }}" type="text/javascript"></script>
 {% endblock %}
 {# Configuramos las variables que la plantilla padre usa para formar el menu #}
@@ -30,38 +29,50 @@
             </div>
         </div>
     </div>
-    <dl class="dl-horizontal" id="respuestaUsuario">
-        <dt id="psswduser">Contraseña:</dt>
-            <dd id="psswduser"></dd>
-        <dt id="nombrecompleto">Nombre de usuario:</dt>
-            <dd id="nombrecompleto">{{datos.nombrecompleto}}</dd>
-        <dt id="ubicacion">Localidad:</dt>
-            <dd id="ubicacion"><b id="oficina">{{datos.oficina|emptiador}}</b> en <b id="localidad">{{datos.localidad|emptiador}}</b></dd>
-        <dt id="grupouser">Grupo Principal:</dt>
-            <dd id="grupouser">{{datos.grupouser}}</dd>
-        {% if rol == "admon" or rol == 'admin_general' %}
-            <dt id="pregunta">Pregunta Secreta:</dt>
-                <dd id="pregunta">{{datos.pregunta}}</dd>
-            <dt id="respuesta">Respuesta:</dt>
-                <dd id="respuesta">{{datos.respuesta}}</dd>
-            <dt id="fecha">Fecha de cumpleaños:</dt>
-                <dd id="fecha">{{datos.fecha}}</dd>
-        {% endif %}
-    </dl>
-    <dl class="dl-horizontal" id="respuestaMail">
-        <dt id="mailuser">Correo</dt>
-            <dd id="mailuser">{{datos.mailuser}}</dd>
-        <dt id="cuentastatus">Estado de la Cuenta:</dt>
-            <dd id="cuentastatus">{{datos.cuentastatus}}</dd>
-        <dt id="buzonstatus">Estado del Buzón:</dt>
-            <dd id="buzonstatus">{{datos.buzonstatus}}</dd>
-    </dl>
-    {% if rol == "admon" or rol == 'admin_general' %}
-        <div class="form-group text-center" id="admon">
-            <h4><a id="creacion" href="/useradd">¿Desea agregar al usuario?</a></h4>
-            <h4><a id="modificacion" href="/usermod">¿Desea Modificar al usuario?</a></h4>
-        </div>
-    {% endif %}
+    <div id="respuestaUsuario">
+        <script id="respuestaUsuario-template" type="text/x-custom-template">
+            {% verbatim %}
+                    <dl class="dl-horizontal" >
+                        <dt id="psswduser">Contraseña:</dt>
+                            <dd id="psswduser">{{datos.psswduser}}</dd>
+                        <dt id="nombrecompleto">Nombre de usuario:</dt>
+                            <dd id="nombrecompleto">{{datos.nombrecompleto}}</dd>
+                        <dt id="ubicacion">Localidad:</dt>
+                            <dd id="ubicacion">{{~establecimiento datos.o datos.ou}}</dd>
+                        <dt id="grupouser">Grupo Principal:</dt>
+                            <dd id="grupouser">{{datos.grupouser}}</dd>
+            {% endverbatim %}
+                {% if rol == "admon" or rol == 'admin_general' %}
+            {% verbatim %}
+                    <dt id="pregunta">Pregunta Secreta:</dt>
+                        <dd id="pregunta">{{~contenido datos.pregunta}}</dd>
+                    <dt id="respuesta">Respuesta:</dt>
+                        <dd id="respuesta">{{~contenido datos.respuesta}}</dd>
+                    <dt id="fecha">Fecha de cumpleaños:</dt>
+                        <dd id="fecha">{{datos.fecha}}</dd>
+            {% endverbatim %}
+                {% endif %}
+            {% verbatim %}
+               </dl>
+               <dl class="dl-horizontal" id="respuestaMail">
+                   <dt id="mailuser">Correo</dt>
+                       <dd id="mailuser">{{~contenido datos.mailuser}}</dd>
+                   <dt id="cuentastatus">Estado de la Cuenta:</dt>
+                       <dd id="cuentastatus">{{~contenido datos.cuentastatus}}</dd>
+                   <dt id="buzonstatus">Estado del Buzón:</dt>
+                       <dd id="buzonstatus">{{~contenido datos.buzonstatus}}</dd>
+                </dl>
+            {% endverbatim %}
+                {% if rol == "admon" or rol == 'admin_general' %}
+            {% verbatim %}
+                    <div class="form-group text-center" id="admon">
+                        {{#if datos.enlaces.creacion}}<h4><a id="creacion" href="/useradd/{{usermod}}">¿Desea agregar al usuario?</a></h4>{{/if}}
+                        {{#if datos.enlaces.modificacion}}<h4><a id="modificacion" href="/usermod/{{usermod}}">¿Desea Modificar al usuario?</a></h4>{{/if}}
+                   </div>
+            {% endverbatim %}
+                {% endif %}
+        </script>
+    </div>
     <table class="table table-condensed">
         <thead>
             <tr>

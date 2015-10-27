@@ -1,5 +1,57 @@
 $(document).ready(function(){
+    $.agenlad = new Object();
+    $.ajax({
+        url: "/js/data/establecimientos.json",
+        dataType: 'json',
+        success: Establecimientos
+    });
 });
+
+/*
+ * Forma una sola lista con los establecimientos, luego configura el elemento #o para que 
+ * lo use en su autocompletado
+ **/
+var Establecimientos = function(data){
+    $.agenlad.establecimientos = [];
+    $.each(data, function(i,e){
+        $.agenlad.establecimientos[i] = e;
+    });
+    
+    /**
+     * Nada con {empty} pasará 
+     */
+    Handlebars.registerHelper('contenido', function(texto) {
+        var contenido = (texto === '{empty}') ? "" : texto;
+        return new Handlebars.SafeString(contenido);
+    });
+    
+    /**
+     *  Contruye una frase con o y ou que sea semánticamente correcta
+     */
+    Handlebars.registerHelper('establecimiento', function(o, ou) {
+        var contenido = "";
+        var est = "";
+        if (!isEmpty(o)){
+            if($.type( o ) === 'string'){
+                est = ($.isNumeric(o)) ? $.agenlad.establecimientos[o]: o ;
+            }else if($.inArray('label', o)){
+                est = o.label;
+            }else{
+                console.log("Este es un caso que no he tomado en cuenta");
+                console.log(o);
+            }
+        }
+        if (isEmpty(ou)){
+            contenido = est;
+        }else{
+            contenido = ou + ' de ' + est;
+        }
+        return new Handlebars.SafeString(contenido);
+    });
+    
+
+};
+
 
 /**
  * Comprueba si el parametro pasado es nulo de varias formas posibles
@@ -11,7 +63,7 @@ function isEmpty(obj) {
     if (typeof obj === 'number' && isNaN(obj)) return true;
     if (typeof obj === 'object' && obj.length === 0) return true;
     if (obj instanceof Date && isNaN(Number(obj))) return true;
-    if (obj == "{empty}") return true;
+    if (obj == "{empty}"|| obj =="empty") return true;
     return false;
 }
 

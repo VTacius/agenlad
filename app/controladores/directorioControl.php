@@ -60,14 +60,11 @@ class directorioControl extends \clases\sesion {
      * Método por defecto
      */
     public function display() {
-       
-        // Esto es importante en la vista
-//        $this->parametros['pagina'] = $this->pagina;
         $this->parametros['pagina'] = $this->pagina;
         // ¿Tenemos en serio acceso a esta página?
         $this->comprobar($this->pagina); 
         // Obtenemos los datos que hemos de enviar a la vista
-//        $this->parametros['datos'] = $this->busquedaUsuarios();
+        // $this->parametros['datos'] = $this->busquedaUsuarios();
         echo $this->twig->render('directorio.html.twig', $this->parametros);        
     }
 }

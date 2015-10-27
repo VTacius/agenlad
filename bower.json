@@ -23,7 +23,8 @@
     "jquery.validate": "~1.13.0",
     "select2": "~4.0.0",
     "select2-bootstrap3-css": "~1.4.6",
-    "mustache": "~2.2.0"
+    "mustache": "~2.2.0",
+    "handlebars": "~4.0.3"
   },
   "resolutions": {
     "select2": "~4.0.0"
