@@ -5,17 +5,6 @@ $(document).ready(function(){
         dataType: 'json',
         success: Establecimientos
     });
-});
-
-/*
- * Forma una sola lista con los establecimientos, luego configura el elemento #o para que 
- * lo use en su autocompletado
- **/
-var Establecimientos = function(data){
-    $.agenlad.establecimientos = [];
-    $.each(data, function(i,e){
-        $.agenlad.establecimientos[i] = e;
-    });
     
     /**
      * Nada con {empty} pasará 
@@ -48,8 +37,17 @@ var Establecimientos = function(data){
         }
         return new Handlebars.SafeString(contenido);
     });
-    
+});
 
+/*
+ * Forma una sola lista con los establecimientos, luego configura el elemento #o para que 
+ * lo use en su autocompletado
+ **/
+var Establecimientos = function(data){
+    $.agenlad.establecimientos = [];
+    $.each(data, function(i,e){
+        $.agenlad.establecimientos[i] = e;
+    });
 };
 
 
@@ -75,10 +73,10 @@ function isEmpty(obj) {
  */
 function errorOnResponse(data){
     console.log(data.responseJSON);
-    var template = $('#errorOnResponse-template').html();
-    Mustache.parse(template);
+    var source = $('#errorOnResponse-template').html();
     var mensaje = {'mensaje':[{'titulo': 'Fallo en la aplicacion', 'mensaje':'La aplicación presenta un problema muy grave. Contacte con un informático sobre este problema'}]};
-    var contenido = Mustache.render(template, mensaje.mensaje);
+    var template = Handlebars.compile(source);
+    var contenido = template(mensaje.mensaje);
     $('#error').show();
     $('#error .alert-dismissible').remove();
     $("#error").append(contenido);
@@ -93,9 +91,9 @@ function errorOnResponse(data){
 function pmostrarError(data){
     if(!isEmpty(data.error)){
         console.log(data.error);
-        var template = $('#errorOnResponse-template').html();
-        Mustache.parse(template);
-        var contenido = Mustache.render(template, data.error);
+        var source = $('#errorOnResponse-template').html();
+        var template = Handlebars.compile(source);
+        var contenido = template(data);
         $('#error').show();
         $('#error .alert-dismissible').remove();
         $("#error").append(contenido);
@@ -103,12 +101,16 @@ function pmostrarError(data){
     }
 };
 
+/**
+ * Mediante el uso de Handlebars, formo las cajas de texto con los mensajes de error
+ */
+
 function pmostrarMensaje(data){
     if(!isEmpty(data.mensaje)){
         console.log(data.mensaje);
-        var template = $('#errorOnResponse-template').html();
-        Mustache.parse(template);
-        var contenido = Mustache.render(template, data.mensaje);
+        var source = $('#errorOnResponse-template').html();
+        var template = Handlebars.compile(source);
+        var contenido = template(data.mensaje);
         $('#mensaje').show();
         $('#mensaje .alert-dismissible').remove();
         $("#mensaje").append(contenido);

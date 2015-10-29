@@ -1,57 +1,48 @@
-    <form class="form-horizontal" id="mailModForm" name="mailModForm" role="form" action="/usermod/cambio" method="POST">
-                    {% if not datos.cuentastaus == "{empty}" %}
-        <legend>Estado del Buzón para <b id="usermod">{{datos.usermod}}</b></legend>
-        <div class="form-group">
-            <div class="col-xs-6">
-                <label for="ou" class="col-xs-7 text-left">Estado de Cuenta de Correo</label>
-                <div class="col-xs-5" id="cuenta">
-                    <div class="btn-group btn-toggle" id="cuentastatus"> 
-                    {% if not datos %}
-                        <button id="encendido" class="btn btn-xs btn-primary active">Active</button>
-                        <button id="apagado" class="btn btn-xs btn-default">Locked</button>
-                    {% elseif datos.cuentastatus == "active" %}
-                        <button id="encendido" class="btn btn-xs btn-primary active">Active</button>
-                        <button id="apagado" class="btn btn-xs btn-default">Locked</button>
-                    {% else %}
-                        <button id="encendido" class="btn btn-xs btn-default">Active</button>
-                        <button id="apagado" class="btn btn-xs btn-primary active">{{ datos.cuentastatus | capitalize }}</button>
-                    {% endif %}
-                    </div>
-                </div>
-            </div>
-            <div class="col-xs-6">
-                <label for="ou" class="col-xs-7 text-left">Estado del Buzón de Correo</label>
-                <div class="col-xs-5" id="buzon">
-                    <div class="btn-group btn-toggle" id="buzonstatus">
-                    {% if not datos %}
-                        <button id="encendido" class="btn btn-xs btn-primary active">Enabled</button>
-                        <button id="apagado" class="btn btn-xs btn-default">Disabled</button>
-                    {% elseif datos.buzonstatus == "enabled" %}
-                        <button id="encendido" class="btn btn-xs btn-primary active">Enabled</button>
-                        <button id="apagado" class="btn btn-xs btn-default">Disabled</button>
-                    {% else %}
-                        <button id="encendido" class="btn btn-xs btn-default">Enabled</button>
-                        <button id="apagado" class="btn btn-xs btn-primary active">{{ datos.buzonstatus | capitalize }}</button>
-                    {% endif %}
-                    </div>
-                    
+    {% verbatim %}
+<script id="mailmod-template" type="text/x-handlebars-template">
+{{#if datos }}
+<form class="form-horizontal" id="mailModForm" name="mailModForm" role="form" method="POST">
+    <legend>Estado del Buzón para <b id="usermod">{{datos.usermod}}</b></legend>
+    <div class="form-group">
+        <div class="col-xs-6">
+            <label for="ou" class="col-xs-7 text-left">Estado de Cuenta de Correo</label>
+            <div class="col-xs-5" id="cuenta">
+                <div class="btn-group btn-toggle" id="cuentastatus"> 
+                    <button id="encendido" class="btn btn-xs btn-default">Active</button>
+                    <button id="apagado" class="btn btn-xs btn-primary active">{{ datos.cuentastatus }}</button>
                 </div>
             </div>
         </div>
-        <div class="form-group text-center" id="cargador" name="cargador">
-            <img src="{{ activos('resources/loader.gif') }}" alt="espere..." class="img-circle">
+        <div class="col-xs-6">
+            <label for="ou" class="col-xs-7 text-left">Estado del Buzón de Correo</label>
+            <div class="col-xs-5" id="buzon">
+                <div class="btn-group btn-toggle" id="buzonstatus">
+                    <button id="encendido" class="btn btn-xs btn-default">Enabled</button>
+                    <button id="apagado" class="btn btn-xs btn-primary active">{{ datos.buzonstatus }}</button>
+                </div>
+                
+            </div>
         </div>
-    </form>
-                    
-                    {% endif %}
-    <form class="form-horizontal" id="userModForm" name="userModForm" role="form" action="/usermod/cambio" method="POST">
+    </div>
+    <div class="form-group text-center" id="cargador" name="cargador" style="display: none">
+    {% endverbatim %}
+        <img src="{{ activos('resources/loader.gif') }}" alt="espere..." class="img-circle">
+    {% verbatim %}
+    </div>
+{{/if}}
+</form>
+</script>
+
+<script id="usermod-template" type="text/x-handlebars-template">                
+{{#if datos.enlaces.modificacion}}
+    <form class="form-horizontal" id="userModForm" name="userModForm" role="form" method="POST">
         <legend>Modificación para usuario <b id="usermod">{{datos.usermod}}</b></legend>
         <div class="form-group">
             <label for="uid" class="col-md-3 text-left">Nombres</label>
             <div class="col-xs-9">
                 <input type="text" class="form-control input-sm" id="nameuser" name="nameuser" required placeholder="Nombres" autofocus autocomplete="off" value="{{datos.nameuser}}">
             </div>
-                <input type="hidden" name="usermod" value="{{datos.usermod}}">
+            <input type="hidden" name="usermod" value="{{datos.usermod}}">
         </div>
         <div class="form-group">
             <label for="apelluser" class="col-md-3 text-left">Apellidos</label>
@@ -62,24 +53,20 @@
         <div class="form-group">
             <label for="o" class="col-md-3 text-left">Establecimiento</label>
             <div class="col-xs-9" id="remote">
-                {% if datos %}
-                    <input type="text" class="form-control input-sm" id="o" name="o" placeholder="Ingrese un establecimiento" autocomplete="off" value="{{datos.localidad.label|emptiador}}" data-o="{{datos.localidad.id}}" data-rule-required="true">
-                {% else %}
-                    <input type="text" class="form-control input-sm" id="o" name="o" placeholder="Ingrese un establecimiento" autocomplete="off" value="{{datos.localidad.label|emptiador}}" data-rule-required="true">
-                {% endif %}
+                <input type="text" class="form-control input-sm" id="o" name="o" placeholder="Ingrese un establecimiento" autocomplete="off" value="{{datos.o.label}}" data-rule-required="true">
             </div>
         </div>
         <div class="form-group">
             <label for="ou" class="col-md-3 text-left">Oficina</label>
             <div class="col-xs-9" id="div_ou" name="div_ou">
-                <input type="text" class="form-control input-sm" id="ou" name="ou" placeholder="Oficina" autocomplete="off" value="{{datos.oficina|emptiador}}" data-rule-required="true">
+                <input type="text" class="form-control input-sm" id="ou" name="ou" placeholder="Oficina" autocomplete="off" value="{{datos.ou}}" data-rule-required="true">
             </div>
         </div>
         
         <div class="form-group">
             <label for="cargo" class="col-xs-3 text-left">Cargo</label>
             <div class="col-xs-9">
-                <input type="text" class="form-control input-sm" id="cargo" name="cargo" placeholder="Cargo" autocomplete="off" value="{{datos.cargo|emptiador}}">
+                <input type="text" class="form-control input-sm" id="cargo" name="cargo" placeholder="Cargo" autocomplete="off" value="{{datos.cargo}}">
             </div>
         </div>
         <div class="form-group">
@@ -93,33 +80,34 @@
             <div class="col-xs-6">
                 <label for="ou" class="col-xs-12 text-left">Grupo Principal</label>
                 <select class="form-control col-xs-12" id="grupouser" name="grupouser">
-                    {% for elemento in datos.grupos %}
-                        {% if elemento.cn == datos.grupouser %}
-                            <option selected value="{{elemento.gidNumber}}">{{elemento.cn}}</option>
-                        {% else %}
-                            <option value="{{elemento.gidNumber}}">{{elemento.cn}}</option>
-                        {% endif %}
-                    {% endfor %}
+                    {{#each datos.grupos}}
+                        <option value="{{gidNumber}}">{{cn}}</option>";
+                    {{/each}}
                 </select>
             </div>
             <div class="col-xs-6">
                 <label for="ou" class="col-xs-12 text-left">Grupos Adicionales</label>
-                <select multiple class="form-control col-xs-12" size="10" id="grupos" name="grupos[]">
-                    {% for elemento in datos.grupos %}
-                        {% if elemento.cn in datos.gruposuser %}
-                            <option selected value="{{elemento.cn}}">{{elemento.cn}}</option>
-                        {% else%}
-                            <option value="{{elemento.cn}}">{{elemento.cn}}</option>
-                        {% endif%}
-                    {% endfor %}
+                <select multiple class="form-control col-xs-12" size="10" id="grupos" name="grupos">
+                    {{#each datos.grupos}}
+                        <option value="{{cn}}">{{cn}}</option>
+                    {{/each}}
                 </select>
             </div>
         </div>
-        <div class="form-group text-center" id="espera" name="espera">
-            <img src="{{ activos('resources/loader.gif') }}" alt="espere..." class="img-circle">
-        </div>
         <div class="form-group text-center">
             <button class="btn btn-md btn-primary" id="enviar" tabindex="1" role="button">Modificar Usuario</button> 
-            <button class="btn btn-md btn-default" id="reset" tabindex="1" role="button">Cancelar</button> 
+            <button class="btn btn-md btn-default" id="reset" tabindex="2" role="button">Cancelar</button> 
         </div>
     </form>
+{{/if}}
+{% endverbatim %}
+{% if rol=="admon"%}
+    {% verbatim %}
+        {{#if data.datos.enlaces.creacion}}
+            <div class="form-group text-center" id="creacion">
+                <h4><a id="creacion" href="/useradd/{{datos.usermod}}">¿Desea agregar al usuario?</a></h4>
+            </div>
+        {{/if}}
+    {% endverbatim %}
+{% endif %}
+</script>

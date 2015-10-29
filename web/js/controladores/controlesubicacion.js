@@ -1,7 +1,11 @@
-/**
-Contrucción de controles
-*/
 $(document).ready(function(){
+    oAutocomplementar();
+});
+
+/**
+ * Contrucción de controles o con la función de autocomplementado
+ */
+var oAutocomplementar = function(){
     $("#o" ).autocomplete({
         minLength: 2,
         source: function( request, response ) {
@@ -22,8 +26,12 @@ $(document).ready(function(){
             ouAutocomplementar(ui.item.id);
         },
     });
-});
+}
 
+/**
+ * Contrucción de controles ou con la función de autocomplementado
+ * Debería ser llamado sólo por medio de oAutocomplementar
+ */
 var ouAutocomplementar = function(o){
     $("#ou" ).autocomplete({
         minLength: 2,
