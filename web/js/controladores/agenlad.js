@@ -37,7 +37,57 @@ $(document).ready(function(){
         }
         return new Handlebars.SafeString(contenido);
     });
+    oAutocomplementar();
 });
+/**
+ * Contrucción de controles o con la función de autocomplementado
+ */
+var oAutocomplementar = function(){
+    $("#o" ).autocomplete({
+        minLength: 2,
+        source: function( request, response ) {
+            $.ajax({
+                url: "/helpers/establecimiento",
+                type: 'POST',
+                dataType: "json",
+                data: {
+                  busqueda: request.term
+                },
+                success: function( data ) {
+                  response( data );
+                }
+            })
+        },
+        select: function( event, ui ) {
+            $(this).attr('data-o', ui.item.id);
+            ouAutocomplementar(ui.item.id);
+        },
+    });
+}
+
+/**
+ * Contrucción de controles ou con la función de autocomplementado
+ * Debería ser llamado sólo por medio de oAutocomplementar
+ */
+var ouAutocomplementar = function(o){
+    $("#ou" ).autocomplete({
+        minLength: 2,
+        source: function( request, response ) {
+            $.ajax({
+                url: "/helpers/oficina",
+                type: 'POST',
+                dataType: "json",
+                data: {
+                  busqueda: request.term,
+                  establecimiento: o
+                },
+                success: function( data ) {
+                  response( data );
+                }
+            })
+        },
+    });
+};
 
 /*
  * Forma una sola lista con los establecimientos, luego configura el elemento #o para que 
@@ -84,7 +134,7 @@ function errorOnResponse(data){
 };
 
 /**
- * Mediante el uso de Mustache, hago uso del template #errorOnResponse-template para 
+ * Mediante el uso de Handlebars, hago uso del template #errorOnResponse-template para 
  * formar las cajas de control con lo que puedo crear los mensajes de error
  *
  */
@@ -93,7 +143,7 @@ function pmostrarError(data){
         console.log(data.error);
         var source = $('#errorOnResponse-template').html();
         var template = Handlebars.compile(source);
-        var contenido = template(data);
+        var contenido = template(data.error);
         $('#error').show();
         $('#error .alert-dismissible').remove();
         $("#error").append(contenido);

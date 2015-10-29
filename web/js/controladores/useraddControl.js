@@ -1,12 +1,13 @@
 $(document).ready(function(){
     $("#comprobacion_usuario").hide();
-    
     /* El formulario ha de validarse, si es correcto ejecutará envío */
     $.validator.setDefaults({
         submitHandler: envio,
     });
-    
     $('#userAddForm').validate();
+    
+    /* Activamos el autocompletado en el control de establecimientos */
+    oAutocomplementar();
 });
 
 var envio = function(e){

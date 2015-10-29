@@ -57,7 +57,7 @@
                                         <button type="button" class="close" data-dismiss="alert">
                                             <span aria-hidden="true">&times;</span>
                                             <span class="sr-only">Cerrar</span>
-                                        </button>{{#.}}{{ #titulo }}<strong>{{ titulo }}: </strong>{{ mensaje }}{{ /titulo }}{{ ^titulo }}<strong>{{ mensaje }}</strong>{{ /titulo }}<br>{{/.}}
+                                        </button>{{#.}}{{#if titulo}}<strong>{{ titulo }}: </strong>{{ mensaje }}{{else}}<strong>{{ mensaje }}</strong>{{/if}}<br>{{/.}}
                                     </div>
                                 {{/.}}
                         {% endverbatim %}

@@ -30,7 +30,9 @@ $(document).ready(function(){
     });
 
     $('#actualizacionDatos').validate();
-
+    
+    /* Activamos el autocompletado en el control de establecimientos */
+    oAutocomplementar();
 });
 
 /*
@@ -46,6 +48,7 @@ var envio = function(){
 
 /* Auxiliar que muestra errores y mensajes gracias a las funciones predichas en agenlad.js */
 var mostrarDatos = function(data){
+    console.log(data);
     pmostrarError(data);
     pmostrarMensaje(data);
 };

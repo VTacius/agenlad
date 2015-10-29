@@ -59,6 +59,9 @@ var llenarControles = function(data){
         e.stopPropagation(); 
         e.preventDefault();
     });
+    
+    /* Activamos el autocompletado en el control de establecimientos */
+    oAutocomplementar();
 
     $('.btn-toggle').click(btnToogle);
     $("#userModForm #reset").click(resetUserMod);
@@ -140,8 +143,7 @@ var resetUserMod = function(e){
  */
 var enviarUserMod = function(e){
     var datos = recogerDatos();
-    console.log(datos);
-    //procesarDatos('/usermod/cambio', datos, mostrarDatosModificar);
+    procesarDatos('/usermod/cambio', datos, mostrarDatosModificar);
 };
 
 
