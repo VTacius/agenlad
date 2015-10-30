@@ -81,7 +81,6 @@ mysql -h 10.10.20.56 -u user_database -p database_name < db.sql
 </VirtualHost>
 ```
 
-```
  * Active el módulo Rewrite de Apache, luego de lo cual habrá que reiniciar el servidor Apache
 ```shell 
 a2enmod rewrite
@@ -97,7 +96,7 @@ cp bower_components/jQuery-Mask-Plugin/dist/jquery.mask.min.js web/js/vendor/
 cp bower_components/jquery.validate/dist/jquery.validate.min.js web/js/vendor/
 cp bower_components/jquery.validate/src/localization/messages_es.js web/js/vendor/
 cp bower_components/select2/dist/js/select2.min.js web/js/vendor/
-cp bower_components/mustache/mustache.min.js web/js/vendor/
+cp bower_components/handlebars/handlebars.min.js web/js/vendor/
 
 cp bower_components/bootstrap/dist/css/bootstrap{,-theme}.min.css web/css/vendor/
 cp bower_components/jquery-ui/themes/smoothness/*css web/css/vendor/
