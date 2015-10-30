@@ -48,7 +48,6 @@ var envio = function(){
 
 /* Auxiliar que muestra errores y mensajes gracias a las funciones predichas en agenlad.js */
 var mostrarDatos = function(data){
-    console.log(data);
     pmostrarError(data);
     pmostrarMensaje(data);
 };
@@ -66,7 +65,7 @@ var configurarDatosUsuarios = function(data){
  * La revision de O es nada más un poco más compleja, pero poco
  * */
 var llenarControlesDatosUsuario = function(data){
-    var equivalencias = {'#nombre':'nameuser', '#apellido': 'apelluser', '#pregunta': 'pregunta', '#respuesta': 'respuesta', '#fecha': 'fecha','#ou': 'oficina','#title': 'cargo', '#jvs': 'jvs', '#nit': 'nit', '#telephoneNumber': 'phone'};
+    var equivalencias = {'#nombre':'nameuser', '#apellido': 'apelluser', '#pregunta': 'pregunta', '#respuesta': 'respuesta', '#fecha': 'fecha','#ou': 'ou','#title': 'cargo', '#jvs': 'jvs', '#nit': 'nit', '#telephoneNumber': 'phone'};
     $.each(equivalencias, function(elem, indice){
         var valor = data[indice];
         if (!isEmpty(valor)){
@@ -78,10 +77,10 @@ var llenarControlesDatosUsuario = function(data){
 
     /* El atributo o (localidad) necesita nuestro desfalco para que se comporte como un select sin serlo, y acá esta como, y neceita configurar 
      */
-    if (!(isEmpty(data.localidad))){
-        $('#o').val(data.localidad.label);
-        $('#o').attr('data-o', data.localidad.id);
-        ouAutocomplementar(data.localidad.id);
+    if (!(isEmpty(data.o))){
+        $('#o').val(data.o.label);
+        $('#o').attr('data-o', data.o.id);
+        ouAutocomplementar(data.o.id);
     }else{
         $('#o').val('');
     }

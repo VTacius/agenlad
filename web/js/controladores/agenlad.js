@@ -3,7 +3,7 @@ $(document).ready(function(){
     $.ajax({
         url: "/js/data/establecimientos.json",
         dataType: 'json',
-        success: Establecimientos
+        success: establecimientos
     });
     
     /**
@@ -93,7 +93,7 @@ var ouAutocomplementar = function(o){
  * Forma una sola lista con los establecimientos, luego configura el elemento #o para que 
  * lo use en su autocompletado
  **/
-var Establecimientos = function(data){
+var establecimientos = function(data){
     $.agenlad.establecimientos = [];
     $.each(data, function(i,e){
         $.agenlad.establecimientos[i] = e;
