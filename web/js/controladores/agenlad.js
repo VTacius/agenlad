@@ -179,7 +179,14 @@ function pmostrarMensaje(data){
  * @param {callback} funcion
  * @returns {undefined}
  */
-function procesarDatos (url, datos, funcion){
+function procesarDatos (url, datos, funcion, e){
+    console.log(e);
+    e || ( e = 'default' );
+    if (!isEmpty(e.currentTarget)){
+        if (typeof(e.currentTarget.type === 'button')){
+            console.log(e.currentTarget.type);
+        }
+    }
     $('#espera').show()        
     $.ajax({ 
         type: 'POST',

@@ -94,7 +94,6 @@ var mostrarDatosBusqueda = function(data){
 var mostrarDatosModificar = (function(data){
     pmostrarError(data);
     pmostrarMensaje(data);
-    $("#espera").hide();
 });
 
 /**
@@ -158,7 +157,7 @@ $("#busqueda #enviar").click(function(e){
     datos = {
         usuarioModificar: $("#usuarioModificar").val()
     };
-    procesarDatos('/usermod/envio', datos, mostrarDatosBusqueda);
+    procesarDatos('/usermod/envio', datos, mostrarDatosBusqueda, this);
     e.stopPropagation(); 
     e.preventDefault();
 });

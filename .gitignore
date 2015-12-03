@@ -1,18 +1,16 @@
-#Librerias externas
-vendor/*
+# Librerías externas
 bower_components/*
-#Twig
-app/herramientas
-# Si no enviamos vendor, entonces no necesitamos este
+node_modules/*
+vendor/*
 composer.lock
+# Archivos temporales
+tmp
+*.swp
+.sass-cache/*
+# Twig
+app/herramientas
 # Directorios temporales para desarrollo
 database/*
-# Directorios temporales para Twig
-tmp
-# Configuración de la aplicación
+# Propios de la aplicación
 *.ini
-# El favicon es nuestro
 favicon.ico
-/nbproject/private/
-nbproject/
-*.swp

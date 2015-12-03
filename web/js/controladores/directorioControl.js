@@ -1,7 +1,6 @@
 $(document).ready(function(){
-    $("#espera").show();
     var filtraje = filtro();
-    procesarDatos("/directorio/busqueda", filtraje, tabularUsuarios);
+    procesarDatos("/directorio/busqueda", filtraje, tabularUsuarios, this);
     $.directorioControl = new Object();
     $.directorioControl.pulsaciones = 0;
     oAutocomplementar();
@@ -14,7 +13,7 @@ $(document).ready(function(){
 $("input").keypress(function(e){
     if ( e.which === 13 ) {
         var filtraje = filtro();
-        procesarDatos("/directorio/busqueda", filtraje, tabularUsuarios);
+        procesarDatos("/directorio/busqueda", filtraje, tabularUsuarios, e);
         e.preventDefault();
     } 
 });
@@ -24,12 +23,12 @@ $("input").keypress(function(e){
  * @param {type} e
  */
 $("input").keyup(function(e){
-    verificaVacio();
-    verificaEspacio($("#uid").val());
+    verificaVacio(e);
+    verificaEspacio($("#uid").val(), e);
     if (!( e.which === 0)){
    	    if ($.directorioControl.pulsaciones  >= 2) {
    	        var filtraje = filtro();
-            procesarDatos("/directorio/busqueda", filtraje, tabularUsuarios);
+            procesarDatos("/directorio/busqueda", filtraje, tabularUsuarios, e);
    	        $.directorioControl.pulsaciones = 0;
    	    }else{
    	        $.directorioControl.pulsaciones++;
@@ -43,10 +42,10 @@ $("input").keyup(function(e){
  *  demás funciones
  * @returns {undefined}
  */
-var verificaVacio = function(){
+var verificaVacio = function(e){
     if (isEmpty($("#o").val()) && isEmpty($("#ou").val()) && isEmpty($("#uid").val())) {
         var filtraje = filtro();
-        procesarDatos("/directorio/busqueda", filtraje, tabularUsuarios);
+        procesarDatos("/directorio/busqueda", filtraje, tabularUsuarios,e);
     }
 };
 
@@ -58,10 +57,10 @@ var verificaVacio = function(){
  * @param {String} valor
  * @returns {undefined}
  */
-var verificaEspacio = function(valor){
+var verificaEspacio = function(valor, e){
     if (valor.indexOf(" ")!==-1){
         var filtraje = filtro();
-        procesarDatos("/directorio/busqueda", filtraje, tabularUsuarios);
+        procesarDatos("/directorio/busqueda", filtraje, tabularUsuarios, e);
     }
 };
 
