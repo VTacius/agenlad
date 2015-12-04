@@ -1,12 +1,12 @@
 <?php
-namespace controladores;
+namespace Controladores;
 /**
  * Controlador para el manejo de sesión
  *
  * @author alortiz
  */
 
-class loginControl extends \clases\sesion{
+class loginControl extends \Clases\sesion{
     private $server;
     private $puerto;
     private $usuario;
@@ -132,7 +132,7 @@ class loginControl extends \clases\sesion{
     /**
      * Auxiliar de autenticar
      * Iniciamos la sesion con datos a guardar en la base de datos
-     * @param \clases\authentication $login
+     * @param \Clases\authentication $login
      */
     protected function sesionar($login){
         $db = $this->index->get('dbsession');
@@ -160,7 +160,7 @@ class loginControl extends \clases\sesion{
      */
     public function autenticar(){
         $this->comprobarBloqueo($this->usuario);
-        $login = new \clases\authentication('ldap', array(
+        $login = new \Clases\authentication('ldap', array(
                 'dc' => $this->server,
                 'pw' => $this->index->get('passwdldap'),
                 'rdn' => $this->index->get('lectorldap'),

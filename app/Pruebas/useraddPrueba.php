@@ -6,7 +6,7 @@ namespace controladores;
  *
  * @author alortiz
  */
-class useraddPrueba extends \clases\sesion{
+class useraddPrueba extends \Clases\sesion{
     public function __construct() {
         parent::__construct();
         $this->pagina = "usershow";

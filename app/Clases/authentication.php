@@ -1,10 +1,10 @@
 <?php
 /**
- * Description of authentication
- *
+ * authentication
+ * Agrega a fat-free la capaciadad de validarse contra LDAP
  * @author vtacius
  */
-namespace clases;
+namespace Clases;
 class authentication {
     //@{ Error messages
 	const

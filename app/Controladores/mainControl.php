@@ -1,5 +1,5 @@
 <?php
-namespace controladores;
+namespace Controladores;
 /**
  * Controlador para el index de la aplicación, en nuestro caso, el lugar donde 
  * cambiamos contraseñas
@@ -8,7 +8,7 @@ namespace controladores;
  * @author alortiz
  */
 
-class mainControl extends \clases\sesion {
+class mainControl extends \Clases\sesion {
     private $hashes;
     private $usuario;
     
@@ -21,7 +21,7 @@ class mainControl extends \clases\sesion {
         $this->pagina = "main";
         // Objetos que hemos de usar
         $this->db = $this->index->get('dbconexion');
-        $this->hashes = new \clases\cifrado();  
+        $this->hashes = new \Clases\cifrado();  
   }
     
     /**
@@ -72,7 +72,7 @@ class mainControl extends \clases\sesion {
             if ($this->complejidad($passchangeprima)) {
                 $this->changeLdapPassword($usuario, $passchangeprima);
                 //Me encanta rehusar código de esta forma. Recuerda no hacer la redirección desde acá
-                $cierre = new \controladores\loginControl();
+                $cierre = new \Controladores\loginControl();
                 $cierre->cerrarSesion();
             } else {
                 $this->mensaje[] = array("codigo" => "warning", 'mensaje' => "La contraseña no tiene la complejidad necesaria");

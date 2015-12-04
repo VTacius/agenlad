@@ -1,7 +1,11 @@
 <?php
-namespace controladores\configuracion;
-
-class dominioControl extends \clases\sesion{
+namespace Controladores\configuracion;
+/**
+ * dominioControl
+ *
+ * @author vtacius
+ */
+class dominioControl extends \Clases\sesion{
     
     protected $error = array();
     protected $datos = array();
@@ -52,7 +56,7 @@ class dominioControl extends \clases\sesion{
         $semilla = $this->index->get('semilla');
         $dc =  explode(".", $dominio);
         $clave =  $semilla . $dc[0];
-        $hashito = new \clases\cifrado();
+        $hashito = new \Clases\cifrado();
         $marcado = $hashito->encrypt($password, $clave);
         $cmds = 'update credenciales set '.$objeto.' = :arg'.$objeto.' where dominio = :argdominio';
         $args = array('argdominio'=>$dominio, 'arg'.$objeto.''=>$marcado);

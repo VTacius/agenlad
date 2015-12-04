@@ -13,7 +13,7 @@ namespace Pruebas;
  *
  * @author vtacius
  */
-class getdatos extends \clases\sesion{
+class getdatos extends \Clases\sesion{
     public function __construct() {
         parent::__construct();
         $this->pagina = "useradd";

@@ -1,12 +1,12 @@
 <?php
-namespace controladores;
+namespace Controladores;
 /**
  * Controlador para directorio telefónico de la aplicacion
  *
  * @author alortiz
  */
 
-class directorioControl extends \clases\sesion {
+class directorioControl extends \Clases\sesion {
     
     function __construct(){
         // Consigue el objeto F3 en uso mediante el constructor de la clase padre

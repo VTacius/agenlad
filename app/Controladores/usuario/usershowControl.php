@@ -1,12 +1,12 @@
 <?php
-namespace controladores\usuario;
+namespace Controladores\usuario;
 /**
  * Controlador para revision de datos de usuario
  * 
  * @version 0.2
  * @author alortiz
  */
-class usershowControl extends \clases\sesion {
+class usershowControl extends \Clases\sesion {
     
     protected $error = array();
     protected $datos = array();

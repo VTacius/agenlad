@@ -1,6 +1,6 @@
 <?php
-namespace controladores;
-class helpers extends \clases\sesion { 
+namespace Controladores;
+class helpers extends \Clases\sesion { 
     
     public function __construct() {
         parent::__construct();

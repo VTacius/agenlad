@@ -1,10 +1,10 @@
 <?php
 /**
- * Clase para el manejo de sesiones
- *
+ * sesion
+ * Manejo de sesiones del que cada controlador desciende
  * @author alortiz
  */
-namespace clases;
+namespace Clases;
 abstract class sesion {
     /** @var string */
     protected $dn;
@@ -96,7 +96,7 @@ abstract class sesion {
         $clave =  $semilla . $dc[0];
         
         // Desciframos firmaz con password de usuario
-        $hashito = new \clases\cifrado();
+        $hashito = new \Clases\cifrado();
         $clavez = $hashito->descifrada($firmaz, $clave);
          // Obtenemos el DN del administrador desde la base de datos
         $config = $this->getConfiguracionDominio();
@@ -115,7 +115,7 @@ abstract class sesion {
      */
     protected function getClaves(){
         // Recuperamos firmaz desde sesion y desciframos
-        $hashito = new \clases\cifrado();
+        $hashito = new \Clases\cifrado();
         $configUser = $this->getConfiguracionUsuario();
         $firmas = $configUser['firmas'];
         

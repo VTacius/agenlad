@@ -1,12 +1,12 @@
 <?php
-namespace controladores;
+namespace Controladores;
 
 /**
  * Controlador para manejo de pruebas
  *
  * @author alortiz
  */
-class pruebaControl extends \clases\sesion{
+class pruebaControl extends \Clases\sesion{
     
     protected function mostrarHtml($mensaje){
         if (is_array($mensaje)) {

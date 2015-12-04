@@ -1,7 +1,11 @@
 <?php
-namespace controladores\configuracion;
-
-class usuarioControl extends \clases\sesion{
+namespace Controladores\configuracion;
+/**
+ * usuarioControl
+ *
+ * @author vtacius
+ */
+class usuarioControl extends \Clases\sesion{
     
     protected $error = array();
     protected $datos = array();

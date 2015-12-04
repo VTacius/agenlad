@@ -1,0 +1,24 @@
+{
+  "name": "agenlad",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VTacius/agenlad"
+  },
+  "version": "1.0.0",
+  "description": "Prueba sobre uso de herramientas gulp",
+  "author": "Alexander Ortiz",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-include": "^2.1.0",
+    "gulp-minify-css": "^1.2.1",
+    "gulp-sass": "^2.1.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^1.5.1",
+    "gulp-util": "^3.0.7"
+  },
+  "scripts": {
+    "build": "gulp"
+  },
+  "dependencies": {}
+}

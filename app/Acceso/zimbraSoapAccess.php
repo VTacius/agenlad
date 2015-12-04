@@ -7,7 +7,6 @@ use SoapParam;
 use SoapVar;
 use SoapFault;
 use Exception;
-//require_once '../clases/\clasesxmlToArray.php';
 
 class zimbraSoapAccess {
         /** @var \Base */
@@ -100,7 +99,7 @@ class zimbraSoapAccess {
      * @return array
      */
     private function parsearRespuesta($contenido){
-        $xml = new \clases\xmlToArray();
+        $xml = new \Clases\xmlToArray();
         $result = $xml->parse($contenido);
         return $result['SOAP:ENVELOPE']['SOAP:BODY'];
     }
@@ -263,5 +262,3 @@ class zimbraSoapAccess {
     }
 
 }
-
-

@@ -1,6 +1,6 @@
 <?php
-namespace controladores\usuario;
-class useraddControl extends \clases\sesion{
+namespace Controladores\usuario;
+class useraddControl extends \Clases\sesion{
     
     public function __construct() {
         parent::__construct();

@@ -21,7 +21,7 @@ class objectosLdap extends \Acceso\ldapAccess{
     protected $entrada = array();
     
     /**
-     * @var clases\cifrado
+     * @var Clases\cifrado
      */
     protected $hashito;
     

@@ -1,7 +1,11 @@
 <?php
-namespace clases;
+/**
+ * cifrado
+ * Agrega capacidad de crear hash SHA1SUM para LDAP, NTLM y LMHash y cifrado
+ * @author <varius>
+ */
+namespace Clases;
 ini_set('default_charset','UTF-8');
-
 class cifrado {
   
     private $decrypted;

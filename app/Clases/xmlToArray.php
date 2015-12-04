@@ -8,9 +8,9 @@
  * @copyright Copyright (c) 2009, Yannick Lorenz
  * @copyright Copyright (c) 2012, Fabrizio La Rosa
  * @package ZimbraSoapPhp
- * @link https://code.google.com/p/zimbra-admin-api-soap-php/source/browse/trunk/zm/Zm/Auth.php description Sacada desde acá
+ * @link https://code.google.com/p/zimbra-admin-api-soap-php/source/browse/trunk/zm/Zm/Auth.php 
  */
-namespace clases;
+namespace Clases;
 class xmlToArray
 {
         var $stack=array();

@@ -1,6 +1,6 @@
 <?php
-namespace controladores\usuario;
-class userActualizacion extends \controladores\usuario\usermodControl { 
+namespace Controladores\usuario;
+class userActualizacion extends \Controladores\usuario\usermodControl { 
     
     public function __construct() {
         parent::__construct();
