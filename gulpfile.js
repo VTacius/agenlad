@@ -13,11 +13,16 @@ var pathos = {
     },
     vendor: {
         js: {
-            path: './app/js/vendor',
+            path: './app/web/js/vendor',
             lib: [
                 './bower_components/jquery/dist/jquery.js',
+                './bower_components/jquery-ui/ui/*.js',
                 './bower_components/boostrap-sass/assets/javascripts/bootstrap/*.js',
-                './bower_components/handlebars/handlebars.js'
+                './bower_components/handlebars/handlebars.js',
+                './bower_components/jquery.validate/dist/jquery.validate.js',
+                './bower_components/jquery.validate/src/localization/messages_es.js',
+                './bower_components/handlebars/handlebars.js',
+                './bower_components/jQuery-Mask-Plugin/dist/jquery.mask.js',
             ]
         }
     }
@@ -25,6 +30,7 @@ var pathos = {
 
 var gulp = require('gulp');
 var sass = require('gulp-sass');
+var copy = require('copy-dir');
 // Ahora, uglificamos
 var mapa = require('gulp-sourcemaps');
 var minijs = require('gulp-uglify');
@@ -55,11 +61,10 @@ gulp.task('minicss', function(){
     .on('error', util.log)
     .pipe(mapa.write())
     .pipe(gulp.dest(pathos.css.prod));
-});
-
+}); 
 /* Tarea previa: Muevo los script de vendor en bower_components a app/js/vendor */
 gulp.task('copiar', function(){
-    gulp.src(pathos.vendor.js.lib, {read: false})
+    gulp.src(pathos.vendor.js.lib)
     .pipe(gulp.dest(pathos.vendor.js.path));
 });
 

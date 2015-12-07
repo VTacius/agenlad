@@ -1,7 +1,7 @@
 {% extends "base/layout.html.twig" %}
 {% block titulo -%}Cambio de contraseña{% endblock %}
 {% block javascript %} 
-    <script src="{{ activos('js/controladores/mainControl.js') }}" type="text/javascript"></script>
+    <script src="{{ activos('js/mainControl.js') }}" type="text/javascript"></script>
 {% endblock %}
 
 {# Configuramos las variables que la plantilla padre usa para formar el menu #}
@@ -41,7 +41,6 @@
             <button type="submit" class="btn btn-primary" id="enviar" name="enviar">Cambiar Contraseña</button>
         </div>
     </form>
-    
 {% endblock %}
 
         
