@@ -1,0 +1,21 @@
+# Enable rewrite engine and route requests to framework
+# Requiere activar el módulo desde consola
+# a2enmod rewrite
+RewriteEngine On
+
+# Some servers require you to specify the `RewriteBase` directive
+# In such cases, it should be the path (relative to the document root)
+# containing this .htaccess file
+#
+# Adecúe esto con la base real de su aplicación si es necesario
+#RewriteBase /var/www/
+
+RewriteCond %{REQUEST_URI} \.ini$
+RewriteRule \.ini$ - [R=404]
+
+RewriteCond %{REQUEST_FILENAME} !-l
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+# http://stackoverflow.com/questions/4576851/simple-problem-with-mod-rewrite-in-the-fat-free-framework
+RewriteRule .* /index.php [L,QSA]
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]

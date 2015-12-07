@@ -1,0 +1,77 @@
+/*!
+ * Bootstrap v3.3.5 (http://getbootstrap.com)
+ * Copyright 2011-2015 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */
+
+// Modificamos las variables que queremos personalizar en un fichero independiente
+@import "app/web/sass/variables";
+
+// Core variables and mixins
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/variables";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/mixins";
+
+// Reset and dependencies
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/normalize";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/print";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/glyphicons";
+
+// Core CSS
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/scaffolding";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/type";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/code";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/grid";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/tables";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/forms";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/buttons";
+
+// Components
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/component-animations";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/dropdowns";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/button-groups";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/input-groups";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/navs";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/navbar";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/breadcrumbs";
+// http://getbootstrap.com/components/#pagination
+// @import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/pagination";
+// http://getbootstrap.com/components/#pagination-pager
+// @import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/pager";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/labels";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/badges";
+// http://getbootstrap.com/components/#jumbotron
+//@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/jumbotron";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/thumbnails";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/alerts";
+// Barra de progreso que no me veo usando, quizá porque ya tengo mi cargador
+// @import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/progress-bars";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/media";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/list-group";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/panels";
+// Esta wea es para meter vídeos, básicamente
+//@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/responsive-embed";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/wells";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/close";
+
+// Components w/ JavaScript
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/modals";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/tooltip";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/popovers";
+// Esta wea para carrousel de imágenes que al menos en mi proyecto nada que ver.
+// Incluso tenés que revisar el código javascript asociado
+// @import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/carousel";
+
+// Utility classes
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/utilities";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/responsive-utilities";
+
+// Esta es la forma en que configuramos el estilo para jquery-ui
+@import "bower_components/jquery-ui/themes/base/core";
+@import "bower_components/jquery-ui/themes/base/datepicker";
+@import "bower_components/jquery-ui/themes/ui-lightness/theme";
+
+/* Tomado del Jumbotron.css original para correcto funcionamiento de esto */
+body {
+  padding-top: 55px;
+  padding-bottom: 20px
+}
