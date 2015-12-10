@@ -49,13 +49,3 @@
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0088cc', endColorstr='#ff0077b3', GradientType=0)
 }
 
-@media (min-width: 768px) {
-  .dl-horizontal dt {
-    width: 240px;
-    margin-bottom: 17px
-  }
-  .dl-horizontal dd {
-    margin-left: 260px;
-    margin-bottom: 17px
-  }
-}

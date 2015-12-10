@@ -3,13 +3,13 @@
 var pathos = {
     css: {
         sass: './app/web/sass/*scss',
-        dev: './web/css/src',
+        dev: './web/css/src/',
         prod: './web/css/'
     },
     js: {
         dev: './app/web/js/*.js',
-        src: './web/js/src',
-        prod: './web/js'
+        src: './web/js/src/',
+        prod: './web/js/'
     },
     vendor: {
         js: {
@@ -47,7 +47,7 @@ gulp.task('estilo', function(){
     gulp.src(pathos.css.sass)
     .pipe(sass())
     .on('error', util.log)
-    .pipe(gulp.dest('./web/css/src'));
+    .pipe(gulp.dest(pathos.css.dev));
 });
 
 /* Minificamos el css */
@@ -62,10 +62,27 @@ gulp.task('minicss', function(){
     .pipe(mapa.write())
     .pipe(gulp.dest(pathos.css.prod));
 }); 
+
 /* Tarea previa: Muevo los script de vendor en bower_components a app/js/vendor */
 gulp.task('copiar', function(){
     gulp.src(pathos.vendor.js.lib)
     .pipe(gulp.dest(pathos.vendor.js.path));
+});
+
+/* Tarea previa independiente: Muevo images de jquery-ui al directorio de producción */
+gulp.task('image', function(){
+    gulp.src('./bower_components/jquery-ui/themes/smoothness/images/')
+    .pipe(gulp.dest(pathos.css.prod));
+    gulp.src('./bower_components/jquery-ui/themes/smoothness/images/*')
+    .pipe(gulp.dest(pathos.css.prod + 'images/'));
+});
+
+/* Tarea previa independiente: Muevo fuentes de bootstrap-sass al directorio de producción */
+gulp.task('fonts', function(){
+    gulp.src('./bower_components/boostrap-sass/assets/fonts/')
+    .pipe(gulp.dest(pathos.css.prod));
+    gulp.src('./bower_components/boostrap-sass/assets/fonts/bootstrap/*')
+    .pipe(gulp.dest(pathos.css.prod + 'fonts/'));
 });
 
 /* Trabajo con JavaScript */
@@ -89,4 +106,4 @@ gulp.task('minijs', ['copiar'], function(){
 
 /* La tarea por defecto ejecuta las tareas más principales */
 
-gulp.task('default', ['minicss', 'minijs']);
+gulp.task('default', ['minicss', 'minijs', 'image', 'fonts']);

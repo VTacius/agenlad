@@ -1,11 +1,10 @@
 {% extends "base/layout.html.twig" %}
 {% block titulo -%}Listado de usuarios{% endblock %}
 {% block css -%} 
-    <link href="{{ activos('css/jumbotron.css') }} " rel="stylesheet">
     <link href="{{ activos('css/usershow.css') }} " rel="stylesheet">
 {% endblock %}
 {% block javascript %} 
-    <script src="{{ activos('js/controladores/usershowControl.js') }}" type="text/javascript"></script>
+    <script src="{{ activos('js/usershowControl.js') }}" type="text/javascript"></script>
 {% endblock %}
 {# Configuramos las variables que la plantilla padre usa para formar el menu #}
 {% set menu = menu %}

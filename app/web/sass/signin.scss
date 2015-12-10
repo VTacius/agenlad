@@ -1,0 +1,77 @@
+/*!
+ * Bootstrap v3.3.5 (http://getbootstrap.com)
+ * Copyright 2011-2015 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ */
+
+// Modificamos las variables que queremos personalizar en un fichero independiente
+@import "app/web/sass/variables";
+
+// Core variables and mixins
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/variables";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/mixins";
+
+// Reset and dependencies
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/normalize";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/print";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/glyphicons";
+
+// Core CSS
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/scaffolding";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/type";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/code";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/grid";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/tables";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/forms";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/buttons";
+
+// Utility classes
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/utilities";
+@import "bower_components/boostrap-sass/assets/stylesheets/bootstrap/responsive-utilities";
+
+body {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #eee;
+}
+
+.form-signin {
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+    .form-control {
+        position: relative;
+        font-size: 16px;
+        height: auto;
+        padding: 10px;
+        -webkit-box-sizing: border-box;
+           -moz-box-sizing: border-box;
+                box-sizing: border-box;
+    }
+
+    .form-signin-heading,
+    .checkbox {
+        margin-bottom: 10px;
+    }
+    .checkbox {
+        font-weight: normal;
+    }
+
+    .form-control:focus {
+        z-index: 2;
+    }
+
+    input[type="text"] {
+        margin-bottom: -1px;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+    
+    input[type="password"] {
+        margin-bottom: 10px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+
+}
+

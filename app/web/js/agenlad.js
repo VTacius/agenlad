@@ -6,6 +6,7 @@
 //=include ./vendor/autocomplete.js
 //=include ./vendor/datepicker.js
 //=include ./vendor/dropdown.js
+//=include ./vendor/collapse.js
 //=include ./vendor/jquery.validate.js
 //=include ./vendor/messages_es.js
 //=include ./vendor/handlebars.js
@@ -179,6 +180,13 @@ function pmostrarMensaje(data){
         $('#espera').hide();        
         $('html, body').animate({scrollTop : 0},800);
     }
+};
+
+/*
+ * Supongo que en algún momento, será "mediante el uso de Handlebars 
+ */
+function mostrarErrorConexion(data){
+    console.log(data);
 };
 
 /**

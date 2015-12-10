@@ -1,0 +1,13 @@
+dt:first-of-type, dd:first-of-type {
+  font-size: xx-large; }
+
+dt, dd {
+  font-size: large; }
+
+@media (min-width: 768px) {
+  .dl-horizontal dt {
+    width: 240px;
+    margin-bottom: 17px; }
+  .dl-horizontal dd {
+    margin-left: 260px;
+    margin-bottom: 17px; } }

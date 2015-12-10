@@ -68,10 +68,103 @@
 // Esta es la forma en que configuramos el estilo para jquery-ui
 @import "bower_components/jquery-ui/themes/base/core";
 @import "bower_components/jquery-ui/themes/base/datepicker";
-@import "bower_components/jquery-ui/themes/ui-lightness/theme";
+@import "bower_components/jquery-ui/themes/base/menu";
+@import "bower_components/jquery-ui/themes/base/autocomplete";
+@import "bower_components/jquery-ui/themes/smoothness/theme";
 
 /* Tomado del Jumbotron.css original para correcto funcionamiento de esto */
 body {
   padding-top: 55px;
-  padding-bottom: 20px
+  padding-bottom: 20px;
 }
+
+.form-horizontal {
+  padding-top: 15px;
+}
+
+.valid {
+  background:url(/resources/accept.png) no-repeat 0 50%;
+  background-position: 3px;
+  padding-left:22px;
+  line-height:24px;
+  color:#3a7d34;
+}
+
+.valid:first-child {
+  padding-left:22px;
+  line-height:24px;
+}
+
+.invalid {
+  background:url(/resources/cross.png) no-repeat 0 50%;
+  padding-left:22px;
+  line-height:24px;
+  color:#ec3f41;
+}
+
+.invalid:first-child {
+  padding-left:22px;
+  line-height:24px;
+}
+
+.ui-autocomplete-loading {
+    background: white url("../resources/ajax-loader.gif") left center no-repeat;
+    padding-left:20px;
+}
+
+
+select.error,input.error {
+  background:url(../resources/cross.png) no-repeat 0 50%;
+  background-position: 3px;
+  padding-left:22px;
+  line-height:24px;
+  color:#ec3f41;
+}
+
+label.error{
+  background-position: 3px;
+  padding-left:22px;
+  line-height:24px;
+  color:#ec3f41;
+}
+
+.alert{
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin-bottom: 2px;
+    font-size: 13px
+}
+
+/**
+#clateral .col-md-8{
+    padding-left: 0px;
+    padding-right: 0px;
+}
+*/
+
+/* Hacemos que las opciones del autocomplete tenga barra espaciadora */
+
+.ui-autocomplete {
+    max-height: 100px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+}
+
+* html .ui-autocomplete {
+    height: 100px;
+}
+
+.ico_espaciado {
+    padding-right: 5px;
+}
+
+/* La columna Acciones de la tabla en usershow necesita tener un ancho fijo */
+#acciones {
+    width: 140px;
+}
+/* El butón editar_usuario de la columna Acciones en usershow necesita un margen derecho fijo */
+#editar_usuario{
+    margin-right: 2px;
+}
+
