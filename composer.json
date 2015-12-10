@@ -1,10 +1,20 @@
 {
     "name": "alortiz/agenlap",
+    "author": {
+        "name": "Alexander Ortíz",
+        "email": "vtacius@gmail.com"
+    },
+    "version": "0.7",
+    "description": "Agenda en php con conexión a un directorio LDAP",
+    "keywords": [
+      "ldap", "php"
+    ],
+    "license": "MIT",
     "require": {
         "php": ">=5.4.0",
         "ext-ldap": ">=0",
         "ext-mysql": ">=0.1",
-	"ext-pgsql": ">=0",
+	    "ext-pgsql": ">=0",
         "ext-mcrypt": ">=0",
         "twig/twig": ">=1.16.0",
         "bcosca/fatfree": ">=3.2.0"

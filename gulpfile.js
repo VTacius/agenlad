@@ -7,7 +7,7 @@ var pathos = {
         prod: './web/css/'
     },
     js: {
-        dev: './app/web/js/',
+        dev: './app/web/js/*js',
         src: './web/js/src/',
         prod: './web/js/'
     },
@@ -44,14 +44,6 @@ var include = require('gulp-include');
 
 /* Luego, las adicionales al fin */
 var util = require('gulp-util');
-
-/* Trabajo con SASS/CSS */
-gulp.task('estilo', function(){
-    gulp.src(pathos.css.sass)
-    .pipe(sass())
-    .on('error', util.log)
-    .pipe(gulp.dest(pathos.css.dev));
-});
 
 /* Minificamos el css */
 gulp.task('minicss', function(){
@@ -90,13 +82,6 @@ gulp.task('fonts', function(){
 gulp.task('data', function(){
     gulp.src(pathos.js.dev + '/data/*')
     .pipe(gulp.dest(pathos.js.prod + '/data'))
-});
-
-/* Trabajo con JavaScript */
-gulp.task('guion', ['copiar'], function(){
-    gulp.src(pathos.js.dev)
-    .pipe(include())
-    .pipe(gulp.dest(pathos.js.src));
 });
 
 /* Minificamos después para obtener un mapa más limpio*/

@@ -1,27 +1,28 @@
 {
-  "name": "directorio",
-  "version": "0.0.5",
-  "authors": [
-    "Alexander Ortíz <vtacius@gmail.com>"
-  ],
-  "description": "Directorio",
-  "keywords": [
-    "ldap"
-  ],
-  "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
-  "dependencies": {
-    "boostrap-sass": "~3.3.5",
-    "jquery-ui": "~1.11.4",
-    "jQuery-Mask-Plugin": "~1.13.1",
-    "jquery.validate": "~1.13.0",
-    "handlebars": "~4.0.4"
-  }
+    "name": "directorio",
+    "authors": {
+        "name": "Alexander Ortíz",
+        "email": "vtacius@gmail.com"
+    },
+    "version": "0.7",
+    "description": "Agenda en php con conexión a un directorio LDAP",
+    "keywords": [
+      "ldap", "php"
+    ],
+    "license": "MIT",
+    "ignore": [
+      "**/.*",
+      "node_modules",
+      "bower_components",
+      "test",
+      "tests"
+    ],
+    "dependencies": {
+      "boostrap-sass": "~3.3.5",
+      "jquery-ui": "~1.11.4",
+      "jQuery-Mask-Plugin": "~1.13.1",
+      "jquery.validate": "~1.13.0",
+      "handlebars": "~4.0.4"
+    }
 }
 
