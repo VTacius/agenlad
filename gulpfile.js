@@ -11,6 +11,10 @@ var pathos = {
         src: './web/js/src/',
         prod: './web/js/'
     },
+    resources: {
+        dev: './app/web/resources/*',
+        prod: './web/resources/'
+    },
     vendor: {
         js: {
             path: './app/web/js/vendor',
@@ -30,7 +34,6 @@ var pathos = {
 
 var gulp = require('gulp');
 var sass = require('gulp-sass');
-var copy = require('copy-dir');
 // Ahora, uglificamos
 var mapa = require('gulp-sourcemaps');
 var minijs = require('gulp-uglify');
@@ -71,10 +74,10 @@ gulp.task('copiar', function(){
 
 /* Tarea previa independiente: Muevo images de jquery-ui al directorio de producción */
 gulp.task('image', function(){
-    gulp.src('./bower_components/jquery-ui/themes/smoothness/images/')
-    .pipe(gulp.dest(pathos.css.prod));
     gulp.src('./bower_components/jquery-ui/themes/smoothness/images/*')
     .pipe(gulp.dest(pathos.css.prod + 'images/'));
+    gulp.src(pathos.resources.dev)
+    .pipe(gulp.dest(pathos.resources.prod));
 });
 
 /* Tarea previa independiente: Muevo fuentes de bootstrap-sass al directorio de producción */

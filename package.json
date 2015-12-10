@@ -4,8 +4,8 @@
     "type": "git",
     "url": "https://github.com/VTacius/agenlad"
   },
-  "version": "1.0.0",
-  "description": "Prueba sobre uso de herramientas gulp",
+  "version": "0.7",
+  "description": "Agenda en php con conexión a un directorio LDAP",
   "author": "Alexander Ortiz",
   "license": "MIT",
   "devDependencies": {
@@ -20,7 +20,5 @@
   "scripts": {
     "build": "gulp"
   },
-  "dependencies": {
-    "copy-dir": "0.0.8"
-  }
+  "dependencies": {}
 }

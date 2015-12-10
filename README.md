@@ -87,26 +87,6 @@ a2enmod rewrite
 service apache2 restart
 ```
 
-* Copie los archivos CSS y Javascript de terceros a la ubicación de la aplicación:
-```shell
-cp bower_components/jquery/dist/jquery.min.js web/js/vendor/
-cp bower_components/jquery-ui/jquery-ui.min.js web/js/vendor/
-cp bower_components/bootstrap/dist/js/bootstrap.min.js web/js/vendor/
-cp bower_components/jQuery-Mask-Plugin/dist/jquery.mask.min.js web/js/vendor/
-cp bower_components/jquery.validate/dist/jquery.validate.min.js web/js/vendor/
-cp bower_components/jquery.validate/src/localization/messages_es.js web/js/vendor/
-cp bower_components/select2/dist/js/select2.min.js web/js/vendor/
-cp bower_components/handlebars/handlebars.min.js web/js/vendor/
-
-cp bower_components/bootstrap/dist/css/bootstrap{,-theme}.min.css web/css/vendor/
-cp bower_components/jquery-ui/themes/smoothness/*css web/css/vendor/
-cp -r bower_components/jquery-ui/themes/smoothness/images/ web/css/vendor/
-cp bower_components/bootstrap/dist/fonts/* web/css/fonts/
-cp bower_components/select2/dist/css/select2.min.css web/css/vendor/
-cp bower_components/select2/dist/js/i18n/es.js web/js/vendor/
-cp bower_components/select2-bootstrap3-css/select2-bootstrap.min.css web/css/vendor/
-```
-
 ### Configurando la aplicación por primera vez
 No es un asistente al uso, pero facilitará mucho la configuración inicial:
 * Dado agenlad.dominio.com como la URL de la aplicación, acceda a agenlad.dominio.com/inicializacion/ para empezar con la configuración. 
