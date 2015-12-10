@@ -1,15 +1,22 @@
+/* jquery */
 //=include ./vendor/jquery.js
+/* jquery-ui */
 //=include ./vendor/core.js
 //=include ./vendor/widget.js
 //=include ./vendor/position.js
 //=include ./vendor/menu.js
 //=include ./vendor/autocomplete.js
 //=include ./vendor/datepicker.js
+/* bootstrap */
 //=include ./vendor/dropdown.js
 //=include ./vendor/collapse.js
+//=include ./vendor/alert.js
+/* Handlebars */
+//=include ./vendor/handlebars.js
+/* jquery-validate */
 //=include ./vendor/jquery.validate.js
 //=include ./vendor/messages_es.js
-//=include ./vendor/handlebars.js
+/* jQueryMask */
 //=include ./vendor/jquery.mask.js
 $(document).ready(function(){
     $.agenlad = new Object();

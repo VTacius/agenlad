@@ -1,6 +1,6 @@
 $(document).ready(function() {
     // Suponemos la mejor forma para variables locales al usar JQuery
-    $.indexControl = {};
+    $.indexControl = new Object();
     $.indexControl.validacion = false;
     // Asegurarnos que las instrucciones y alertas estén ocultas
     $("#pswd_info").hide();

@@ -7,7 +7,7 @@ var pathos = {
         prod: './web/css/'
     },
     js: {
-        dev: './app/web/js/*.js',
+        dev: './app/web/js/',
         src: './web/js/src/',
         prod: './web/js/'
     },
@@ -79,10 +79,14 @@ gulp.task('image', function(){
 
 /* Tarea previa independiente: Muevo fuentes de bootstrap-sass al directorio de producción */
 gulp.task('fonts', function(){
-    gulp.src('./bower_components/boostrap-sass/assets/fonts/')
-    .pipe(gulp.dest(pathos.css.prod));
     gulp.src('./bower_components/boostrap-sass/assets/fonts/bootstrap/*')
     .pipe(gulp.dest(pathos.css.prod + 'fonts/'));
+});
+
+/* Tarea previa independiente: Muevo data de desarrollo a producción */
+gulp.task('data', function(){
+    gulp.src(pathos.js.dev + '/data/*')
+    .pipe(gulp.dest(pathos.js.prod + '/data'))
 });
 
 /* Trabajo con JavaScript */
@@ -106,4 +110,4 @@ gulp.task('minijs', ['copiar'], function(){
 
 /* La tarea por defecto ejecuta las tareas más principales */
 
-gulp.task('default', ['minicss', 'minijs', 'image', 'fonts']);
+gulp.task('default', ['minicss', 'minijs', 'image', 'fonts', 'data']);

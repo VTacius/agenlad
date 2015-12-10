@@ -1,7 +1,7 @@
 $(document).ready(function(){
     var filtraje = filtro();
     procesarDatos("/directorio/busqueda", filtraje, tabularUsuarios, this);
-    $.directorioControl = {};
+    $.directorioControl = new Object();
     $.directorioControl.pulsaciones = 0;
     oAutocomplementar();
 });
@@ -100,7 +100,7 @@ $("input").keypress(function(e){
 $("input").keyup(function(e){
     verificaVacio(e);
     verificaEspacio($("#uid").val(), e);
-    if ( e.which !== 0 ){
+    if (!( e.which === 0)){
    	    if ($.directorioControl.pulsaciones  >= 2) {
    	        var filtraje = filtro();
             procesarDatos("/directorio/busqueda", filtraje, tabularUsuarios, e);

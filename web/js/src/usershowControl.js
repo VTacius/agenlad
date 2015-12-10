@@ -104,10 +104,3 @@ $("#enviar").click(function(e){
     $("#usermodTecnico").show();
 });
 
-/**
- *
- */
-$("[name='editar_usuario']").click(function(e){
-    console.log("Esta ocurriendo y no será televisado");
-    console.log($(e).value());
-});
