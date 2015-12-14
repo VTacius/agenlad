@@ -35,7 +35,8 @@ var llenarControles = function(data){
         $("#grupos option:contains('" + elemento + "')").attr('selected','selected');
     });
 
-    if (isEmpty(data.datos.cuentastatus) ) {
+    console.log(data.datos);
+    if ( !isEmpty(data.datos.cuentastatus) ) {
         $("#mailModForm").show();
         $(".switch-toggle input").change(zimbraUserMod);
         $("#buzon #apagado").text(data.buzonstatus);
@@ -91,6 +92,7 @@ var mostrarModificarZimbra = function(data){
  * @param {object} e
  */
 var zimbraUserMod = function(e) {
+    $("#cargador").show();
     var idObjeto = $(this).prop('id');
     var texto = $('[for="' + idObjeto + '"').text();
     var datos = {
@@ -98,7 +100,7 @@ var zimbraUserMod = function(e) {
         idElemento: $(this).parent().parent().prop('id'),
         usermod : $("#usermod").text()
     };
-    //procesarDatos('/usermod/zimbra', datos, mostrarModificarZimbra );
+    procesarDatos('/usermod/zimbra', datos, mostrarModificarZimbra );
 };
 
 /**
