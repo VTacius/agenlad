@@ -27,6 +27,7 @@ var pathos = {
                 './bower_components/jquery.validate/src/localization/messages_es.js',
                 './bower_components/handlebars/handlebars.js',
                 './bower_components/jQuery-Mask-Plugin/dist/jquery.mask.js',
+                './bower_components/jquery-switchbutton/jquery.switchButton.js'
             ]
         }
     }
@@ -44,19 +45,6 @@ var include = require('gulp-include');
 
 /* Luego, las adicionales al fin */
 var util = require('gulp-util');
-
-/* Minificamos el css */
-gulp.task('minicss', function(){
-    gulp.src(pathos.css.sass)
-    .pipe(sass())
-    .on('error', util.log)
-    .pipe(gulp.dest(pathos.css.dev))
-    .pipe(mapa.init())
-    .pipe(minicss())
-    .on('error', util.log)
-    .pipe(mapa.write())
-    .pipe(gulp.dest(pathos.css.prod));
-}); 
 
 /* Tarea previa: Muevo los script de vendor en bower_components a app/js/vendor */
 gulp.task('copiar', function(){
@@ -83,6 +71,19 @@ gulp.task('data', function(){
     gulp.src(pathos.js.dev + '/data/*')
     .pipe(gulp.dest(pathos.js.prod + '/data'))
 });
+
+/* Minificamos el css */
+gulp.task('minicss', function(){
+    gulp.src(pathos.css.sass)
+    .pipe(sass())
+    .on('error', util.log)
+    .pipe(gulp.dest(pathos.css.dev))
+    .pipe(mapa.init())
+    .pipe(minicss())
+    .on('error', util.log)
+    .pipe(mapa.write())
+    .pipe(gulp.dest(pathos.css.prod));
+}); 
 
 /* Minificamos después para obtener un mapa más limpio*/
 gulp.task('minijs', ['copiar'], function(){
