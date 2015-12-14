@@ -35,6 +35,7 @@ var llenarControles = function(data){
         $("#grupos option:contains('" + elemento + "')").attr('selected','selected');
     });
 
+    console.log(data.datos);
     if ( !isEmpty(data.datos.cuentastatus) ) {
         $("#mailModForm").show();
         $(".switch-toggle input").change(zimbraUserMod);
@@ -91,6 +92,7 @@ var mostrarModificarZimbra = function(data){
  * @param {object} e
  */
 var zimbraUserMod = function(e) {
+    $("#cargador").show();
     var idObjeto = $(this).prop('id');
     var texto = $('[for="' + idObjeto + '"').text();
     var datos = {
