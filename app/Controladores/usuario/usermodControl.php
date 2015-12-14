@@ -333,10 +333,10 @@ class usermodControl extends \Controladores\usuario\usershowControl {
     private function modificarEstadoZimbra($clavez, $operacion, $estado, $usuario){
         $mailbox = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
         $mailbox->cuenta($usuario);
-        if ($operacion == 'cuentastatus') {
+        if ($operacion == 'cuenta') {
             $estatuto = (strtolower($estado)==="active") ? 'active': 'locked'; 
             $mailbox->setZimbraAccountStatus($estatuto);
-        }elseif($operacion == 'buzonstatus'){
+        }elseif($operacion == 'buzon'){
             $estatuto = (strtolower($estado)==="enabled") ? 'enabled': 'disabled'; 
             $mailbox->setZimbraMailStatus($estatuto);
         }

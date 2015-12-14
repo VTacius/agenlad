@@ -3,6 +3,10 @@
 {% block javascript %} 
     <script src="{{ activos('js/usermodControl.js') }}" type="text/javascript"></script>
 {% endblock %}
+{% block css %}
+    <link href="{{ activos('css/usermod.css') }} " rel="stylesheet">
+{% endblock %}
+
 {# Configuramos las variables que la plantilla padre usa para formar el menu #}
 {% set menu = menu %}
 {% set pagina = pagina %}

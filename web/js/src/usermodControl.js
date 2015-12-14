@@ -34,38 +34,15 @@ var llenarControles = function(data){
     $(data.datos.gruposuser).each(function(index, elemento){
         $("#grupos option:contains('" + elemento + "')").attr('selected','selected');
     });
-    
-    /* Empiezo formulario con los controles que indican estatus de la cuenta */ 
-    
-    var source = $('#mailmod-template').html();
-    var template = Handlebars.compile(source);
-    var contenido = template(data);
-    $('#mailmodv').html(contenido);
 
-    if (data.datos.cuentastatus === "active"){
-        $("#cuenta #apagado").text("Locked");
-    }else{
-        $("#cuenta #apagado").text(data.cuentastatus);
-    }
-    
-    if (data.datos.buzonstatus === "enabled"){
-        $("#buzon #apagado").text("Disabled");
-    }else{
+    if (isEmpty(data.datos.cuentastatus) ) {
+        $("#mailModForm").show();
+        $(".switch-toggle input").change(zimbraUserMod);
         $("#buzon #apagado").text(data.buzonstatus);
-    }  
-    
-    /* Como he creado los controles de la nada, es necesario hacer la asociación de acciones en este momento */
-    $('button').click(function(e){
-        e.stopPropagation(); 
-        e.preventDefault();
-    });
-    
-    /* Activamos el autocompletado en el control de establecimientos */
-    oAutocomplementar();
-
-    $('.btn-toggle').click(btnToogle);
-    $("#userModForm #reset").click(resetUserMod);
-    $("#userModForm #enviar").click(enviarUserMod);
+        $("#cuenta #apagado").text(data.cuentastatus);
+        $("#mailModForm #usermod").text(data.datos.usermod);
+    } 
+     
 };
 
 /**
@@ -77,12 +54,11 @@ var llenarControles = function(data){
 var mostrarDatosBusqueda = function(data){
     pmostrarError(data);
     pmostrarMensaje(data);
-    
     if (data.datos.enlaces.modificacion) {
         $("#busqueda").hide();
         data.datos["correo"] = (data.datos.mailuser === "{empty}") ? 0 : 1;
         llenarControles(data);
-    }    
+    } 
 };
 
 /**
@@ -114,15 +90,15 @@ var mostrarModificarZimbra = function(data){
  * para cambio de estado
  * @param {object} e
  */
-var btnToogle = function(e) {
-    $("#cargador").show();
-    $(this).children('.btn').toggleClass('active btn-primary btn-default');  
+var zimbraUserMod = function(e) {
+    var idObjeto = $(this).prop('id');
+    var texto = $('[for="' + idObjeto + '"').text();
     var datos = {
-        textElemento: $(this).children(".active").text(),
-        idElemento: $(this).attr('id'),
+        textElemento: texto,
+        idElemento: $(this).parent().parent().prop('id'),
         usermod : $("#usermod").text()
     };
-    procesarDatos('/usermod/zimbra', datos, mostrarModificarZimbra );
+    //procesarDatos('/usermod/zimbra', datos, mostrarModificarZimbra );
 };
 
 /**

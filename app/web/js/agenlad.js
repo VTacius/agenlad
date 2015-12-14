@@ -207,7 +207,7 @@ function mostrarErrorConexion(data){
  * @returns {undefined}
  */
 function procesarDatos (url, datos, funcion, e){
-    console.log(e);
+    /* console.log(e); */
     e || ( e = 'default' );
     if (!isEmpty(e.currentTarget)){
         if (typeof(e.currentTarget.type === 'button')){
