@@ -39,10 +39,22 @@ var llenarControles = function(data){
     if ( !isEmpty(data.datos.cuentastatus) ) {
         $("#mailModForm").show();
         $(".switch-toggle input").change(zimbraUserMod);
-        $("#buzon #apagado").text(data.buzonstatus);
-        $("#cuenta #apagado").text(data.cuentastatus);
+        if (data.datos.buzonstatus !== "enabled"){
+            $("#buzon #apagadob").prop('checked', true);
+            if (data.datos.buzonstatus !== "disabled"){
+                $("#buzon [for=apagadob]").text(data.datos.buzonstatus);
+            }
+        }
+        if (data.datos.cuentastatus  !== "active"){
+            $("#cuenta #apagadoc").prop('checked', true);
+            if (data.datos.cuentastatus !== "locked"){
+                $("#cuenta [for=apagadoc]").text(data.datos.cuentastatus);
+            }
+        }
         $("#mailModForm #usermod").text(data.datos.usermod);
     } 
+    
+    $("#userModForm #enviar").click(enviarUserMod);
      
 };
 
@@ -92,7 +104,6 @@ var mostrarModificarZimbra = function(data){
  * @param {object} e
  */
 var zimbraUserMod = function(e) {
-    $("#cargador").show();
     var idObjeto = $(this).prop('id');
     var texto = $('[for="' + idObjeto + '"').text();
     var datos = {
@@ -119,6 +130,8 @@ var resetUserMod = function(e){
  * @param {object} e
  */
 var enviarUserMod = function(e){
+    e.stopPropagation(); 
+    e.preventDefault();
     var datos = recogerDatos();
     procesarDatos('/usermod/cambio', datos, mostrarDatosModificar);
 };
