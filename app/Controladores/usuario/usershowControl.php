@@ -111,7 +111,22 @@ class usershowControl extends \Clases\sesion {
                 $this->datos['enlaces'] = array('creacion'=>true, "modificacion"=>false);
             }
             $correo = "{empty}";
-        }else{
+        // El nuevo rol tecnico_region solo puede ver información sobre usuarios que pertenezcan a su misma localidad y unidad organizativa 
+        } elseif ($this->parametros['rol'] === 'tecnico_dependencia'){
+            $admin = new \Modelos\userSamba($this->dn, $this->pswd);
+            $admin->setUid($this->parametros['usuario']);
+            $admin_o = $this->comprobarEstablecimiento($admin->getO());
+            $admin_ou = $admin->getOu(); 
+            $user_o = $this->comprobarEstablecimiento($usuario->getO()); 
+            $user_ou = $admin->getOu();
+            if ($admin_o !== $user_o || $admin_ou !== $user_ou){
+                $usuario = new \Modelos\userSamba($this->dn, $this->pswd);
+                $usuario->setUid('{empty}');
+                $this->mensaje = array("codigo" => "warning", 'mensaje' => "Usuario no se encuentra bajo su administración");
+                $this->datos['enlaces'] = array('creacion'=>false, "modificacion"=>false);
+            }
+
+        } else {
             $this->datos['enlaces'] = array('creacion'=>false, "modificacion"=>true);
             $correo = $usuario->getMail();
         }
@@ -210,7 +225,7 @@ class usershowControl extends \Clases\sesion {
         $this->grupo($usuario['grupo']);
         
         $this->mail($clavez, $usuario['correo']);
-        
+
         $resultado = array(
                 'error' => $this->error,
                 'datos' => $this->datos,

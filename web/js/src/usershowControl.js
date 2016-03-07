@@ -32,22 +32,24 @@ var mostrar = function(respuesta){
  * @returns {undefined}
  */
 var mostrarDatos = function(respuesta){
-    // Llenamos los datos
-    var source = $('#respuestaUsuario-template').html();
-    var template = Handlebars.compile(source);
-    var contenido = template(respuesta);
+    if (!(respuesta.datos.nameuser==="{empty}" && respuesta.datos.buzonstatus==="{empty}")){
+        // Llenamos los datos
+        var source = $('#respuestaUsuario-template').html();
+        var template = Handlebars.compile(source);
+        var contenido = template(respuesta);
 
-    pmostrarError(respuesta);
-    pmostrarMensaje(respuesta);
+        pmostrarError(respuesta);
+        pmostrarMensaje(respuesta);
 
-    $("#respuestaUsuario dl").remove();
-    $("#respuestaUsuario div").remove();
-    $("#respuestaUsuario").append(contenido);
-    
-    /*
-    if (!(data.nameuser==="{empty}" && data.buzonstatus==="{empty}")){
-        $("dl").show();
-    }*/
+        $("#respuestaUsuario dl").remove();
+        $("#respuestaUsuario div").remove();
+        $("#respuestaUsuario").append(contenido);
+    } else{
+        $("#respuestaUsuario dl").remove();
+        $("#respuestaUsuario div").remove();
+        pmostrarError(respuesta);
+        pmostrarMensaje(respuesta);
+    }
 
 };
 
@@ -80,6 +82,8 @@ $("#usuarioCliente").keyup(function(e){
         var filtraje = filtro();
         procesarDatos("/directorio/busqueda", filtraje, mostrar, e);
    	    $.directorioControl.pulsaciones = 0;
+        $("#respuestaUsuario dl").remove();
+        $("#respuestaUsuario div").remove();
     }else if (!( e.which === 0)){
    	    if ($.directorioControl.pulsaciones  >= 2) {
    	        var filtraje = filtro();

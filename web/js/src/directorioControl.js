@@ -73,7 +73,6 @@ var filtro = function(){
 var tabularUsuarios = function(respuesta){
     var source = $('#respuesta-template').html();
     var template = Handlebars.compile(source);
-    console.log(respuesta.datos); 
     respuesta.datos.sort(function(a, b){
         var aUid = a.cn;
         var bUid = b.cn;
