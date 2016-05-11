@@ -34,6 +34,7 @@ var mostrar = function(respuesta){
 var mostrarDatos = function(respuesta){
     if (!(respuesta.datos.nameuser==="{empty}" && respuesta.datos.buzonstatus==="{empty}")){
         // Llenamos los datos
+        console.log(respuesta.datos);
         var source = $('#respuestaUsuario-template').html();
         var template = Handlebars.compile(source);
         var contenido = template(respuesta);
