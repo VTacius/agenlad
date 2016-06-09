@@ -50,27 +50,20 @@ $twig->addFilter($emptiador);
 $twig->addExtension(new Twig_Extension_Debug());
 
 /**
- * Veamos que tal le va con una conexión a nivel de aplicación
- * Supongo que abrirá una por ¿Cada equipo conectado?
- * En realidad, la suponen de tal forma para manejar sesiones
+ * Conecta con la base de datos según los valores que recogimos en parametros.ini
  */
-$dbbase = $index->get('db_base');
-$dbusuario = $index->get('db_usuario');
+$db_base = $index->get('db_base');
+$db_server = $index->get('db_server');
+$db_usuario = $index->get('db_usuario');
+$db_password = $index->get('db_password');
 
-$db_s_server = $index->get('db_s_server');
-$db_d_server = $index->get('db_d_server');
-$db_s_password = $index->get('db_s_password');
-$db_d_password = $index->get('db_d_password');
+$dsn = "pgsql:host=$db_server;port=5432;dbname=$db_base";
 
-$dsn_sesion = "mysql:host=$db_s_server;port=3306;dbname=$dbbase";
-$dsn_datos = "pgsql:host=$db_d_server;port=5432;dbname=$dbbase";
-
-// Que pena que esto no tuviera un try como debiera ser, siendo que ejecuta el constructor en este lugar sin más
 try{
-    $index->set('dbsession',new \DB\SQL($dsn_sesion, $dbusuario, $db_s_password, array( \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION , \PDO::ATTR_TIMEOUT => 5)));
-    $index->set('dbconexion',new \DB\SQL($dsn_datos, $dbusuario, $db_d_password, array( \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION , \PDO::ATTR_TIMEOUT => 5)));
+    $index->set('dbconexion',new \DB\SQL($dsn, $db_usuario, $db_password, array( \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION , \PDO::ATTR_TIMEOUT => 5)));
 }catch (\PDOException $e){
     print $e->getMessage();
+    print_r($e);
 }
 
 /**

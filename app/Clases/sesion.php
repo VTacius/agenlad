@@ -25,7 +25,7 @@ abstract class sesion {
     public function __construct(){
         $this->index = \Base::instance();
         try{
-            $db = $this->index->get('dbsession');
+            $db = $this->index->get('dbconexion');
             if ($db === null){
                 throw new \Exception('Error en la conexión a base de datos');
             }

@@ -45,7 +45,7 @@ class loginControl extends \Clases\sesion{
      * @return \DB\SQL
      */
     private function conectarDB(){
-        return $this->index->get('dbsession');
+        return $this->index->get('dbconexion');
     }
     
     /**
@@ -55,7 +55,7 @@ class loginControl extends \Clases\sesion{
     protected function logueado($usuario){
         $base = $this->conectarDB();
         // Operamos
-        $cmds = 'delete from intentos where user=:user';
+        $cmds = 'delete from intentos where usuario=:user';
         $args = array('user'=>$usuario);
         $base->exec($cmds, $args);
     }
@@ -70,11 +70,11 @@ class loginControl extends \Clases\sesion{
     protected function obtenerBandera($usuario, $password){
         $base = $this->conectarDB();
         // Operamos
-        $cmds = "select titulo, user.rol, permisos, dominio from user join rol on user.rol=rol.rol where user=:user;";
+        $cmds = "select titulo, usuario.rol, permisos, dominio from usuario join rol on usuario.rol=rol.rol where usuario=:user;";
         $args = array('user'=>$usuario);
         $resultado = $base->exec($cmds, $args);
         if ($base->count() == 0){
-            $cmds = "select titulo, user.rol, permisos, dominio from user join rol on user.rol=rol.rol where user='usuario';";
+            $cmds = "select titulo, usuario.rol, permisos, dominio from usuario join rol on usuario.rol=rol.rol where usuario='usuario';";
             return $base->exec($cmds, $args);
         } 
 //        $this->cifrarEnPrimerLogueo($resultado, $password, $usuario);
@@ -100,7 +100,7 @@ class loginControl extends \Clases\sesion{
     protected function comprobarBloqueo($usuario){
         $base = $this->conectarDB();
         // Operamos
-        $cmds = "select count(user) as intentos from intentos where user=:user";
+        $cmds = "select count(usuario) as intentos from intentos where usuario=:user";
         // Funciona sin los dos puntos y con los dos puntos antes del índice
         $pams = array(':user' => $usuario);
         $resultado = $base->exec($cmds, $pams)[0]['intentos'];
@@ -135,7 +135,7 @@ class loginControl extends \Clases\sesion{
      * @param \Clases\authentication $login
      */
     protected function sesionar($login){
-        $db = $this->index->get('dbsession');
+        $db = $this->index->get('dbconexion');
         // Señores, he acá donde se inicia la puta sesión
         $sesion = new \DB\SQL\Session($db);
         $this->index->set('SESSION.dn', $login->getDN());
@@ -149,7 +149,8 @@ class loginControl extends \Clases\sesion{
         $this->index->set('SESSION.rol', $roles[0]['rol']);
         $this->index->set('SESSION.titulo', $roles[0]['titulo']);
         $this->index->set('SESSION.dominio', $this->dominioUser($login->getDN(), $roles[0]['dominio']));
-        $this->index->set('SESSION.permisos', unserialize($roles[0]['permisos']));
+        $cadena_limpia = str_replace('\\', '', $roles[0]['permisos']);
+        $this->index->set('SESSION.permisos', unserialize($cadena_limpia));
     }
 
 
@@ -184,7 +185,7 @@ class loginControl extends \Clases\sesion{
      * Acciones para el cierre de sesión
      */
     public function cerrarSesion(){
-        $db = $this->index->get('dbsession');
+        $db = $this->index->get('dbconexion');
         new \DB\SQL\Session($db);
         $this->index->clear('SESSION');
     }
