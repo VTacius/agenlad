@@ -11,6 +11,39 @@ class usermodControl extends \Controladores\usuario\usershowControl {
         $this->parametros['pagina'] = $this->pagina;
     }
     
+    public function modificarDatosAdministrativos($usuario, $nit){
+        /** 
+            TODO: Te lo dejo porque creo que en cualquier momento querrán que lo implementes,
+            igual te lo copias de userActualizacion.php y ya estuvo
+        
+
+        $fecha = (empty($fecha_nacimiento)) ? '12/02/1809' : $fecha_nacimiento;
+        $date = \DateTime::createFromFormat('d/m/Y', $fecha);
+        $dato_fecha = $date->format('Y/m/d');
+        */
+        $sentencia = array(
+            'update' => 'update datos_administrativos set nit=:nit where usuario=:usuario',
+            'insert' => 'insert into datos_administrativos(usuario,nit) values(:usuario,:nit)',
+            'valores' => array('usuario'=> $usuario, 'nit'=>$nit)
+        );
+        $entrada = $this->obtenerDatosAdministrativos($usuario);
+        try{
+            $base = $this->index->get('dbconexion');
+            if (count($entrada) > 0){
+                $entrada = $base->exec($sentencia['update'], $sentencia['valores']);
+                $this->mensaje[] = array("codigo" => "success", 'mensaje' => "Actualizados los datos administrativos para usuario " .  $usuario);
+            }else{
+                $entrada = $base->exec($sentencia['insert'], $sentencia['valores']);
+                $this->mensaje[] = array("codigo" => "success", 'mensaje' => "Agregados los datos administrativos para usuario " .  $usuario);
+            }
+        }catch (\PDOException $e){
+            // Lo pones en el mensaje de error a enviar al servidor
+            $this->mensaje[] = array("codigo" => "danger", 'mensaje' => 'Error agregando datos administrativos. Revise los mensajes asociados');
+            $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: " . $e->getMessage() . " " . $dato_fecha . " " . $fecha);
+            // $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: ");
+        }
+    }
+
     /**
      * Lista todos los grupos que existen dentro del dominio dado
      * TODO: Hay una copia descarada en useraddControl
@@ -254,17 +287,25 @@ class usermodControl extends \Controladores\usuario\usershowControl {
             'usuarioModificar' => $this->index->get('POST.usermod'),
             'usuarioLocalidad' => $this->index->get('POST.o')
         );
+        
+        // Añadimos una marca para saber que este usuario ha sido modificado por un administrador
+        $usuarioAttr['usuarioDescripcion'] = "USERMODWEBADMIN";
+        $nit = $this->index->get('POST.nit');
               
         $claves = $this->getClaves();       
         $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
+        
         // Modificamos los atributos del usuario
         $this->modificarAttrUsuario($usuario, $usuarioAttr);
+        
         //Modificamos la entrada del usuario en Zimbra si es que acaso existe
         $correo = $usuario->getMail();
         
         $this->modificarUsuarioZimbra($correo, $usuarioAttr);
        
         $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
+
+        $this->modificarDatosAdministrativos($usuarioAttr['usuarioModificar'], $nit);
         
         $resultado = array(
             'mensaje' => $this->mensaje,

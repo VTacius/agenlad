@@ -41,26 +41,32 @@
     <form class="form-horizontal" id="userModForm" name="userModForm" role="form" method="POST">
         <legend>Modificación para usuario <b id="usermod">{{datos.usermod}}</b></legend>
         <div class="form-group">
-            <label for="uid" class="col-md-3 text-left">Nombres</label>
+            <label for="uid" class="col-xs-3 text-left">Nombres</label>
             <div class="col-xs-9">
                 <input type="text" class="form-control input-sm" id="nameuser" name="nameuser" required placeholder="Nombres" autofocus autocomplete="off" value="{{datos.nameuser}}">
             </div>
             <input type="hidden" name="usermod" value="{{datos.usermod}}">
         </div>
         <div class="form-group">
-            <label for="apelluser" class="col-md-3 text-left">Apellidos</label>
+            <label for="apelluser" class="col-xs-3 text-left">Apellidos</label>
             <div class="col-xs-9">
                 <input type="text" class="form-control input-sm" id="apelluser" name="apelluser" required placeholder="Apellidos" autocomplete="off" value="{{datos.apelluser}}">
             </div>
         </div>
         <div class="form-group">
-            <label for="o" class="col-md-3 text-left">Establecimiento</label>
+            <label for="apelluser" class="col-xs-3 text-left">NIT</label>
+            <div class="col-xs-9">
+                <input type="text" class="form-control input-sm" id="nit" name="nit" required placeholder="NIT" autocomplete="off" value="{{datos.nit}}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="o" class="col-xs-3 text-left">Establecimiento</label>
             <div class="col-xs-9" id="remote">
                 <input type="text" class="form-control input-sm" id="o" name="o" placeholder="Ingrese un establecimiento" autocomplete="off" value="{{datos.o.label}}" data-rule-required="true">
             </div>
         </div>
         <div class="form-group">
-            <label for="ou" class="col-md-3 text-left">Oficina</label>
+            <label for="ou" class="col-xs-3 text-left">Oficina</label>
             <div class="col-xs-9" id="div_ou" name="div_ou">
                 <input type="text" class="form-control input-sm" id="ou" name="ou" placeholder="Oficina" autocomplete="off" value="{{datos.ou}}" data-rule-required="true">
             </div>

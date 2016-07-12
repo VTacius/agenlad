@@ -70,12 +70,12 @@ class loginControl extends \Clases\sesion{
     protected function obtenerBandera($usuario, $password){
         $base = $this->conectarDB();
         // Operamos
-        $cmds = "select titulo, usuario.rol, permisos, dominio from usuario join rol on usuario.rol=rol.rol where usuario=:user;";
-        $args = array('user'=>$usuario);
+        $cmds = "select titulo, usuario.rol, permisos, dominio from usuario join rol on usuario.rol=rol.rol where usuario=:usuario;";
+        $args = array('usuario'=>$usuario);
         $resultado = $base->exec($cmds, $args);
         if ($base->count() == 0){
             $cmds = "select titulo, usuario.rol, permisos, dominio from usuario join rol on usuario.rol=rol.rol where usuario='usuario';";
-            return $base->exec($cmds, $args);
+            return $base->exec($cmds);
         } 
 //        $this->cifrarEnPrimerLogueo($resultado, $password, $usuario);
         return $resultado;
