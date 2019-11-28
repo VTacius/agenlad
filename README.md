@@ -87,8 +87,8 @@ a2enmod rewrite
 service apache2 restart
 ```
 
-### Configurando la aplicación por primera vez
-No es un asistente al uso, pero facilitará mucho la configuración inicial:
-* Dado agenlad.dominio.com como la URL de la aplicación, acceda a agenlad.dominio.com/inicializacion/ para empezar con la configuración. 
-* Continúe en agenlad.dominio.com/inicializacion/usuario
-
+## Desarrollo
+De la siguiente forma es posible correr un par de test disponibles
+```bash
+phpunit8 --bootstrap vendor/autoload.php  --cache-result-file .phpunit.result.cache tests/
+```

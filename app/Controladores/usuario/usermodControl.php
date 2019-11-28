@@ -418,15 +418,4 @@ class usermodControl extends \Controladores\usuario\usershowControl {
         sleep(1);
         print json_encode($resultado);
     }
-    
-    /**
-     * Punto de entrada para ruta /usermod
-     */
-    public function display(){
-        // Esto es importante en la vista
-        $this->parametros['pagina'] = $this->pagina;
-        // ¿Tenemos en serio acceso a esta página?
-        $this->comprobar($this->pagina);     
-        echo $this->twig->render('usuario/usermod.html.twig', $this->parametros);       
-    }
 }

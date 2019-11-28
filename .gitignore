@@ -1,3 +1,7 @@
+# Parametros para la aplicación
+registro.log
+setup.cfg
+.phpunit.result.cache
 # Librerías externas
 bower_components/*
 node_modules/*

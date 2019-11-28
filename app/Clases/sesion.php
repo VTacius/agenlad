@@ -16,65 +16,21 @@ abstract class sesion {
     protected $pagina;
     /** @var array Todos los datos de sesión necesarios*/
     protected $parametros;
-    /** @var Twig_Environment*/
-    protected $twig;
+    /** @var string Los datos que se han enviado*/
+    protected $datos;
 
     /**
      * El constructor llama al objeto F3 en uso
      */
     public function __construct(){
         $this->index = \Base::instance();
-        try{
-            $db = $this->index->get('dbconexion');
-            if ($db === null){
-                throw new \Exception('Error en la conexión a base de datos');
-            }
-            $sesion = new \DB\SQL\Session($db);
-        }catch (\Exception $e){
-            print $e->getMessage();
-            //TODO: Implementar esto
-            //$this->index->reroute('@login_mensaje(@mensaje=Error general de la aplicación)');
-            //exit();
-        }
-        // El que descienda de acá, usará twig
-        $this->twig = $this->index->get('twig');
-        // Traemos las variables de sesión necesarias
         // dn y pswd quedarán disponibles para el uso de las clases hijas
         $this->dn = $this->index->get('SESSION.dn');
         $this->pswd = $this->index->get('SESSION.pswd');
         // Solo los necesitamos para crear inicializar el array parametros
-        $this->parametros = array(
-            'rol' => $this->index->get('SESSION.rol'),
-            'menu' => $this->index->get('SESSION.permisos'),
-            'titulo'=> $this->index->get('SESSION.titulo'),
-            'usuario' => $this->index->get('SESSION.user')
-        );
+        $this->parametros = array();
     }
-    
-    /** 
-     * Ahora se que en todos habrá un display,
-     * y por tanto puedo usarlo desde acá
-     */
-    abstract public function display();
-    
-    /**
-     * Verifica que $parametros haya llegado en POST
-     * Parece que esta obsoleto y nadie usa este método
-     * @param string $parametro
-     * @param string $mensaje
-     * @return string
-     */
-    protected function input($parametro, $mensaje){
-        $valor = 'POST.' . $parametro;
-        $valor = $this->index->get($valor);
-        if (empty($valor)) {
-            $this->parametros['mensajeError'] = "Error: $mensaje";
-            $this->display();
-        }else{
-            return $valor;
-        }
-        
-    }
+  
 
     /**
      * Retorna el RDN y contraseña del usuario para manipular datos 

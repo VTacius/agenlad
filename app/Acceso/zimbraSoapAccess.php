@@ -40,11 +40,9 @@ class zimbraSoapAccess {
      * Por otra parte, recordar por siempre que es necesario que el valor $servidor 
      * sea un nombre DNS
     */
-    public function __construct( $administrador, $password){
-        $this->index = \Base::instance();
-        $servidor = $this->index->get('zserver');
+    public function __construct($parametros, $credenciales){
         $conexion = array(
-            'location' => "https://$servidor:7071/service/admin/soap/",
+            'location' => "https://{$parametros->servidor}:7071/service/admin/soap/",
             'uri'          => 'urn:zimbraAdmin',
             'trace'        => 1,
             'exception'    => 1,
@@ -65,8 +63,8 @@ class zimbraSoapAccess {
 
         // Primer mensaje: Nos autenticamos
         $parametrosAuth = array (
-            new SoapParam($administrador, 'name'),
-            new SoapParam($password, 'password')
+            new SoapParam($credenciales->usuario, 'name'),
+            new SoapParam($credenciales->password, 'password')
         );
 
         $this->llamada("AuthRequest", $parametrosAuth, array('uri' => 'urn:zimbraAdmin'));

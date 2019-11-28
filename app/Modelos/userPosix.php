@@ -1,12 +1,14 @@
 <?php
 /**
- * Clase para creación, obtención y modificación de datos de usuario
+ * Clase para creación, obtención y modificación de datos de usuario Posix
  *
  * @author alortiz
  */
-namespace Modelos;
 
-class userPosix extends \Modelos\objectosLdap{
+ namespace App\Modelos;
+use App\Modelos\objectosLdap;
+
+class userPosix extends objectosLdap {
     /**
      * Caracteres permitidos para la contraseña
      * @var array 
@@ -19,10 +21,9 @@ class userPosix extends \Modelos\objectosLdap{
     
     private $mailDomain;
     
-    public function __construct($rdnLDAP, $passLDAP, $destino="", $parametros = array()) {
-        parent::__construct($rdnLDAP, $passLDAP, $destino, $parametros);
+    public function __construct($conexion, $cifrado) {
+        parent::__construct($conexion, $cifrado);
         // Usamos desde acá la clase cifrado. 
-        $this->hashito = new \Clases\cifrado();
         $this->objeto='shadowAccount';   
         // Agrego y modifico atributos
         $this->atributos = array(    
@@ -192,17 +193,17 @@ class userPosix extends \Modelos\objectosLdap{
      * @param string $uid
      */
     public function setUid($uid) {
-        $this->configurarDatos('uid', $uid);
+        $existeResultado = $this->configurarDatos('uid', $uid);
         
-        // Esto tiene un poco de sentido, pero si se hace por defecto. No hay razón para hacerlo en este momentos
-        $homeDirectory = "/home/" . $uid;
-        $this->setHomeDirectory($homeDirectory);
+        if($existeResultado){
+            $this->setHomeDirectory("/home/{$uid}");
         
-        if ($this->entrada['mail']==='{empty}') {
-            $mail = $uid . "@" . $this->mailDomain;
-            $this->setMail($mail);
+            if ($this->entrada['mail']==='{empty}') {
+                $this->setMail("{$uid}@{$this->mailDomain}");
+            }
         }
         
+        return $existeResultado; 
     }
 
     protected function setHomeDirectory($homeDirectory) {
@@ -212,7 +213,6 @@ class userPosix extends \Modelos\objectosLdap{
     protected function setMail($mail) {
         $this->configurarValor('mail', $mail);
     }
-
 
     /**
      * Función pública para el uso de 

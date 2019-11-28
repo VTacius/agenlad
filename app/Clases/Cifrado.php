@@ -4,31 +4,35 @@
  * Agrega capacidad de crear hash SHA1SUM para LDAP, NTLM y LMHash y cifrado
  * @author <varius>
  */
-namespace Clases;
+
+ namespace App\Clases;
 ini_set('default_charset','UTF-8');
-class cifrado {
-  
-    private $decrypted;
-    private $iv = "fYfhHeDm"; // 8 bit IV
-    private $bit_check=8; // bit amount for diff algor.
+
+class Cifrado {
+    function __construct(){
+        $this->ciphering = 'aes-256-ctr';
+        $this->iv_length = 16;
+        $this->hash_algo = 'sha256';
+        $this->options = OPENSSL_RAW_DATA;
+    }
 
     /**
-    * Tomando una contraseña dada,
-    * regresa una cadena cifrada para el atributo en userPassword
-    * @param string $Input
-    * @return string
-    */
+     * Tomando una contraseña dada,
+     * regresa una cadena cifrada para el atributo en userPassword
+     * @param string $Input
+     * @return string
+     */
     function slappasswd($Input){
         $lpass = "{SHA}" . base64_encode( pack( "H*", sha1($Input) ) );
         return $lpass;
     }
 
     /**
-    * Tomando una contraseña dada,
-    * Regresa un hash para el atributo sambaNTPassword
-    * @param string $Input
-    * @return string
-    */
+     * Tomando una contraseña dada,
+     * Regresa un hash para el atributo sambaNTPassword
+     * @param string $Input
+     * @return string
+     */
     function NTLMHash($Input) {
         // Convert the password from UTF8 to UTF16 (little endian)
         $Input=iconv('UTF-8','UTF-16LE',$Input);
@@ -47,11 +51,11 @@ class cifrado {
     }	
 
     /**
-    * Tomando una contraseña dada,
-    * Regresa un hash para el atributo sambaLMPassword 
-    * @param string $string
-    * @return string
-    */
+     * Tomando una contraseña dada,
+     * Regresa un hash para el atributo sambaLMPassword 
+     * @param string $string
+     * @return string
+     */
     function LMhash($string){
         $string = strtoupper(substr($string,0,14));
 
@@ -62,10 +66,10 @@ class cifrado {
     }
 
     /**
-    * Función auxiliar para LMhash. En realidad, no se que devuelve por si misma 
-    * @param string $string
-    * @return string
-    */
+     * Función auxiliar para LMhash. En realidad, no se que devuelve por si misma 
+     * @param string $string
+     * @return string
+     */
     function LMhash_DESencrypt($string){
         $key = array();
         $tmp = array();
@@ -97,13 +101,13 @@ class cifrado {
     }
 
     /**
-    * Cifra $text tomando como clave a $key
-    * con algunos parametros.
-    * @param string $text 
-    * @param string $key
-    * @return string
-    */
-    function encrypt( $text, $key ) {
+     * Cifra $contenido tomando como clave a $clave
+     * con algunos parametros.
+     * @param string $text 
+     * @param string $key
+     * @return string
+     */
+    function encrypt($contenido, $clave) {
         $text_num =str_split($text,  $this->bit_check);
         $text_num = $this->bit_check-strlen($text_num[count($text_num)-1]);
         for ($i=0;$i<$text_num; $i++) {
@@ -115,41 +119,34 @@ class cifrado {
         mcrypt_generic_deinit($cipher);
         return base64_encode($decrypted);
     }
+  
     /**
-    * Descifra $text tomando como clave a $key
-    * con otros parametros opcionales
-    * @param string $encrypted_text
-    * @param string $key
-    * @param int $iv
-    * @param int $bit_check
-    * @return string
-    */
-    function decrypt( $encrypted_text, $key ){
-        $cipher = mcrypt_module_open(MCRYPT_TRIPLEDES,'','cbc','');
-        mcrypt_generic_init($cipher, $key, $this->iv);
-        $decrypted = mdecrypt_generic($cipher,base64_decode($encrypted_text));
-        mcrypt_generic_deinit($cipher);
-        $last_char=substr($decrypted,-1);
-        for($i=0;$i<  $this->bit_check-1; $i++){
-            if(chr($i)==$last_char){
-                $decrypted=substr($decrypted,0,strlen($decrypted)-$i);
-                break;
-            }
-        }
-        $this->decrypted = $decrypted;
+     * Cifra $contenido considerando a $clave, según parametros datos en __construct
+     * @param String $contenido 
+     * @param String $clave
+     */
+    public function cifrar($contenido, $clave){
+        $iv = random_bytes($this->iv_length);
+        $encryption_key = openssl_digest($clave, $this->hash_algo, TRUE);
+
+        $encryption = openssl_encrypt($contenido, $this->ciphering, $encryption_key, $this->options, $iv);
+        return base64_encode($iv . $encryption);
     }
+
     /**
-    * Devuelve la formula sanitizada
-    * No quiero tocar la otra función del miedo que me da
-    * @param string $encrypted_text texto a descifrar
-    * @param string $key clave de descifrado
-    * @return string
-    */
-    function descifrada ( $encrypted_text, $key ){
-        $this->decrypt ($encrypted_text, $key );
-        $clave = filter_var($this->decrypted, FILTER_SANITIZE_EMAIL);
-        return $clave;
+     * Descifra $contenido considerando a $clave, según parametros datos en __construct
+     * @param String $contenido 
+     * @param String $clave
+     */
+    public function descifrar($contenido, $clave) {
+        $raw = base64_decode($contenido);
+        $iv = substr($raw, 0, $this->iv_length);
+        $encryption_key = openssl_digest($clave, $this->hash_algo, TRUE);
+
+        $contenido = substr($raw, $this->iv_length);
+        return openssl_decrypt($contenido, $this->ciphering, $encryption_key, $this->options, $iv);
     }
+
     
 }
 

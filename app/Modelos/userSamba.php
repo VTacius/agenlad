@@ -1,19 +1,20 @@
 <?php
 /**
- * Description of sambauser
+ * Clase para creación, obtención y modificación de datos de usuario Samba
  *
  * @author alortiz
  */
 
-namespace Modelos;
+namespace App\Modelos;
+use App\Modelos\userPosix;
 
-class userSamba extends \Modelos\userPosix {
+class userSamba extends userPosix {
     // Con protected puede acceder de ella desde usuarios
     protected $sambaSID;
     protected $netbiosName;
 
-    public function __construct($rdnLDAP, $passLDAP) {
-        parent::__construct($rdnLDAP, $passLDAP);
+    public function __construct($conexion, $cifrado) {
+        parent::__construct($conexion, $cifrado);
         $this->objeto='sambaSamAccount';
         $this->atributos = array_merge($this->atributos, array(    
             'sambaAcctFlags','sambaHomeDrive',
@@ -22,9 +23,8 @@ class userSamba extends \Modelos\userPosix {
             'sambaPwdMustChange','sambaSID',
             ));
         $this->objectClass = array( 'top', 'person', 'organizationalPerson', 'posixAccount', 'shadowAccount', 'inetOrgPerson', 'sambaSamAccount');
-        // La siguiente configuracion se consigue en desde userPosix
-        $this->sambaSID = $this->config['sambaSID'];
-        $this->netbiosName = $this->config['netbiosName']; 
+        $this->sambaSID = $parametros->sambaSID;
+        $this->netbiosName = $parametros->netbiosName; 
     }
 
     public function getSambaAcctFlags() {
@@ -158,8 +158,9 @@ class userSamba extends \Modelos\userPosix {
         $this->setSambaSID($sambaSID);
     }
     public function setUid($uid) {
-        parent::setUid($uid);
-        $sambaHomePath = "\\\\" .$this->netbiosName . "\\" . $uid;
-        $this->setSambaHomePath($sambaHomePath);
+        $existeResultado = parent::setUid($uid);
+        if($existeResultado){
+            $this->setSambaHomePath("\\\\{$this->netbiosName}\\{$uid}");
+        }
     }
 }

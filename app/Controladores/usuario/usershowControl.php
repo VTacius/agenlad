@@ -1,70 +1,25 @@
 <?php
-namespace Controladores\usuario;
+
 /**
  * Controlador para revision de datos de usuario
  * 
  * @version 0.2
  * @author alortiz
  */
-class usershowControl extends \Clases\sesion {
+
+ namespace App\Controladores\usuario;
+
+use App\Acceso\ldapAccess;
+use App\Modelos\userSamba;
+use App\Modelos\userPosix;
+use App\Modelos\grupoSamba;
+use App\Clases\baseControlador;
+use App\Clases\Cifrado;
+
+class usershowControl extends baseControlador {
     
     protected $error = array();
-    protected $datos = array();
     protected $mensaje = array();
-    
-    public function __construct() {
-        parent::__construct();
-        // Nombramos la página que hemos de producir
-        $this->pagina = "usershow";
-        // Esto es importante en la vista
-        $this->parametros['pagina'] = $this->pagina;
-    }
-    
-    /**
-     * TODO: Hay uno bastante parecido en directorioControl
-     * @param type $filter
-     * @return type
-     */
-    private function busquedaUsuario($usuario) {
-        $usuarios = new \Modelos\userPosix($this->dn, $this->pswd, 'central' );
-        $atributos = array('cn');
-        $filtro = array("cn"=>"NOT (root OR nobody)",'uid'=>$usuario); 
-        $datos = $usuarios->search($filtro, $atributos, "dc=sv");
-        if (empty($datos[0]['cn'])) {
-            return false;
-        }else{
-            return true;
-        }
-    }
-
-    /**
-     * Prueba para comprobarEstablecimiento con el Ministerio de Salud
-     */
-    public function comprobarEstablecimientoPrueba(){
-        $establecimiento = $this->comprobarEstablecimiento('Secretaría de Estado SS Ministerio de Salud');
-        print_r($establecimiento);
-    }
-
-    /**
-     * Busca que el atributo O del usuario corresponda con un establecimiento válido
-     */
-    protected function comprobarEstablecimiento($establecimiento){
-        $busqueda = "select id, nombre as label from ctl_establecimiento where activo is True and ";
-        $busqueda .= is_numeric($establecimiento) ? "id=:establecimiento" : "nombre ilike ('%'|| :establecimiento || '%')"; 
-        if (empty($establecimiento)){
-            $busqueda = "estavlecimiento que no existe";
-        }
-        try{
-            $base = $this->index->get('dbconexion');
-            $entrada = $base->exec($busqueda, array(':establecimiento' => $establecimiento));
-            return $entrada[0];
-        }catch (\PDOException $e){
-            // Lo pones en el mensaje de error a enviar al servidor
-            $this->mensaje[] = array("codigo" => "danger", 'mensaje' => 'Error agregando datos administrativos. Revise los mensajes asociados');
-            //$this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: " . $e->getMessage() );
-            $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: ");
-        }
-    }
     
     /**
      * Busca que el atributo O del usuario corresponda con un establecimiento válido
@@ -89,162 +44,148 @@ class usershowControl extends \Clases\sesion {
     }
     
     /**
-     * Devuelve los datos de usuario, y envia mensajes de error según el usuario
-     * exista o no, en que ámbito administrativo existe y otros
-     * @param string $usuarioCliente
-     * @return array
+     * Busca que el atributo O del usuario corresponda con un establecimiento válido
+     * @param \PDOConection $conexion
+     * @param String $establecimiento
+     * @return Array
      */
-    protected function usuario($usuarioCliente){
-        // Empezamos con un objeto usuario
-        $usuario = new \Modelos\userSamba($this->dn, $this->pswd);
-        $usuario->setUid($usuarioCliente);
-        // TODO: Hay uno bastante parecido en directorioControl
-        // TODO: Una copia descarada en usermodControl
-        if ($usuario->getEntrada()['dn'] === "{empty}") {
-            // Por las nuevas formas en objetosLdap
-            $usuario->setUid('{empty}');
-            if ($this->busquedaUsuario($usuarioCliente)) {
-                $this->mensaje = array("codigo" => "warning", 'mensaje' => "Usuario $usuarioCliente no se encuentra bajo su administración");
-                $this->datos['enlaces'] = array('creacion'=>false, "modificacion"=>false);
-            }else{
-                $this->mensaje = array("codigo" => "warning", 'mensaje' => "Usuario $usuarioCliente no existe");
-                $this->datos['enlaces'] = array('creacion'=>true, "modificacion"=>false);
-            }
-            $correo = "{empty}";
-        // El nuevo rol tecnico_region solo puede ver información sobre usuarios que pertenezcan a su misma localidad y unidad organizativa 
-        } elseif ($this->parametros['rol'] === 'tecnico_dependencia'){
-            $admin = new \Modelos\userSamba($this->dn, $this->pswd);
-            $admin->setUid($this->parametros['usuario']);
-            $admin_o = $this->comprobarEstablecimiento($admin->getO());
-            $admin_ou = $admin->getOu(); 
-            $user_o = $this->comprobarEstablecimiento($usuario->getO()); 
-            $user_ou = $admin->getOu();
-            if ($admin_o !== $user_o || $admin_ou !== $user_ou){
-                $usuario = new \Modelos\userSamba($this->dn, $this->pswd);
-                $usuario->setUid('{empty}');
-                $this->mensaje = array("codigo" => "warning", 'mensaje' => "Usuario no se encuentra bajo su administración");
-                $this->datos['enlaces'] = array('creacion'=>false, "modificacion"=>false);
-            }
-
-        } else {
-            $this->datos['enlaces'] = array('creacion'=>false, "modificacion"=>true);
-            $correo = $usuario->getMail();
-        }
-        $group = $usuario->getGidNumber();
-        $this->datos['usermod'] = $usuario->getUid();
-        $this->datos['nombrecompleto'] = $usuario->getCn();
-        $this->datos['nameuser'] = $usuario->getGivenName();
-        $this->datos['apelluser'] = $usuario->getSn();
-        $this->datos['cargo'] = $usuario->getTitle();
-        $this->datos['phone'] = $usuario->getTelephoneNumber();
-        $this->datos['psswduser'] = $usuario->getuserPassword();
-        // Para comprobar que localidad sea un dato válido, necesitamos buscar el valor de dicho atributo ldap en la base de datos
-        $this->datos['o'] = $this->comprobarEstablecimiento($usuario->getO());
-        // TODO: Hacerlo con oficina también
-        $this->datos['ou'] = $usuario->getOu();
-        // Agregados a posteridad, y pensaba incluso en agregarlos en otro grupo
-        $datos = $this->obtenerDatosAdministrativos($usuario->getUid());
-        $this->datos['pregunta'] = count($datos)>0 ? $datos[0]['pregunta'] : '{empty}';
-        $this->datos['respuesta'] = count($datos)>0 ? $datos[0]['respuesta'] : '{empty}';
-        // El último agregado en 09/07
-        if (count($datos)>0){
-            $fecha =  is_null($datos[0]['fecha_nacimiento']) ? '1809-12-02' : $datos[0]['fecha_nacimiento'];
-        }else{
-            $fecha = '1809-12-02';
-        }
-        $date = \DateTime::createFromFormat('Y-d-m', $fecha);
-        $dato_fecha = $date->format('d/m/Y');
-        $this->datos['fecha'] = $dato_fecha;
-        $this->datos['jvs'] = count($datos)>0 ? $datos[0]['jvs'] : '{empty}';
-        $this->datos['nit'] = count($datos)>0 ? $datos[0]['nit'] : '{empty}';
-
-        return array('correo'=>$correo, 'grupo'=>$group);
-    }
-    
-    /**
-     * Devuelve los datos administrativos del usuario
-     * @param string $usuario
-     * @return array
-     */
-    protected function obtenerDatosAdministrativos($usuario){
-        $busqueda = 'select usuario, pregunta, respuesta, fecha_nacimiento, nit, jvs from datos_administrativos where usuario=:usuario';
+    protected function comprobarEstablecimiento($conexion, $establecimiento){
+        $busqueda = "select id, nombre as label from ctl_establecimiento where activo is True and ";
+        $busqueda .= is_numeric($establecimiento) ? "id=:establecimiento" : "nombre ilike ('%'|| :establecimiento || '%')"; 
         try{
-            $base = $this->index->get('dbconexion');
-            $entrada = $base->exec($busqueda, array(':usuario' => $usuario));
-            return $entrada;
+            $entrada = $conexion->exec($busqueda, array(':establecimiento' => $establecimiento));
+            return $entrada[0];
         }catch (\PDOException $e){
             // Lo pones en el mensaje de error a enviar al servidor
             $this->mensaje[] = array("codigo" => "danger", 'mensaje' => 'Error agregando datos administrativos. Revise los mensajes asociados');
-            $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: " . $e->getMessage() );
-            //$this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: ");
+            //$this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: " . $e->getMessage() );
+            $this->error[] = array('titulo' => "Error de aplicación", 'mensaje' => "Error manipulando base de datos: ");
         }
+    }
+    
+    /**
+     * Devuelve los datos de usuario
+     * @param Array $ldapParams
+     * @param String $userName
+     * @return Array
+     */
+    protected function usuario($ldapParams, $userName){
+        
+        list($parametros, $credenciales) = $this->obtenerParametros($ldapParams);
+        $cifrador = new Cifrado();
+        $conexion = new ldapAccess($parametros, $credenciales);
+        $usuario = new userSamba($conexion, $cifrador);
+        $usuario->setUid($userName);
+        
+        // TODO: Hay uno bastante parecido en directorioControl
+        // TODO: Una copia descarada en usermodControl
+       
+        $mensaje = "";
+        $datos = $usuario->getEntrada();
+        if (empty($datos['dn'])) {
+            $mensaje = "Usuario $userName no existe";
+            return Array('mensaje' => $mensaje);
+        }         
+        
+        $datos = $usuario->getEntrada();
+        $datos['userPassword'] = $usuario->getuserPassword();
+
+        return $datos;
     }
     
     /**
      * Obtiene el grupo al cual pertenece el usuario
-     * @param type $group
+     * @param Array $ldapParams
+     * @param String $group
      */
-    protected function grupo($group){
-        // Seguimos con el objeto Grupo
-        $grupo = new \Modelos\grupoSamba($this->dn, $this->pswd );
-        $grupo->setGidNumber($group);
-        $this->datos['grupouser'] = $grupo->getCn();
+    protected function grupo($ldapParams, $groupName){
+        list($parametros, $credenciales) = $this->obtenerParametros($ldapParams);
+        $conexion = new ldapAccess($parametros, $credenciales);
+        $grupo = new grupoSamba($conexion);
+        $grupo->setGidNumber($groupName);
+        
+        return $grupo->getCn();
     }  
     
     /**
      * Obtiene los datos del buzón de correos para el usuario
      * Espera a que $correo sea {empty} para invalidar toda la busqueda si acaso
      * el usuario en cuestion no debe ser modificado por tal administrador
-     * @param array $clavez
-     * @param string $correo
+     * @param Array $clavez
+     * @param String $correo
      */
-    protected function mail($clavez, $correo){
-        // Por último, el objeto mailbox
-        $mailbox = new \Modelos\mailbox($clavez['dn'], $clavez['pswd']);
+    protected function mail($zimbraParams, $conexion, $correo){
+        list($parametros, $credenciales) = $this->obtenerClavesZimbra($zimbraParams, $conexion, $this->ipaddress, $this->tokens);
+        $mailbox = new \Modelos\mailbox($parametros, $credenciales);
         $mailbox->cuenta($correo);
         
         // Configuramos los datos
-        $this->datos['mailuser'] = $mailbox->getMail();
-        $this->datos['buzonstatus']= $mailbox->getZimbraMailStatus();
-        $this->datos['cuentastatus'] = $mailbox->getZimbraAccountStatus();
-    }
-    
-    /**
-     * Responde a la ruta en /usermod/cambio
-     */
-    public function datos(){
-        // ¿Tenemos en serio acceso a esta página?
-        $this->comprobar($this->pagina); 
-        // Recuperamos los parametros que le son enviados
-        $usuarioCliente = $this->input('usuarioCliente','Favor, escriba un username');
-        // Obtenemos las claves para acceder a Soap Zimbra
-        $clavez = $this->getClavez();
-        
-        $usuario = $this->usuario($usuarioCliente);
-        
-        $this->grupo($usuario['grupo']);
-        
-        $this->mail($clavez, $usuario['correo']);
+        $datos = Array();
+        $datos['zimbraMailStatus']= $mailbox->getZimbraMailStatus();
+        $datos['zimbraAccountStatus'] = $mailbox->getZimbraAccountStatus();
 
-        $resultado = array(
-                'error' => $this->error,
-                'datos' => $this->datos,
-                'mensaje'=> $this->mensaje
-        );
-        
-        print json_encode($resultado);
+        return $datos;
+    }
+    
+    
+    /**
+     * Devuelve los datos administrativos del usuario
+     * @param String $usuario
+     * @return Array
+     */
+    protected function obtenerDatosAdministrativos($conexion, $usuario){
+        $busqueda = 'select usuario, pregunta, respuesta, fecha_nacimiento, nit, jvs from datos_administrativos where usuario=:usuario';
+        try{
+            $entrada = $conexion->exec($busqueda, array(':usuario' => $usuario));
+            return array('datos' => $entrada);
+        }catch (\PDOException $e){
+            return array('datos' => Array());
+        }
     }
     
     /**
-     * Controlador por defecto
+     * Responde a la ruta en GET /usuarios/@usuario
      */
-    public function display(){
-        // Esto es importante en la vista
-        $this->parametros['pagina'] = $this->pagina;
-        // ¿Tenemos en serio acceso a esta página?
-        $this->comprobar($this->pagina); 
+    public function detalles($index, $params){
+        $ldapParams = $index->get('ldap');
+        $zimbraParams = $index->get('zimbra');
+        $username = $params['usuario'];
         
-        // Obtenemos los datos que hemos de enviar a la vista
-        echo $this->twig->render('usuario/usershow.html.twig', $this->parametros); 
+        $usuario = $this->usuario($ldapParams, $username);
+        if (array_key_exists('mensaje', $usuario)){
+            print json_encode($usuario);
+            $index->error(404);
+        }
+
+        // TODO: Debería hacerse con el atributo oficina también
+        $datos['o'] = $this->comprobarEstablecimiento($index->get('dbconexion'), $usuario['o']);
+        
+        $datosDB = $this->obtenerDatosAdministrativos($index->get('dbconexion'), $username);
+        if (sizeof($datosDB['datos']) > 0){
+            $usuario = array_merge($usuario, $datosDB['datos'][0]);
+            $date = \DateTime::createFromFormat('Y-d-m', $datosDB['datos'][0]['fecha_nacimiento']);
+            $usuario['fecha_nacimiento'] =  $date ? $date->format('d/m/Y') : ''; 
+        }
+        
+        $usuario['grupo'] = $this->grupo($ldapParams, $usuario['gidNumber']);
+        
+        $datosMail = $this->mail($zimbraParams, $index->get('dbconexion'), $usuario['mail']);
+
+        $usuario = array_merge($usuario, $datosMail);
+        
+        print json_encode($usuario) . "\n";
+    }
+
+    public function lista ($index){
+        $filtros = $index['GET'];
+        
+        $atributos = array('uid','cn','title','o', 'ou','mail', 'telephoneNumber');
+        
+        list($parametros, $credenciales) = $this->obtenerParametros($index->get('ldap'));
+        $conexion = new ldapAccess($parametros, $credenciales);
+        $usuario = new userSamba($conexion);
+        //print json_encode($usuario->search($index['GET'], $atributos));
+        //$usuario->getAll($atributos);
+        //print json_encode($usuario->getEntrada());
     }
 }

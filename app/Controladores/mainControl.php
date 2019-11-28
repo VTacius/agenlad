@@ -1,5 +1,5 @@
 <?php
-namespace Controladores;
+namespace App\Controladores;
 /**
  * Controlador para el index de la aplicación, en nuestro caso, el lugar donde 
  * cambiamos contraseñas
@@ -9,36 +9,30 @@ namespace Controladores;
  */
 
 class mainControl extends \Clases\sesion {
-    private $hashes;
-    private $usuario;
     
-    protected $error = array();
-    protected $mensaje = array();
-    
-    function __construct(){
-        parent::__construct();
-        // Nombramos la página que hemos de producir
-        $this->pagina = "main";
-        // Objetos que hemos de usar
-        $this->db = $this->index->get('dbconexion');
-        $this->hashes = new \Clases\cifrado();  
-  }
-    
+    public function beforeRoute($index){
+        $this->datos = json_decode($index['BODY']);
+        if(json_last_error() > 0){
+            throw new \Error('No envio datos válidos');
+        }
+    }
+
     /**
      * Cambiar las contraseñas en el directorio LDAP
+     * @param string $username
      * @param string $password
      */
-    private function changeLdapPassword($usuario, $password){
-        $this->usuario = new \Modelos\userSamba($this->dn, $this->pswd);
-        $this->usuario->setUid($usuario);
-        $this->usuario->configuraPassword($password);
-        if ($this->usuario->actualizarEntrada()) {
-            $this->mensaje[] = array("codigo" => "success", 'mensaje'=> "Contraseña cambiada exitosamente");
-            return true;
+    private function changeLdapPassword($username, $password){
+        
+        $usuario = new \Modelos\userSamba($this->dn, $this->pswd);
+        $usuario->setUid($username);
+        $usuario->configuraPassword($password);
+        
+        
+        if ($usuario->actualizarEntrada()) {
+            return array('mensaje' => "Contraseña cambiada exitosamente para {$username}");
         }else{
-            $this->error[] = $this->usuario->getErrorLdap();
-            $this->mensaje[] = array("codigo" => "danger", 'mensaje' => "Ha ocurrido un error al cambiar las contraseñas");
-            return false;
+            return array('error' => $usuario->getErrorLdap());
         }
         
     }
@@ -60,40 +54,18 @@ class mainControl extends \Clases\sesion {
     }
 
     /**
+     * POST /
      * Se encarga del cambio de contraseña y de la devolución de errores
      */
     public function cambioCredenciales(){
-        // Tenemos permiso para acceder a esta funcion contenida en este método
-        $this->comprobar($this->pagina);
-        $usuario = $this->index->get('SESSION.user');
-        $passchangeprima = $this->index->get('POST.passchangeprima');
-        $passchangeconfirm = $this->index->get('POST.passchangeconfirm');
-        if ($passchangeconfirm == $passchangeprima){
-            if ($this->complejidad($passchangeprima)) {
-                $this->changeLdapPassword($usuario, $passchangeprima);
-                //Me encanta rehusar código de esta forma. Recuerda no hacer la redirección desde acá
-                $cierre = new \Controladores\loginControl();
-                $cierre->cerrarSesion();
-            } else {
-                $this->mensaje[] = array("codigo" => "warning", 'mensaje' => "La contraseña no tiene la complejidad necesaria");
-            }
-        }else{
-            $this->mensaje[] = array("codigo" => "warning", 'mensaje' => "Las contraseñas no coinciden");
+        $usuario = $this->datos->usuario;
+        $password = $this->datos->password;
+        $resultado = array();
+        if ($this->complejidad($password)) {
+            $resultado = $this->changeLdapPassword($usuario, $password);
+        } else {
+            $resultado = array('error' => 'La contraseña no tiene la complejidad necesaria');
         }
-        $resultado = array(
-            'mensaje' => $this->mensaje, 
-            'error' => $this->error);
         print json_encode($resultado); 
-    }
-    
-    /**
-     * Método por defecto
-     */
-    public function display() {
-        // Esto es importante en la vista
-        $this->parametros['pagina'] = $this->pagina;
-        // ¿Tenemos en serio acceso a esta página?
-        $this->comprobar($this->pagina);       
-        echo $this->twig->render('main.html.twig', $this->parametros);       
     }
 }

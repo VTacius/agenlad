@@ -7,7 +7,7 @@
 
 namespace Modelos;
 
-class objetosSoap extends \Acceso\zimbraSoapAccess{
+class objetosSoap extends \Acceso\zimbraSoapAccess {
     /** 
      * Arreglo de los atributos del usuario. 
      * @var array 
@@ -17,10 +17,6 @@ class objetosSoap extends \Acceso\zimbraSoapAccess{
     /** @var array */
     protected $cuenta = array();
     
-    public function __construct($administrador, $password) {
-        parent::__construct($administrador, $password);
-    }
-
     public function getCuenta(){
 	return $this->cuenta;
     }

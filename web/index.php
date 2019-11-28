@@ -8,72 +8,52 @@ include_once '../vendor/autoload.php';
 $index = \Base::instance();
 
 /**
- * Leemos el fichero de configuración y configuramos las variables para todo el proyecto
+ * Leemos el fichero de configuración
  */
-$index->config(__DIR__ . '/../parametros.ini');
+$index->config('./../setup.cfg');
 
 /**
  * Ponemos a nuestro disposición todo nuestro código
  */
-$index->set('AUTOLOAD','../app/');
+$index->set('AUTOLOAD','./../app/');
 
 /**
- * Nos encargamos de convocar el poder de Twig
+ * Configuramos como tratar los errores
  */
-$twig_loader = new Twig_Loader_Filesystem(__DIR__ . '/../app/plantillas');
 
-$index->set('twig', 
-    $twig = new Twig_Environment($twig_loader, array(
-        'cache' => __DIR__ . '/../tmp/cache',
-        'auto_reload' => true,
-    ))
-);
-
-/**
- * Esta función Twig permite usar archivos estáticos desde una ubicación fija
- */
-$activos = new Twig_SimpleFunction('activos', function ($activos) {
-    return '/' . $activos;
+$index->set('ONERROR', function($base){
+    $logger = new Log('./../registro.log');
+    $logger->write(json_encode($base['ERROR']));
+    print(json_encode(Array('mensaje' => 'Un error ha ocurrido')));
 });
 
+/**
+ * Conecta a la base de datos
+ */
+$db = $index->get('db');
+$db_base = $db['base'];
+$db_server = $db['server'];
+$db_usuario = $db['usuario'];
+$db_password = $db['password'];
 
-$emptiador = new Twig_SimpleFilter('emptiador', function ($valor) {
-    return ($valor === "{empty}") ? "" : $valor ;
-});
-
-$twig->addFunction($activos);
-$twig->addFilter($emptiador);
+$dsn = "pgsql:host=${db_server};port=5432;dbname={$db_base}";
+$index->set('dbconexion', new \DB\SQL($dsn, $db_usuario, $db_password, array( \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION , \PDO::ATTR_TIMEOUT => 5)));
 
 /**
- * Agregamos la extensión debug para twig, pero en producción sería recomendable quitarla porque no se supone que la uses
+ * Configura la clave que ayuda en el cifrado de datos
  */
-$twig->addExtension(new Twig_Extension_Debug());
-
-/**
- * Conecta con la base de datos según los valores que recogimos en parametros.ini
- */
-$db_base = $index->get('db_base');
-$db_server = $index->get('db_server');
-$db_usuario = $index->get('db_usuario');
-$db_password = $index->get('db_password');
-
-$dsn = "pgsql:host=$db_server;port=5432;dbname=$db_base";
-
-try{
-    $index->set('dbconexion',new \DB\SQL($dsn, $db_usuario, $db_password, array( \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION , \PDO::ATTR_TIMEOUT => 5)));
-}catch (\PDOException $e){
-    print $e->getMessage();
-    print_r($e);
-}
+$index->set('claveMaestra', $_ENV['CLAVEMAESTRA']); 
 
 /**
  * Configuramos las rutas
- * ADVERTENCIA: Deben ser absolutas cuando se haga referencia a ellas dentro de HTML
  */
 
+//Rutas hacia main
+$index->route('POST /', 'Controladores\mainControl->cambioCredenciales');
+//Rutas hacia usershow
+$index->route('GET /usuarios/@usuario [ajax]', 'App\Controladores\usuario\usershowControl->detalles');
 // Rutas hacia directorio
-$index->route('GET|POST @directorio: /directorio [sync]', 
-        'Controladores\directorioControl->display');
+$index->route('GET /usuarios [ajax]', 'App\Controladores\usuario\usershowControl->lista');
 $index->route('GET|POST @directorio_busqueda: /directorio/busqueda', 
         'Controladores\directorioControl->mostrarUsuario');
 //Rutas hacia login
@@ -87,21 +67,7 @@ $index->route('GET|POST @login_finalMensaje: /login/cambio/@mensaje',
         'Controladores\loginControl->cerrarMensaje');
 $index->route('GET|POST @login_mensaje: /login/@mensaje',
         'Controladores\loginControl->display');
-//Rutas hacia main
-$index->route('GET|POST @main: /', 
-        'Controladores\mainControl->display');
-$index->route('GET|POST @main_index: /main', 
-        'Controladores\mainControl->display');
-$index->route('POST @cambiologin: /main/cambio [ajax]',
-        'Controladores\mainControl->cambioCredenciales');
-//Rutas hacia usershow
-$index->route('GET|POST @tecnico: /usershow', 
-        'Controladores\usuario\usershowControl->display');
-$index->route('GET|POST @tecnicoDatos: /usershow/datos [ajax]', 
-        'Controladores\usuario\usershowControl->datos');
 //Rutas hacia usermod
-$index->route('GET|POST @usermod: /usermod', 
-        'Controladores\usuario\usermodControl->display');
 $index->route('GET|POST @usermod_modificar: /usermod/envio', 
         'Controladores\usuario\usermodControl->mostrarUsuarioPost');
 $index->route('GET|POST @usermod_modificar: /usermod/@usuarioModificar', 
@@ -132,8 +98,6 @@ $index->route('GET|POST @prueba_getdatos: /pruebas/getdatos',
         'Pruebas\getdatos->display');
 $index->route('GET|POST @prueba_userupdate: /pruebas/userupdate', 
         'Controladores\usuario\userActualizacion->pruebas');
-$index->route('GET|POST @prueba_comprobar_establecimiento: /pruebas/establecimiento', 
-        'Controladores\usuario\usershowControl->comprobarEstablecimientoPrueba');
 // Rutas para configuracion de dominios
 $index->route('GET|POST @conf_dominios: /confdominios', 
         'Controladores\configuracion\dominioControl->display');

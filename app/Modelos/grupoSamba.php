@@ -5,14 +5,13 @@
  * @author alortiz
  */
 
-namespace Modelos;
+namespace App\Modelos;
+use App\Modelos\objectosldap;
 
-class grupoSamba extends \Modelos\objectosLdap{
+class grupoSamba extends objectosldap {
     
-    public function __construct($rdnLDAP, $passLDAP, $destino="", $parametros = array()) {
-        parent::__construct($rdnLDAP, $passLDAP, $destino, $parametros);
-    #public function __construct($rdnLDAP, $passLDAP) {
-    #    parent::__construct($rdnLDAP, $passLDAP);
+    public function __construct($conexion) {
+        parent::__construct($conexion);
         $this->objeto='posixGroup';
         $this->atributos = array('cn','displayName','gidNumber','memberUid','objectClass','sambaGroupType','sambaSID');
     }
