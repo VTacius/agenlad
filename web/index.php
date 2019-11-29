@@ -24,7 +24,7 @@ $index->set('AUTOLOAD','./../app/');
 $index->set('ONERROR', function($base){
     $logger = new Log('./../registro.log');
     $logger->write(json_encode($base['ERROR']));
-    print(json_encode(Array('mensaje' => 'Un error ha ocurrido')));
+    print(json_encode(Array('mensaje' => 'Un error ha ocurrido')) . "\n");
 });
 
 /**
@@ -48,34 +48,16 @@ $index->set('claveMaestra', $_ENV['CLAVEMAESTRA']);
  * Configuramos las rutas
  */
 
-//Rutas hacia main
+// Rutas hacia main
 $index->route('POST /', 'Controladores\mainControl->cambioCredenciales');
-//Rutas hacia usershow
-$index->route('GET /usuarios/@usuario [ajax]', 'App\Controladores\usuario\usershowControl->detalles');
-// Rutas hacia directorio
-$index->route('GET /usuarios [ajax]', 'App\Controladores\usuario\usershowControl->lista');
-$index->route('GET|POST @directorio_busqueda: /directorio/busqueda', 
-        'Controladores\directorioControl->mostrarUsuario');
-//Rutas hacia login
-$index->route('GET|POST @login: /login',
-        'Controladores\loginControl->display');
-$index->route('GET|POST @login_inicio: /login/inicio', 
-        'Controladores\loginControl->autenticar');
-$index->route('GET|POST @login_final: /login/final', 
-        'Controladores\loginControl->cerrar');
-$index->route('GET|POST @login_finalMensaje: /login/cambio/@mensaje', 
-        'Controladores\loginControl->cerrarMensaje');
-$index->route('GET|POST @login_mensaje: /login/@mensaje',
-        'Controladores\loginControl->display');
-//Rutas hacia usermod
-$index->route('GET|POST @usermod_modificar: /usermod/envio', 
-        'Controladores\usuario\usermodControl->mostrarUsuarioPost');
-$index->route('GET|POST @usermod_modificar: /usermod/@usuarioModificar', 
-        'Controladores\usuario\usermodControl->mostrarUsuarioGet');
-$index->route('POST @usermod_modificar: /usermod/cambio [ajax]', 
-        'Controladores\usuario\usermodControl->modificarUsuario');
-$index->route('POST @zimbra_modificar: /usermod/zimbra [ajax]', 
-        'Controladores\usuario\usermodControl->modificarBuzon');
+// Rutas hacia usershow
+$index->route('GET /usuarios/@usuario [ajax]', 'App\Controladores\usuario\Listado->detalles');
+$index->route('GET /usuarios [ajax]', 'App\Controladores\usuario\Listado->lista');
+// Rutas hacia login
+$index->route('POST /login [ajax]', 'App\Controladores\Login->autenticar');
+// Rutas hacia usermod
+$index->route('PUT /usuarios [ajax]', 'App\Controladores\usuario\usermodControl->modificarUsuario');
+$index->route('PUT /usermod/zimbra [ajax]', 'Controladores\usuario\usermodControl->modificarBuzon');
 //Rutas hacia useradd
 $index->route('GET|POST @useradd: /useradd', 
         'Controladores\usuario\useraddControl->display');
@@ -85,19 +67,6 @@ $index->route('GET|POST @useradd_creacion_test: /useradd/test',
         'Controladores\usuario\useraddPrueba->display');
 $index->route('GET|POST @useradd_check_uid: /useradd/checkuid', 
         'Controladores\usuario\useraddControl->checkUid');
-// Estas son algunas rutas de pruebas, que espero que no sean muchas
-$index->route('GET|POST @prueba_user: /pruebas', 
-        'Controladores\pruebaControl->display');
-$index->route('GET|POST @prueba_paginacion: /pruebas/paginacion', 
-        'Pruebas\paginacion->display');
-$index->route('GET|POST @prueba_useradd: /pruebas/useradd', 
-        'Pruebas\useraddPrueba->display');
-$index->route('GET|POST @prueba_useradd: /pruebas/busqueda/@term', 
-        'Controladores\pruebaControl->busqueda');
-$index->route('GET|POST @prueba_getdatos: /pruebas/getdatos', 
-        'Pruebas\getdatos->display');
-$index->route('GET|POST @prueba_userupdate: /pruebas/userupdate', 
-        'Controladores\usuario\userActualizacion->pruebas');
 // Rutas para configuracion de dominios
 $index->route('GET|POST @conf_dominios: /confdominios', 
         'Controladores\configuracion\dominioControl->display');

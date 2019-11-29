@@ -46,7 +46,7 @@ class mainControl extends \Clases\sesion {
      *  Una letra mayúscula
      *  Un caracter especial entre los siguientes . _ @ & + ! $ *
      *  Basado en http://runnable.com/UmrnTejI6Q4_AAIM/how-to-validate-complex-passwords-using-regular-expressions-for-php-and-pcre
-     * @param type $password
+     * @param String $password
      * @return boolean
      */
     private function complejidad($password){

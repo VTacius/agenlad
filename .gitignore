@@ -2,6 +2,7 @@
 registro.log
 setup.cfg
 .phpunit.result.cache
+usuario.json
 # Librerías externas
 bower_components/*
 node_modules/*

@@ -5,7 +5,8 @@
  * @author alortiz
  */
 
- namespace App\Modelos;
+namespace App\Modelos;
+
 use App\Modelos\objectosLdap;
 
 class userPosix extends objectosLdap {

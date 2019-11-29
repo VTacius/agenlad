@@ -6,6 +6,7 @@
  */
 
 namespace App\Modelos;
+
 use App\Modelos\userPosix;
 
 class userSamba extends userPosix {
@@ -157,6 +158,7 @@ class userSamba extends userPosix {
         $sambaSID = $this->sambaSID . "-" . strval(($uidNumber *2) + 1000);
         $this->setSambaSID($sambaSID);
     }
+    
     public function setUid($uid) {
         $existeResultado = parent::setUid($uid);
         if($existeResultado){

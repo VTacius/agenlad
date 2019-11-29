@@ -4,20 +4,26 @@ namespace App\Clases;
 
 use App\Clases\Cifrado;
 
-class baseControlador {
-    
-    public function beforeRoute($index){
-        $this->ipaddress = $index['IP'];
-        
-        $this->tokens = new \stdClass();
-        if(array_key_exists('Authentication', $index['HEADERS'])){
-            $this->tokens->usuario = explode(' ', $index['HEADERS']['Authentication'])[1]; ;
-        } else {
-            $index->error(401);
-        }
-        $this->tokens->maestro = $index['claveMaestra'];
+class BaseControlador {
 
-        $this->cifrado = new Cifrado();
+    /**
+     * 
+     * Obtiene los datos enviados por Json en $origen según $requerimientos
+     * @param Array $requerimientos
+     * @param Array $origen
+     * @return Array
+     */
+    protected function parsearDatosPeticion($requerimientos, $origen){
+        $datos = json_decode($origen, true);
+        $resultado = Array();
+        foreach ($requerimientos as $clave => $valor) {
+            if(array_key_exists($clave, $datos)){
+                 $resultado[$clave] = $datos[$clave];
+            } else if (in_array('requerido', $valor['validaciones'])) {
+                throw new \Exception("Error Processing Request", 1);
+            } 
+        }
+        return $resultado;
     }
 
     /**

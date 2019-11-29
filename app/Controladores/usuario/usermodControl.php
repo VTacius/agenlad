@@ -1,26 +1,25 @@
 <?php
-namespace Controladores\usuario;
-class usermodControl extends \Controladores\usuario\usershowControl { 
-    protected $error = array();
-    protected $datos = array();
-    protected $mensaje = array();
-    
-    public function __construct() {
-        parent::__construct();
-        $this->pagina = "usermod";
-        $this->parametros['pagina'] = $this->pagina;
-    }
+
+namespace App\Controladores\usuario;
+
+use App\Acceso\ldapAccess;
+use App\Modelos\userSamba;
+use App\Modelos\userPosix;
+use App\Modelos\grupoSamba;
+use App\Clases\BaseControladorAuth;
+use App\Clases\Cifrado;
+
+class usermodControl extends BaseControladorAuth { 
     
     public function modificarDatosAdministrativos($usuario, $nit){
-        /** 
-            TODO: Te lo dejo porque creo que en cualquier momento querrán que lo implementes,
-            igual te lo copias de userActualizacion.php y ya estuvo
-        
-
-        $fecha = (empty($fecha_nacimiento)) ? '12/02/1809' : $fecha_nacimiento;
-        $date = \DateTime::createFromFormat('d/m/Y', $fecha);
-        $dato_fecha = $date->format('Y/m/d');
-        */
+        /**
+         *  
+         * TODO: Te lo dejo porque creo que en cualquier momento querrán que lo implementes,
+         * igual te lo copias de userActualizacion.php y ya estuvo
+         * $fecha = (empty($fecha_nacimiento)) ? '12/02/1809' : $fecha_nacimiento;
+         * $date = \DateTime::createFromFormat('d/m/Y', $fecha);
+         * $dato_fecha = $date->format('Y/m/d');
+         */
         $sentencia = array(
             'update' => 'update datos_administrativos set nit=:nit where usuario=:usuario',
             'insert' => 'insert into datos_administrativos(usuario,nit) values(:usuario,:nit)',
@@ -128,7 +127,6 @@ class usermodControl extends \Controladores\usuario\usershowControl {
             }
     }
 
-
     /**
      * 
      * configurar como los nuevos grupos adicionales del usuario
@@ -163,7 +161,7 @@ class usermodControl extends \Controladores\usuario\usershowControl {
      * Si el atributo grupos_ou se encuentra verficado como verdadero, se 
      * procede a mover al usuario a una nueva rama organizativa
      * TODO: Por allí anda una en la creacion de usuarios algo que podr{ias usar
-     * @param \Modelos\userSamba $usuario
+     * @param userSamba $usuario
      * @param string $usuarioGrupo
      * @return string
      */
@@ -185,7 +183,7 @@ class usermodControl extends \Controladores\usuario\usershowControl {
     /**
      * Actualizamos los atributos de $usuario con los datos contenidos en 
      * $usuarioAttr, que formamos con los datos obtenidos del formulario
-     * @param string $usuario
+     * @param userSamba $usuario
      * @param string $usuarioAttr
      * @return string
      */
@@ -271,99 +269,6 @@ class usermodControl extends \Controladores\usuario\usershowControl {
       
     }
     
-    public function modificarUsuario(){
-        $this->comprobar($this->pagina);         
-        // Modificaciones de los grupos de usuario
-        $userGrupos = $this->index->get('POST.grupos');
-        $usuarioGrupos = empty($userGrupos) ? array() : $userGrupos;  
-        // Modificaciones de los datos de usuario
-        $usuarioAttr = array(
-            'usuarioCargo' => $this->index->get('POST.cargo'),
-            'usuarioPhone' => $this->index->get('POST.phone'),
-            'usuarioGrupo' => $this->index->get('POST.grupouser'),
-            'usuarioNombre' => $this->index->get('POST.nameuser'),
-            'usuarioOficina' => $this->index->get('POST.ou'),
-            'usuarioApellido' => $this->index->get('POST.apelluser'),
-            'usuarioModificar' => $this->index->get('POST.usermod'),
-            'usuarioLocalidad' => $this->index->get('POST.o')
-        );
-        
-        // Añadimos una marca para saber que este usuario ha sido modificado por un administrador
-        $usuarioAttr['usuarioDescripcion'] = "USERMODWEBADMIN";
-        $nit = $this->index->get('POST.nit');
-              
-        $claves = $this->getClaves();       
-        $usuario = new \Modelos\userSamba($claves['dn'], $claves['pswd']);
-        
-        // Modificamos los atributos del usuario
-        $this->modificarAttrUsuario($usuario, $usuarioAttr);
-        
-        //Modificamos la entrada del usuario en Zimbra si es que acaso existe
-        $correo = $usuario->getMail();
-        
-        $this->modificarUsuarioZimbra($correo, $usuarioAttr);
-       
-        $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
-
-        $this->modificarDatosAdministrativos($usuarioAttr['usuarioModificar'], $nit);
-        
-        $resultado = array(
-            'mensaje' => $this->mensaje,
-            'error' => $this->error
-        );
-        
-        print json_encode($resultado);
-    }
-    
-    /**
-     * Retorna datos para usuario al script 
-     */
-    public function mostrarUsuarioPost(){
-        $this->comprobar($this->pagina);     
-        $usuarioCliente = $this->index->get('POST.usuarioModificar');
-        $this->mostrarUsuario($usuarioCliente);
-
-        $resultado = array(
-            'mensaje'=>$this->mensaje,
-            'error'=>$this->error,
-            'datos'=>$this->datos        
-        );
-        print json_encode($resultado);  
-    }
-    
-    public function mostrarUsuarioGet(){
-        $this->comprobar($this->pagina);
-        $usuarioCliente = $this->index->get('PARAMS.usuarioModificar');
-        $this->mostrarUsuario($usuarioCliente);
-        $this->parametros['datos'] = $this->datos;
-        echo $this->twig->render('usuario/usermod.html.twig', $this->parametros);       
-    
-    }
-   
-    /**
-     * Los métodos aca usados provienen de usershowControl()
-     * Es la forma más certera para ahorar toneladas de código
-     * @param string $usuarioCliente
-     * @return array
-     */
-    protected function mostrarUsuario($usuarioCliente){
-        $this->comprobar($this->pagina); 
-        
-        // Obtenemos las claves para acceder a Soap Zimbra
-        $clavez = $this->getClavez();
-        
-        $usuario = $this->usuario($usuarioCliente);
-        
-        $this->datos['grupos'] = $this->listarGrupos();
-        
-        $this->datos['gruposuser'] = $this->listarGruposUsuarios("atributo falso", $usuarioCliente);
-        
-        $this->grupo($usuario['grupo']);
-        
-        $this->mail($clavez, $usuario['correo']);
-        
-    }
-    
     /**
      * Usada por modificarBuzon()
      * @param array $clavez
@@ -418,4 +323,61 @@ class usermodControl extends \Controladores\usuario\usershowControl {
         sleep(1);
         print json_encode($resultado);
     }
+   
+    private function requerir(){
+        return Array(
+            'title' => Array('validaciones' => []),
+            'telephoneNumber' => Array('validaciones' => []),
+            'gidNumber' => Array('validaciones' => []),
+            'givenName' => Array('validaciones' => []),
+            'ou' => Array('validaciones' => []),
+            'sn' => Array('validaciones' => []),
+            'uid' => Array('validaciones' => []),
+            'o' => Array('validaciones' => []),
+        );
+    }
+
+    public function modificarUsuario($index){
+        
+        try {
+            $requerimientos = $this->requerir();
+            $datos = $this->parsearDatosPeticion($requerimientos, $index['BODY']);
+        } catch (\Exception $e){
+            $index->error(400);
+        }
+        $datos['description'] = "USERMODWEBADMIN";
+        
+        list($parametros, $credenciales) = $this->obtenerParametros($ldapParams);
+        $cifrador = new Cifrado();
+        $conexion = new ldapAccess($parametros, $credenciales);
+        $usuario = new userSamba($conexion, $cifrador);
+        
+        print_r($datos);
+        /*
+        // Modificamos los atributos del usuario
+        $this->modificarAttrUsuario($usuario, $datos);
+        
+        // Modificaciones de los grupos de usuario
+        $userGrupos = $this->index->get('POST.grupos');
+        $usuarioGrupos = empty($userGrupos) ? array() : $userGrupos;  
+        
+        $nit = $this->index->get('POST.nit');
+              
+        //Modificamos la entrada del usuario en Zimbra si es que acaso existe
+        $correo = $usuario->getMail();
+        
+        $this->modificarUsuarioZimbra($correo, $datos);
+       
+        $this->modificarGruposAdicionales($usuarioGrupos, $usuario, $claves);
+
+        $this->modificarDatosAdministrativos($datos['usuarioModificar'], $nit);
+        
+        $resultado = array(
+            'mensaje' => $this->mensaje,
+            'error' => $this->error
+        );
+        */
+        
+    }
+    
 }

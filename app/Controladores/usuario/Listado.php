@@ -1,22 +1,21 @@
 <?php
-
 /**
- * Controlador para revision de datos de usuario
+ * Controlador para listado/detalles de usuarios
  * 
  * @version 0.2
  * @author alortiz
  */
 
- namespace App\Controladores\usuario;
+namespace App\Controladores\usuario;
 
 use App\Acceso\ldapAccess;
 use App\Modelos\userSamba;
 use App\Modelos\userPosix;
 use App\Modelos\grupoSamba;
-use App\Clases\baseControlador;
+use App\Clases\BaseControladorAuth;
 use App\Clases\Cifrado;
 
-class usershowControl extends baseControlador {
+class Listado extends BaseControladorAuth {
     
     protected $error = array();
     protected $mensaje = array();
@@ -77,7 +76,6 @@ class usershowControl extends baseControlador {
         $usuario = new userSamba($conexion, $cifrador);
         $usuario->setUid($userName);
         
-        // TODO: Hay uno bastante parecido en directorioControl
         // TODO: Una copia descarada en usermodControl
        
         $mensaje = "";
@@ -176,16 +174,55 @@ class usershowControl extends baseControlador {
         print json_encode($usuario) . "\n";
     }
 
+    /**
+     * Busca en $indice una lista separada por comas que devuelve como un Array,
+     * considerando un valor por defecto de no existir
+     * @param Array $origen De donde vienen los datos
+     * @param String $indice Donde buscar el contenido
+     * @return Array
+     */
+    protected function parsearListado($origen, $indice){
+        /** Buscamos en los atributos que nos envian de la peticion */
+        if (array_key_exists($indice, $origen)){
+            return array_map(
+                function($item){
+                    return trim($item);
+                }, explode(',', $origen[$indice]));
+        } else {
+            return Array();
+        }
+
+    }
+    protected function parsearDiccionario($origen, $indice){
+        $pf = array_filter(
+            explode(",", $origen[$indice]),
+            function($item){
+                $pos = strpos($item, "="); 
+                return  $pos> 0 and !empty(substr($item, $pos + 1));
+            });
+        
+        return array_reduce(
+            $pf,
+            function($acumulador, $item){
+                list($clave, $valor) = explode("=", $item);
+                $acumulador[trim($clave)] = trim($valor);
+                return $acumulador;
+            }, Array());
+    }
+
     public function lista ($index){
-        $filtros = $index['GET'];
+        /** Buscamos en los filtros que nos envían de la petición */
+        $atributos = $this->parsearListado($index['GET'], 'atributos');
+        $atributos = sizeof($atributos) > 0 ? $atributos:  Array('uid','cn','title','o', 'ou','mail', 'telephoneNumber');
         
-        $atributos = array('uid','cn','title','o', 'ou','mail', 'telephoneNumber');
-        
+        $filtros = $this->parsearDiccionario($index['GET'], 'filtros');
+        $filtros = sizeof($filtros) > 0 ? $filtros : Array('uid' => "NOT root AND NOT nobody");
+
+
         list($parametros, $credenciales) = $this->obtenerParametros($index->get('ldap'));
+        $cifrador = new Cifrado();
         $conexion = new ldapAccess($parametros, $credenciales);
-        $usuario = new userSamba($conexion);
-        //print json_encode($usuario->search($index['GET'], $atributos));
-        //$usuario->getAll($atributos);
-        //print json_encode($usuario->getEntrada());
+        $usuario = new userPosix($conexion, $cifrador);
+        print json_encode($usuario->search($filtros, $atributos));
     }
 }

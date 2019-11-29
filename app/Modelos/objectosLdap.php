@@ -6,6 +6,7 @@
  */
 
 namespace App\Modelos;
+
 use App\Acceso\ldapAccess;
 
 class objectosLdap {
