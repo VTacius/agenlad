@@ -9,23 +9,15 @@ use Exception;
 use ErrorException;
 
 class ldapAccess {
-    /** @var El dn de quién esta realizando la conexion*/
+    /** @var String El dn de quién esta realizando la conexion*/
     protected $dn;
-    /** @var array El contenido de todos los datos estará a nivel de clase */
+    
+    /** @var Array El contenido de todos los datos estará a nivel de clase */
     protected $datos = array();
-     /** Configuracion de los parametros de conexión  */
-    protected $base;
-    protected $server;
-    protected $puerto;
-    /** @var array La configuración que trajimos desde la base de datos*/
-    protected $config;
+    
     /** @var $link_identifier La conexión estará a nivel de clase, y no se piensa usar fuera de acá */
-    protected $conexionLdap;
-    /** @var  array Errores ocurridos durante las operaciones LDAP */
-    protected $errorLdap = array();
-    /** @var  bool Tendremos a la mano la busqueda lista para ordenarla después */
-    protected $searchLDAP; 
- 
+    protected $conexion;
+
     /**
     * Get auth::dn
     * @return string
@@ -56,10 +48,6 @@ class ldapAccess {
     }
     
     /**
-     * Empiezan métodos necesarios para establecer cualquier conexión
-     */
-    
-    /**
      * 
      * @param stdClass $parametros 
      * @param stdClass $credenciales 
@@ -67,26 +55,18 @@ class ldapAccess {
      * @throws Exception
      */
     function __construct($parametros, $credenciales){
-        try{
-            $this->base = $parametros->base;
-            $this->conexionLdap = ldap_connect($parametros->servidor);
-            ldap_set_option($this->conexionLdap, LDAP_OPT_PROTOCOL_VERSION, 3);
-            ldap_set_option($this->conexionLdap, LDAP_OPT_NETWORK_TIMEOUT, 2);
-            if ((@$this->enlaceLdap = ldap_bind($this->conexionLdap, $credenciales->dn, $credenciales->password))){
-                return true;
-            } else {
-                throw new Exception (ldap_error($this->conexionLdap));
-            }
-        } catch (Exception $e) {
-            $this->setErrorLdap("Error en la conexion", $e->getMessage());
-            return false;
-        }
+        $this->conexion = ldap_connect($parametros->servidor, $parametros->puerto);
+        $this->base = $parametros->base;
+		
+		ldap_set_option($this->conexion, LDAP_OPT_PROTOCOL_VERSION, 3);
+		ldap_set_option($this->conexion, LDAP_OPT_REFERRALS, 0);
+		
+		$enlace = @ldap_bind($this->conexion, $credenciales->dn, $credenciales->password);
+		if(!$enlace){
+			throw new \Exception(ldap_error($this->conexion));
+		}
     }
 
-    /**
-     * Terminan métodos necesarios para establecer cualquier conexión 
-     */
-	
     /**
      * Empiezan métodos auxiliares de primer nivel
      */
@@ -100,9 +80,9 @@ class ldapAccess {
      * @param $result_entry_identifier $entrada
      */
     protected function mapa($atributos, $entrada){
-        $usuario = array('dn'=>@ldap_get_dn($this->conexionLdap, $entrada));
+        $usuario = array('dn'=>@ldap_get_dn($this->conexion, $entrada));
         foreach ($atributos as $attr) {
-            if (($valor = @ldap_get_values($this->conexionLdap, $entrada, $attr))){
+            if (($valor = @ldap_get_values($this->conexion, $entrada, $attr))){
                 array_pop($valor);
                 $usuario[$attr] = count($valor)==1? $valor[0]:  $valor;
             }
@@ -116,20 +96,20 @@ class ldapAccess {
      * @param Array $atributos
      * @param Integer $size
      */
-    public function getDatos($filtro, $atributos, $size=499){
-        
+    public function obtenerDatos($filtro, $atributos, $size=499){
+        $datos = Array(); 
         try {
-            $this->searchLDAP = ldap_search($this->conexionLdap, $this->base, $filtro, $atributos, 0, 0);
-            $entrada = ldap_first_entry($this->conexionLdap, $this->searchLDAP);
+            $busqueda = ldap_search($this->conexion, $this->base, $filtro, $atributos, 0, 0);
+            $entrada = ldap_first_entry($this->conexion, $busqueda);
             do {
-                array_push($this->datos, $this->mapa($atributos, $entrada));
-            } while ($entrada = @ldap_next_entry($this->conexionLdap, $entrada));
+                array_push($datos, $this->mapa($atributos, $entrada));
+            } while ($entrada = @ldap_next_entry($this->conexion, $entrada));
             
         } catch (Exception  $e) {
             $this->setErrorLdap("Error obteniendo datos", $e->getMessage());
             return false;
         }
-        return $this->datos;
+        return $datos;
     }
     
     /**
@@ -138,24 +118,16 @@ class ldapAccess {
     
     /**
      * Modifica los valores de una entrada ldap para el dn dado
-     * @param array $valores
-     * @return boolean
+     * @param String $dn
+     * @param Array $datos
+     * @return Boolean
      * @throws Exception
      */
-    public function modificarEntrada ($valores, $dn = false) {
-        // Mantenemos la compatibilidad con la forma en que se usa para cambiar contraseña
-        if ($dn == false) {
-            $dn = $this->dn;
-        }
-        try{
-            if (@ldap_modify($this->conexionLdap, $dn, $valores)) {
-                return true;
-            } else {
-                throw new Exception(ldap_error($this->conexionLdap));
-            }
-        }catch(Exception $e){
-            $this->setErrorLdap("Error en modificación", $e->getMessage());	
-            return false;
+    public function modificarEntrada ($dn, $datos) {
+        if (@ldap_modify($this->conexion, $dn, $datos)) {
+            return true;
+        } else {
+            throw new Exception(ldap_error($this->conexion));
         }
     }
 
@@ -166,12 +138,12 @@ class ldapAccess {
      * @return boolean
      * @throws Exception
      */
-    public function nuevaEntrada( $valores, $dn ) {
+    public function nuevaEntrada($valores, $dn) {
         try{
-            if (@ldap_add($this->conexionLdap, $dn, $valores)) {
+            if (@ldap_add($this->conexion, $dn, $valores)) {
                 return true;
             } else {
-                throw new Exception(ldap_error($this->conexionLdap));
+                throw new Exception(ldap_error($this->conexion));
             }
         }catch(Exception $e){
             $this->setErrorLdap("Error agregando entrada", $e->getMessage());
@@ -183,10 +155,10 @@ class ldapAccess {
         // En realidad, parece que esta función agrega un atributo del tipo 
         // "permito varios y no me ahuevo"
         try{
-            if (@ldap_mod_add($this->conexionLdap, $dn, $valores)) {
+            if (@ldap_mod_add($this->conexion, $dn, $valores)) {
                 return true;
             } else {
-                throw new Exception(ldap_error($this->conexionLdap));
+                throw new Exception(ldap_error($this->conexion));
             }
         }catch(Exception $e){
             $this->setErrorLdap("Error en modificación", $e->getMessage());	
@@ -198,10 +170,10 @@ class ldapAccess {
         // En realidad, parece que esta función agrega un atributo del tipo 
         // "permito varios y no me ahuevo"
         try{
-            if (@ldap_mod_del($this->conexionLdap, $dn, $valores)) {
+            if (@ldap_mod_del($this->conexion, $dn, $valores)) {
                 return true;
             } else {
-                throw new Exception(ldap_error($this->conexionLdap));
+                throw new Exception(ldap_error($this->conexion));
             }
         }catch(Exception $e){
             $this->setErrorLdap("Error en modificación", $e->getMessage());
@@ -216,10 +188,10 @@ class ldapAccess {
             $newRdn = $matches[1];
         }
         try {
-            if (ldap_rename($this->conexionLdap, $oldDn, $newRdn, $newParent, true)) {
+            if (ldap_rename($this->conexion, $oldDn, $newRdn, $newParent, true)) {
                 return true;
             } else {
-                throw new Exception(ldap_error($this->conexionLdap));
+                throw new Exception(ldap_error($this->conexion));
             }
         } catch (Exception $e) {
             $this->setErrorLdap("Error en modificación", $e->getMessage());

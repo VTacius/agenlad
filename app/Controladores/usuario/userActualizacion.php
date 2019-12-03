@@ -18,7 +18,8 @@ class userActualizacion extends \Controladores\usuario\usermodControl {
                 'update' => 'update datos_administrativos set pregunta=:pregunta, respuesta=:respuesta, fecha_nacimiento=:fecha_nacimiento, nit=:nit where usuario=:usuario',
                 'insert' => 'insert into datos_administrativos(usuario, pregunta, respuesta, fecha_nacimiento, nit) values(:usuario, :pregunta, :respuesta, :fecha_nacimiento, :nit)',
                 'valores' => array(':usuario'=> $usuario, ':pregunta'=>$pregunta, 'respuesta'=>$respuesta, ':fecha_nacimiento'=> $dato_fecha, ':nit'=>$nit)
-            ); }else{
+            ); 
+        }else{
             $sentencia = array(
                 'update' => 'update datos_administrativos set pregunta=:pregunta, respuesta=:respuesta, fecha_nacimiento=:fecha_nacimiento, nit=:nit, jvs=:jvs where usuario=:usuario',
                 'insert' => 'insert into datos_administrativos(usuario, pregunta, respuesta, fecha_nacimiento, nit, jvs) values(:usuario, :pregunta, :respuesta, :fecha_nacimiento, :nit, :jvs)',

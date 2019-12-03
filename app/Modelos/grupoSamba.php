@@ -6,6 +6,7 @@
  */
 
 namespace App\Modelos;
+
 use App\Modelos\objectosldap;
 
 class grupoSamba extends objectosldap {
@@ -21,11 +22,11 @@ class grupoSamba extends objectosldap {
     }
 
     public function setSambaSID($sambaSID) {
-        $this->configurarDatos('sambaSID', $sambaSID);
+        $this->configurarEntrada('sambaSID', $sambaSID);
     }
         
     public function setCn($cn){
-        $this->configurarDatos('cn', $cn);
+        $this->configurarEntrada('cn', $cn);
     }
     
     public function getCn(){
@@ -37,7 +38,7 @@ class grupoSamba extends objectosldap {
     }
 
     public function setGidNumber($gidNumber) {
-        $this->configurarDatos('gidNumber', $gidNumber);
+        $this->configurarEntrada('gidNumber', $gidNumber);
     }
     
     

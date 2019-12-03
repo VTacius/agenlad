@@ -5,28 +5,38 @@
  * @author alortiz
  */
 
-namespace Modelos;
+namespace App\Modelos;
 
-class mailbox extends \Modelos\objetosSoap {
+use App\Modelos\objetosSoap;
+
+class mailbox extends objetosSoap {
         
-    public function __construct($administrador, $password) {
-        parent::__construct($administrador, $password);
-        // Agregados atributos como description
-        $this->atributos = array('zimbraAccountStatus', 'zimbraMailStatus', 
-            'zimbraAuthLdapExternalDn', 'company ','mail', 'l', 'sn', 'title', 
-            'givenName', 'displayName', 'telephoneNumber', 'description', 'st');
+    public function __construct($parametros, $credenciales) {
+        parent::__construct($parametros, $credenciales);
+        
+        $this->atributos = Array('company', 'description', 'displayName', 'givenName', 'l', 
+            'mail', 'sn', 'telephoneNumber', 'title', 'st', 'zimbraAccountStatus', 
+            'zimbraAuthLdapExternalDn', 'zimbraMailStatus' );
+
+        $this->traduccion = Array('o' => 'company', 'ou' => 'l');
+        $this->listables = Array('description', 'o', 'ou', 'title', 'telephoneNumber');
     }
     
     public function cuenta($usuario){
-        $this->configurarDatos($usuario);
+        $this->configurarCuenta($usuario);
+    }
+   
+    public function configurarDatos($datos){
+        foreach($this->listables as $clave){
+            if (array_key_exists($clave, $datos)){
+                $clave = array_key_exists($clave, $this->traduccion) ? $this->traduccion[$clave] : $clave;
+                $this->entrada[$clave] = $datos[$clave];
+            }
+        }
     }
     
-    function getCompany() {
-        return $this->cuenta['company'];
-    }
-
-    function getDescription() {
-        return $this->cuenta['description'];
+    public function getCuenta(){
+        return $this->cuenta;
     }
     
     function getSt() {
@@ -53,44 +63,24 @@ class mailbox extends \Modelos\objetosSoap {
         return $this->cuenta['displayName'];
     }
 
-    function getTelephoneNumber() {
-        return $this->cuenta['telephoneNumber'];
-    }
-    
     function getMail(){
         return $this->cuenta['mail'];
     }
     
-    function setCompany($company) {
-        $this->cuenta['company'] = $company;
-    }
-
-    function setDescription($description) {
-        $this->cuenta['description'] = $description;
-    }
-
     function setSt($st) {
         $this->cuenta['st'] = $st;
-    }
-
-    function setOu($ou) {
-        $this->cuenta['l'] = $ou;
     }
 
     function setTitle($title) {
         $this->cuenta['title'] = $title;
     }
 
-    function configuraNombre($nombre, $apellido){
+    function configurarNombre($nombre, $apellido){
         $this->cuenta['givenName'] = $nombre;
         $this->cuenta['sn'] = $apellido;
         $this->cuenta['displayName'] = $nombre . " " . $apellido;
     }
 
-    function setTelephoneNumber($telephoneNumber) {
-        $this->cuenta['telephoneNumber'] = $telephoneNumber;
-    }
-    
     public function getZimbraAccountStatus() {
         return $this->cuenta['zimbraAccountStatus'];
     }

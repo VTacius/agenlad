@@ -14,17 +14,20 @@ class userSamba extends userPosix {
     protected $sambaSID;
     protected $netbiosName;
 
-    public function __construct($conexion, $cifrado) {
-        parent::__construct($conexion, $cifrado);
-        $this->objeto='sambaSamAccount';
+    public function __construct($parametros, $conexion, $cifrado) {
+        parent::__construct($parametros, $conexion, $cifrado);
+        
+        $this->objeto = 'sambaSamAccount';
+         
         $this->atributos = array_merge($this->atributos, array(    
-            'sambaAcctFlags','sambaHomeDrive',
-            'sambaHomePath','sambaKickoffTime','sambaLMPassword','sambaLogoffTime','sambaLogonScript',
-            'sambaLogonTime','sambaNTPassword','sambaPrimaryGroupSID','sambaPwdCanChange','sambaPwdLastSet',
-            'sambaPwdMustChange','sambaSID',
-            ));
+            'sambaAcctFlags', 'sambaHomeDrive', 'sambaHomePath', 'sambaKickoffTime', 'sambaLMPassword', 'sambaLogoffTime',
+            'sambaLogonScript', 'sambaLogonTime', 'sambaNTPassword', 'sambaPrimaryGroupSID', 'sambaPwdCanChange', 
+            'sambaPwdLastSet', 'sambaPwdMustChange','sambaSID',));
+        
         $this->objectClass = array( 'top', 'person', 'organizationalPerson', 'posixAccount', 'shadowAccount', 'inetOrgPerson', 'sambaSamAccount');
+        
         $this->sambaSID = $parametros->sambaSID;
+        
         $this->netbiosName = $parametros->netbiosName; 
     }
 
@@ -129,8 +132,9 @@ class userSamba extends userPosix {
      * @param string $sambaSID
      */
     protected function setSambaSID($sambaSID) {
-        $this->configurarDatos('sambaSID', $sambaSID);
+        $this->configurarEntrada('sambaSID', $sambaSID);
     }
+    
     /**
      * Función pública para el uso de
      * usuario::setUserPassword, sambauser::setSambaNTPassword, sambauser::setSambaLMPassword

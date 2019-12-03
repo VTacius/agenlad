@@ -10,36 +10,25 @@ namespace App\Modelos;
 use App\Acceso\ldapAccess;
 
 class objectosLdap {
-    /** 
-     * Arreglo de los atributos del usuario. Recuerde que DN no se considera atributo
-     * @var array 
-     */
-    protected $atributos = array();
+    /** @var Array Los atributos del usuario. Recuerde que DN no se considera atributo */
+    protected $atributos = Array();
+
+    /** @var Array Los atributos que pueden ser configurables directamente */
+    protected $listables = Array();
     
-    /**
-     * El contenido de todo cuanto el usuario puede ser
-     * @var array
-     */
-    protected $entrada = array();
+    /** @var Array El contenido de todo cuanto el usuario puede ser */
+    protected $entrada = Array();
     
-    /**
-     * @var Clases\cifrado
-     */
-    protected $hashito;
+    /** @var App\Clases\Cifrado Clase externa encargada de hashes y cifrados */
+    protected $cifrado;
     
-    /**
-     * @var string (ObjectClass) 
-     */
+    /** @var String El ObjectClass que identifica las entradas LDAP en las clases hijas */
     protected $objeto;
     
-    /**
-     * @var array (Una lista de ObjectClass )
-     */
+    /** @var Array Lista de ObjectClass que se necesitan para definir la entrada LDAP actual */
     protected $objectClass;
 
-    /** 
-     * @var $link_identifier La conexión con LDAP 
-     */
+    /** @var $link_identifier La conexión con LDAP  */
     protected $conexion;
 
     public function __construct($conexion, $cifrado = ""){
@@ -47,6 +36,14 @@ class objectosLdap {
         $this->cifrado = $cifrado;
     }
     
+    public function configurarDatos($datos){
+        foreach($this->listables as $clave){
+            if (array_key_exists($clave, $datos)){
+                $this->entrada[$clave] = $datos[$clave];
+            }
+        }
+    }
+
     /**
      * Configura el valor de un elemento cualquiera dentro del árbol LDAP
      * Use para los atributos que no son de búsqueda
@@ -60,6 +57,12 @@ class objectosLdap {
         }
     }
     
+    /**
+     * Crea el filtro (clave=valor) o (!(clave=valor))
+     * @param String $clave
+     * @param String $valor
+     * @return String
+     */
     private function parserFiltro($clave, $valor) {
         if (\preg_match('/^NOT/', $valor)){
             $v = explode(' ', $valor);
@@ -68,7 +71,14 @@ class objectosLdap {
             return "({$clave}={$valor})";
         }
     }
-   
+    
+    /**
+     * Divide si es necesario los filtros que se hacen para cada atributo
+     * Devuelve algo como (&(clave=valor)(!(clave=valor)))
+     * @param String $clave
+     * @param String $cadena
+     * @return String
+     */
     private function parsearItems($clave, $cadena){
         $partes = array_map(
             function($valor) use ($clave){
@@ -80,6 +90,11 @@ class objectosLdap {
         }, '(&') . ')';
     }
 
+    /**
+     * Toma el filtro enviado por el usuario y lo parsear en un filtro ldap válido
+     * @param Array $search
+     * @return String
+     */
     protected function crearFiltro($search){
         $filtro = "(&(objectClass=$this->objeto)";
         foreach ($search as $clave => $valor){
@@ -91,7 +106,7 @@ class objectosLdap {
     
     /**
      * Devulve la primera base que es posible configurar en un servidor normal
-     * @return string
+     * @return String
      */
     public function getDNBase(){
         $re = "/((ou=\\w+),((dc=\\w+,*){3}))/";
@@ -138,15 +153,15 @@ class objectosLdap {
     /**
      * Configurar atributos único con los cuales es posible buscar 
      * entradas existente dentro del árbol LDAP
-     * En caso 
-     * @param string $atributo
-     * @param string $especificacion
+     * En caso de no tener  
+     * @param String $atributo
+     * @param String $especificacion
      */
-    protected function configurarDatos($atributo, $valor){
+    protected function configurarEntrada($atributo, $valor){
         $atributo = strtolower($atributo);
         $filtro = "(&($atributo=$valor)(objectClass=$this->objeto))";
         if (empty($this->entrada)) {
-            $this->entrada = $this->conexion->getDatos($filtro, $this->atributos)[0];
+            $this->entrada = $this->conexion->obtenerDatos($filtro, $this->atributos)[0];
             return !empty($this->entrada['dn']); 
         }else{
             /** TODO: ¿Esto en verdad aún sirve? */
@@ -156,65 +171,45 @@ class objectosLdap {
     }
     
     /**
-     * Obtiene todas las entradas del árbol LDAP disponibles
-     * Es posible pasar un array con los attributos que se necesitan 
-     * Recuerde que dn no se considera atributo
-     * @param array $attr
-     * @return array
-     */
-    public function getAll( $attr = false, $base = false){
-        if ($base) {
-            $this->base =  $base;
-        }
-        $atributes = $attr === false ? $this->atributos : $attr;
-        $filtro = "(objectClass=$this->objeto)";
-        $this->entrada = $this->conexion->getDatos($filtro, $atributes);
-        return $this->entrada; 
-    }
-    
-    /**
      * Realiza la búsqueda en base a un arreglo hash pasado como parametro
-     * @param array $search
-     * @param array $atributes
-     * @param boolean|string $base
-     * @return array
+     * @param Array $search
+     * @param Array $atributes
+     * @param Boolean|String $base
+     * @return Array
      */
     
-    public function search($search, $atributos = false, $base = false, $limite = 499){
+    public function busqueda($search, $atributos = false, $base = false, $limite = 499){
        
         $base = $base ? $base: $this->base;
         $atributos = $atributos ? array_merge(array_keys($search), $atributos) : array_keys($search);
         $filtro = $this->crearFiltro($search);
-        $this->entrada = $this->conexion->getDatos($filtro, $atributos, $limite);
-        
-        return $this->entrada;
+        return  $this->conexion->obtenerDatos($filtro, $atributos, $limite);
     }
     
     /**
-     * Actualiza la actual entrada en LDAP
-     * 
-     * @return bool
+     * Actualiza la actual entrada en LDAP los datos actualmente en $this->entrada
+     * @return Bool
      */
     public function actualizarEntrada(){
-        // Elimina los elementos vacíos (Asignados {empyt} por defecto) mediante self::elementosVacios
-        $valores = array_filter($this->entrada, 'self::elementosVacios');
-        // El primer índice es dn, pero ya no lo usaremos màs
-        $dn = array_shift($valores);
-        if($this->modificarEntrada($valores, $dn)){
-            return true;
-        }else{
-            return false;
-        }
+        $dn = $this->entrada['dn'];
+        unset($this->entrada['dn']);
+        print ("Datos actuales de la entrada en ObjectosLDAP\n");
+        print_r($this->entrada);
+        return $this->conexion->modificarEntrada($dn, $this->entrada);
     }
-    
+   
+    /**
+     * Crea una nueva entrada LDAP con los datos actualmente en $this->entrada
+     * @return Bool 
+     */
     public function crearEntrada($dn){
         // Elimina los elementos vacíos (Asignados {empyt} por defecto) mediante self::elementosVacios
         $valores = array_filter($this->entrada, 'self::elementosVacios');
         // El primer índice es dn, pero ya no lo usaremos màs
         $valores['objectClass'] = $this->objectClass;
-        if($this->nuevaEntrada($valores, $dn)){
+        if ($this->nuevaEntrada($valores, $dn)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }

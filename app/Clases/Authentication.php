@@ -40,14 +40,6 @@ class Authentication {
 			print($e->getMessage() . "\n");
 		}
 		
-		/*
-		if (
-			@ldap_bind($dc,$info[0]['dn'],$pw) &&
-			@ldap_close($dc)) {
-                        $this->setDN($info[0]['dn']);
-			return $info[0]['uid'][0]==$id;
-		}
-		*/
 	}
         
 	/**

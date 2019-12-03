@@ -223,6 +223,6 @@ class Listado extends BaseControladorAuth {
         $cifrador = new Cifrado();
         $conexion = new ldapAccess($parametros, $credenciales);
         $usuario = new userPosix($conexion, $cifrador);
-        print json_encode($usuario->search($filtros, $atributos));
+        print json_encode($usuario->busqueda($filtros, $atributos));
     }
 }

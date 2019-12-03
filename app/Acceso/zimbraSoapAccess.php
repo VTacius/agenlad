@@ -1,5 +1,5 @@
 <?php
-namespace Acceso;
+namespace App\Acceso;
 
 use SoapClient;
 use SoapHeader;
@@ -76,9 +76,7 @@ class zimbraSoapAccess {
     }
     
     public function getErrorSoap(){
-        if (sizeof($this->errorSoap)>0) {
-            return $this->errorSoap;
-        }
+        return sizeof($this->errorSoap) > 0 ? $this->errorSoap : Array();
     }
     
     public function setLastResponse($titulo, $mensaje){

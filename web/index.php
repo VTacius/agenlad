@@ -22,9 +22,7 @@ $index->set('AUTOLOAD','./../app/');
  */
 
 $index->set('ONERROR', function($base){
-    $logger = new Log('./../registro.log');
-    $logger->write(json_encode($base['ERROR']));
-    print(json_encode(Array('mensaje' => 'Un error ha ocurrido')) . "\n");
+    $base->error($base['ERROR']['code'], json_encode($base['ERROR']['trace']));
 });
 
 /**
@@ -48,66 +46,25 @@ $index->set('claveMaestra', $_ENV['CLAVEMAESTRA']);
  * Configuramos las rutas
  */
 
-// Rutas hacia main
-$index->route('POST /', 'Controladores\mainControl->cambioCredenciales');
 // Rutas hacia usershow
 $index->route('GET /usuarios/@usuario [ajax]', 'App\Controladores\usuario\Listado->detalles');
 $index->route('GET /usuarios [ajax]', 'App\Controladores\usuario\Listado->lista');
 // Rutas hacia login
 $index->route('POST /login [ajax]', 'App\Controladores\Login->autenticar');
 // Rutas hacia usermod
-$index->route('PUT /usuarios [ajax]', 'App\Controladores\usuario\usermodControl->modificarUsuario');
-$index->route('PUT /usermod/zimbra [ajax]', 'Controladores\usuario\usermodControl->modificarBuzon');
+$index->route('PUT /usuarios/@usuario [ajax]', 'App\Controladores\usuario\Actualizacion->modificarUsuario');
 //Rutas hacia useradd
-$index->route('GET|POST @useradd: /useradd', 
-        'Controladores\usuario\useraddControl->display');
-$index->route('GET|POST @useradd_creacion: /useradd/creacion', 
-        'Controladores\usuario\useraddControl->creacionUsuario');
-$index->route('GET|POST @useradd_creacion_test: /useradd/test', 
-        'Controladores\usuario\useraddPrueba->display');
-$index->route('GET|POST @useradd_check_uid: /useradd/checkuid', 
-        'Controladores\usuario\useraddControl->checkUid');
-// Rutas para configuracion de dominios
-$index->route('GET|POST @conf_dominios: /confdominios', 
-        'Controladores\configuracion\dominioControl->display');
-$index->route('GET|POST @conf_dominio_modificar: /confdominios/modificar', 
-        'Controladores\configuracion\dominioControl->modificarDominios');
-$index->route('GET|POST @conf_dominio_modificar: /confdominios/nuevo', 
-        'Controladores\configuracion\dominioControl->mostrarNuevoDominio');
-$index->route('GET|POST @conf_dominio_modificar: /confdominios/nuevo/crear', 
-        'Controladores\configuracion\dominioControl->crearDominio');
-$index->route('GET|POST @conf_dominio_set_password_samba: /confdominios/password/samba', 
-        'Controladores\configuracion\dominioControl->setPasswordSamba');
-$index->route('GET|POST @conf_dominio_set_password_zimbra: /confdominios/password/zimbra', 
-        'Controladores\configuracion\dominioControl->setPasswordZimbra');
-$index->route('GET|POST @conf_dominio_detalles: /confdominios/@clave', 
-        'Controladores\configuracion\dominioControl->mostrarDetalles');
-// Rutas para configuracion de usuarios
-$index->route('GET|POST @conf_usuario: /confpermisos', 
-        'Controladores\configuracion\usuarioControl->display');
-$index->route('GET|POST @conf_usuario_busqueda: /confpermisos/busqueda/@term', 
-        'Controladores\configuracion\usuarioControl->busqueda');
-$index->route('GET|POST @conf_usuario_busqueda_rol: /confpermisos/rol/', 
-        'Controladores\configuracion\usuarioControl->datosRolUsuario');
-$index->route('GET|POST @conf_usuario_configuracion_rol: /confpermisos/configurarol', 
-        'Controladores\configuracion\usuarioControl->configuracionRolUsuario');
-// Rutas para Inicializacion de la aplicacion
-$index->route('GET|POST @conf_usuario_busqueda_rol: /inicializacion', 
-        'Controladores\configuracion\inicializacion->display');
-$index->route('GET|POST @conf_usuario_busqueda_rol: /inicializacion/usuario', 
-        'Controladores\configuracion\inicializacion->usuario');
+$index->route('GET @useradd: /useradd', 'Controladores\usuario\useraddControl->display');
+$index->route('POST @useradd_creacion: /useradd/creacion', 'Controladores\usuario\useraddControl->creacionUsuario');
+$index->route('GET|POST @useradd_creacion_test: /useradd/test', 'Controladores\usuario\useraddPrueba->display');
+$index->route('GET|POST @useradd_check_uid: /useradd/checkuid', 'Controladores\usuario\useraddControl->checkUid');
 // Agregado el 26/06/15 para que los usuarios puedan actualizar por si mismos sus datos
-$index->route('GET|POST @usuario_actualizacion: /actualizacion', 
-        'Controladores\usuario\userActualizacion->display');
-$index->route('GET|POST @usuario_actualizacion_cambio: /actualizacion/cambio', 
-        'Controladores\usuario\userActualizacion->actualizacionCambio');
-$index->route('GET|POST @usuario_actualizacion_cambio: /actualizacion/usuario', 
-        'Controladores\usuario\userActualizacion->getUsuario');
+$index->route('GET|POST @usuario_actualizacion: /actualizacion', 'Controladores\usuario\userActualizacion->display');
+$index->route('GET|POST @usuario_actualizacion_cambio: /actualizacion/cambio', 'Controladores\usuario\userActualizacion->actualizacionCambio');
+$index->route('GET|POST @usuario_actualizacion_cambio: /actualizacion/usuario', 'Controladores\usuario\userActualizacion->getUsuario');
 // Rutas para obtención de datos por parte de todas las partes de la aplicación
-$index->route('POST @helpers_establecimientos: /helpers/establecimiento [ajax]', 
-        'Controladores\helpers->getEstablecimiento');
-$index->route('POST @helpers_oficinas: /helpers/oficina [ajax]', 
-        'Controladores\helpers->getOficinas');
+$index->route('POST @helpers_establecimientos: /helpers/establecimiento [ajax]', 'Controladores\helpers->getEstablecimiento');
+$index->route('POST @helpers_oficinas: /helpers/oficina [ajax]', 'Controladores\helpers->getOficinas');
 
 // Esta es la forma en que la aplicación empieza
 $index->run();

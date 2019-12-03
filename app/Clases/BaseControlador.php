@@ -17,7 +17,7 @@ class BaseControlador {
         $datos = json_decode($origen, true);
         $resultado = Array();
         foreach ($requerimientos as $clave => $valor) {
-            if(array_key_exists($clave, $datos)){
+            if(array_key_exists($clave, $datos) && !is_null($datos[$clave])){
                  $resultado[$clave] = $datos[$clave];
             } else if (in_array('requerido', $valor['validaciones'])) {
                 throw new \Exception("Error Processing Request", 1);
@@ -38,6 +38,7 @@ class BaseControlador {
         $parametros->base = $ldapParams['base'];
         $parametros->sambaSID = $ldapParams['sambaSID'];
         $parametros->netbiosName = $ldapParams['netbiosName'];
+        $parametros->dominioCorreo = $ldapParams['dominioCorreo'];
        
         $credenciales = new \stdClass();
         $credenciales->dn = $ldapParams['dn'];
